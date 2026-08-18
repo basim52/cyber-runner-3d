@@ -1,7 +1,10 @@
 /**
- * Firebase Integration Module (firebase.google.com)
- * Google Authentication & Cloud Firestore Realtime Persistence
+ * Firebase Integration Module
+ * Google Authentication & Cloud Firestore Realtime Persistence with Custom Database ID
  */
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 // Default Firebase Configuration from provisioned Firebase Applet Config
 const DEFAULT_FIREBASE_CONFIG = {
@@ -10,12 +13,14 @@ const DEFAULT_FIREBASE_CONFIG = {
   apiKey: "AIzaSyCn26iKPQYiPm8Ah_k1OpkZ-kcYNnqoQSg",
   authDomain: "gen-lang-client-0689175056.firebaseapp.com",
   storageBucket: "gen-lang-client-0689175056.firebasestorage.app",
-  messagingSenderId: "652115799495"
+  messagingSenderId: "652115799495",
+  firestoreDatabaseId: "ai-studio-cyberrunner3d-e35fea7d-ea67-4de3-afde-f87939b64e39"
 };
 
 class FirebaseService {
   constructor() {
     this.isInitialized = false;
+    this.app = null;
     this.auth = null;
     this.db = null;
     this.currentUser = null;
@@ -29,9 +34,16 @@ class FirebaseService {
     try {
       const customConfig = localStorage.getItem('fantasy_custom_firebase_config');
       if (customConfig) {
-        return JSON.parse(customConfig);
+        const parsed = JSON.parse(customConfig);
+        if (parsed && parsed.projectId && parsed.projectId !== 'cyber-runner-3d' && parsed.apiKey && !parsed.apiKey.includes('DummyKey')) {
+          return parsed;
+        } else {
+          localStorage.removeItem('fantasy_custom_firebase_config');
+        }
       }
-    } catch (e) {}
+    } catch (e) {
+      localStorage.removeItem('fantasy_custom_firebase_config');
+    }
     return DEFAULT_FIREBASE_CONFIG;
   }
 
@@ -49,24 +61,20 @@ class FirebaseService {
       } catch (e) {}
     }
 
-    if (typeof firebase === 'undefined') {
-      console.warn('Firebase SDK not loaded, running in offline mode.');
-      if (this.currentUser) this.notifyListeners(this.currentUser);
-      return;
-    }
-
     try {
       const config = this.getConfig();
-      if (!firebase.apps.length) {
-        firebase.initializeApp(config);
-      }
-      this.auth = firebase.auth();
-      this.db = firebase.firestore ? firebase.firestore() : null;
-      this.provider = new firebase.auth.GoogleAuthProvider();
+      this.app = getApps().length === 0 ? initializeApp(config) : getApp();
+      this.auth = getAuth(this.app);
+
+      // Connect to named Firestore database
+      const dbId = config.firestoreDatabaseId || "ai-studio-cyberrunner3d-e35fea7d-ea67-4de3-afde-f87939b64e39";
+      this.db = getFirestore(this.app, dbId);
+
+      this.provider = new GoogleAuthProvider();
       this.provider.addScope('profile');
       this.provider.addScope('email');
 
-      this.auth.onAuthStateChanged((user) => {
+      onAuthStateChanged(this.auth, (user) => {
         if (user) {
           this.currentUser = {
             uid: user.uid,
@@ -82,7 +90,7 @@ class FirebaseService {
       });
 
       this.isInitialized = true;
-      console.log('Firebase initialized successfully!');
+      console.log('Firebase & Named Firestore Database initialized successfully!');
     } catch (error) {
       console.warn('Firebase initialization notice:', error.message);
       if (this.currentUser) this.notifyListeners(this.currentUser);
@@ -105,7 +113,7 @@ class FirebaseService {
   async signInWithGoogle() {
     if (this.auth && this.getConfig().apiKey !== 'AIzaSyDummyKeyForFallback-ReplaceInSettings') {
       try {
-        const result = await this.auth.signInWithPopup(this.provider);
+        const result = await signInWithPopup(this.auth, this.provider);
         if (result && result.user) {
           const userObj = {
             uid: result.user.uid,
@@ -166,7 +174,7 @@ class FirebaseService {
   async signOut() {
     if (this.auth) {
       try {
-        await this.auth.signOut();
+        await fbSignOut(this.auth);
       } catch (e) {}
     }
     this.currentUser = null;
@@ -175,11 +183,13 @@ class FirebaseService {
   }
 
   async saveUserData(uid, data) {
-    if (this.db && uid && !uid.startsWith('google_')) {
+    if (!uid) return;
+    if (this.db) {
       try {
-        await this.db.collection('users').doc(uid).set({
+        const userRef = doc(this.db, 'users', uid);
+        await setDoc(userRef, {
           ...data,
-          lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+          lastUpdated: serverTimestamp()
         }, { merge: true });
       } catch (err) {
         console.warn('Firestore write warning:', err.message);
@@ -188,17 +198,36 @@ class FirebaseService {
   }
 
   async loadUserData(uid) {
-    if (this.db && uid && !uid.startsWith('google_')) {
+    if (!uid) return null;
+    if (this.db) {
       try {
-        const doc = await this.db.collection('users').doc(uid).get();
-        if (doc.exists) {
-          return doc.data();
+        const userRef = doc(this.db, 'users', uid);
+        const snap = await getDoc(userRef);
+        if (snap.exists()) {
+          return snap.data();
         }
       } catch (err) {
         console.warn('Firestore read warning:', err.message);
       }
     }
     return null;
+  }
+
+  async submitScore(playerName, score, character, gems) {
+    if (this.db && score > 0) {
+      try {
+        const scoresRef = collection(this.db, 'scores');
+        await addDoc(scoresRef, {
+          playerName: playerName || 'مغامر الغابة',
+          score: Math.floor(score),
+          character: character || 'sami',
+          gems: gems || 0,
+          timestamp: serverTimestamp()
+        });
+      } catch (err) {
+        console.warn('Firestore score submission notice:', err.message);
+      }
+    }
   }
 
   setupConfigModal() {
@@ -250,12 +279,10 @@ class FirebaseService {
         if (!rawText) return;
 
         try {
-          // Parse either raw JSON or JS object syntax
           let cleanJson = rawText;
           if (cleanJson.includes('const firebaseConfig =')) {
             cleanJson = cleanJson.replace(/const\s+firebaseConfig\s*=\s*/, '').replace(/;\s*$/, '');
           }
-          // Fix unquoted keys if pasted from JS
           cleanJson = cleanJson.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
           const parsedConfig = JSON.parse(cleanJson);
 
@@ -284,6 +311,11 @@ class FirebaseService {
 
 // Global Singleton
 window.firebaseService = new FirebaseService();
-window.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.firebaseService) window.firebaseService.setupConfigModal();
+  });
+} else {
   if (window.firebaseService) window.firebaseService.setupConfigModal();
-});
+}
+export default window.firebaseService;

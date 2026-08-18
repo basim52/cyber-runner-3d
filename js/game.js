@@ -875,6 +875,10 @@ class Game {
 
     this.syncAllData();
 
+    if (window.firebaseService) {
+      window.firebaseService.submitScore(this.userName, this.score, this.activeCharacter, this.gems);
+    }
+
     if (this.ui.finalScore) this.ui.finalScore.textContent = Math.floor(this.score).toLocaleString('ar-EG');
     if (this.ui.bestScore) this.ui.bestScore.textContent = this.highScore.toLocaleString('ar-EG');
     if (this.ui.finalDistance) this.ui.finalDistance.textContent = Math.floor(this.distance) + 'm';
