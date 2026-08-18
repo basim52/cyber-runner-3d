@@ -316,6 +316,13 @@ class Game {
     const googleName = document.getElementById('google-user-name');
     const googleEmail = document.getElementById('google-user-email');
 
+    // Interactive Google Modal Elements
+    const googleModal = document.getElementById('google-login-modal');
+    const btnConfirmGoogle = document.getElementById('btn-confirm-google-login');
+    const btnCancelGoogle = document.getElementById('btn-cancel-google-login');
+    const emailInput = document.getElementById('google-email-input');
+    const nameInput = document.getElementById('google-name-input');
+
     // Decode Google JWT Token
     const parseJwt = (token) => {
       try {
@@ -335,21 +342,10 @@ class Game {
         this.applyGoogleUser({
           name: payload.name || 'مغامر Google',
           email: payload.email,
-          picture: payload.picture || 'https://www.gstatic.com/images/branding/product/2x/avatar_square_blue_120dp.png'
+          picture: payload.picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${payload.email}`
         });
       }
     };
-
-    // Initialize Google Identity Client if available
-    try {
-      if (window.google && window.google.accounts && window.google.accounts.id) {
-        window.google.accounts.id.initialize({
-          client_id: "839485729104-fantasyrunner.apps.googleusercontent.com",
-          callback: window.handleGoogleCredentialResponse,
-          auto_select: true
-        });
-      }
-    } catch (err) {}
 
     // Apply Google User
     this.applyGoogleUser = (userData) => {
@@ -379,39 +375,43 @@ class Game {
       this.updateUserStatsUI();
       this.updateAccountUI();
 
+      if (googleModal) googleModal.classList.add('hidden');
       if (window.sound) window.sound.playPowerup();
     };
 
-    // Google Login Click Handler
+    // Open Interactive Google Modal on Click
     if (btnGoogleLogin) {
-      btnGoogleLogin.addEventListener('click', () => {
-        // Trigger Google One-Tap or Prompt
-        if (window.google && window.google.accounts && window.google.accounts.id) {
-          window.google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              // Interactive Fallback Prompt
-              this.promptManualGoogleLogin();
-            }
-          });
-        } else {
-          this.promptManualGoogleLogin();
-        }
+      btnGoogleLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (emailInput && this.userEmail) emailInput.value = this.userEmail;
+        if (nameInput && this.userName) nameInput.value = this.userName;
+        if (googleModal) googleModal.classList.remove('hidden');
       });
     }
 
-    this.promptManualGoogleLogin = () => {
-      const email = prompt('ادخل بريد Google الخاص بك (مثال: name@gmail.com):', this.userEmail || 'basim@gmail.com');
-      if (email && email.trim()) {
-        const cleanEmail = email.trim();
-        const defaultName = cleanEmail.split('@')[0];
-        const name = prompt('ادخل اسمك المستعار في اللعبة:', this.userName || defaultName) || defaultName;
+    if (btnCancelGoogle) {
+      btnCancelGoogle.addEventListener('click', () => {
+        if (googleModal) googleModal.classList.add('hidden');
+      });
+    }
+
+    if (btnConfirmGoogle) {
+      btnConfirmGoogle.addEventListener('click', () => {
+        const email = (emailInput.value || '').trim();
+        const name = (nameInput.value || '').trim() || (email.split('@')[0] || 'مغامر Google');
+        if (!email) {
+          alert('يرجى كتابة بريد Google الإلكتروني');
+          return;
+        }
+
         this.applyGoogleUser({
           name: name,
-          email: cleanEmail,
-          picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`
+          email: email,
+          picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${email}`
         });
-      }
-    };
+      });
+    }
 
     // Google Logout Handler
     if (btnGoogleLogout) {

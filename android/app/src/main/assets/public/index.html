@@ -101,7 +101,7 @@
         <div class="google-auth-widget" id="google-auth-widget">
           <!-- Logged Out State -->
           <div id="google-logged-out" class="google-auth-state">
-            <button id="btn-google-login" class="btn-google-signin">
+            <button id="btn-google-login" class="btn-google-signin" type="button">
               <svg class="google-icon-svg" viewBox="0 0 24 24" width="22" height="22">
                 <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
                 <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
@@ -122,6 +122,37 @@
               </div>
             </div>
             <button id="btn-google-logout" class="btn-google-logout" title="تبديل الحساب / خروج">🚪 تبديل</button>
+          </div>
+        </div>
+
+        <!-- Google Login Interactive Modal -->
+        <div id="google-login-modal" class="google-login-modal hidden">
+          <div class="google-modal-inner glass-panel">
+            <div class="google-modal-header">
+              <svg viewBox="0 0 24 24" width="28" height="28">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+              <h3>تسجيل الدخول بحساب Google</h3>
+            </div>
+            <p class="google-modal-desc">اكتب بريد Google الخاص بك ليتم حفظ أرقامك القياسية وشخصياتك المفتوحة واسترجاعها في أي وقت:</p>
+            
+            <div class="google-input-group">
+              <label for="google-email-input">بريد Google الإلكتروني:</label>
+              <input type="email" id="google-email-input" class="google-modal-input" placeholder="example@gmail.com" autocomplete="email">
+            </div>
+
+            <div class="google-input-group">
+              <label for="google-name-input">اسمك في اللعبة:</label>
+              <input type="text" id="google-name-input" class="google-modal-input" placeholder="اسمك المستعار" maxlength="20">
+            </div>
+
+            <div class="google-modal-actions">
+              <button id="btn-confirm-google-login" class="btn-primary">متابعة وحفظ الحساب ☁️</button>
+              <button id="btn-cancel-google-login" class="btn-secondary">إلغاء ✖️</button>
+            </div>
           </div>
         </div>
 
@@ -432,12 +463,12 @@
 
   </div>
 
-  <!-- Scripts with v12.0.0 cache buster -->
-  <script src="js/audio.js?v=12.0.0"></script>
-  <script src="js/particles.js?v=12.0.0"></script>
-  <script src="js/player.js?v=12.0.0"></script>
-  <script src="js/world.js?v=12.0.0"></script>
-  <script src="js/controls.js?v=12.0.0"></script>
-  <script src="js/game.js?v=12.0.0"></script>
+  <!-- Scripts with v13.0.0 cache buster -->
+  <script src="js/audio.js?v=13.0.0"></script>
+  <script src="js/particles.js?v=13.0.0"></script>
+  <script src="js/player.js?v=13.0.0"></script>
+  <script src="js/world.js?v=13.0.0"></script>
+  <script src="js/controls.js?v=13.0.0"></script>
+  <script src="js/game.js?v=13.0.0"></script>
 </body>
 </html>
