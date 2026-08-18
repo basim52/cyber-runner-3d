@@ -252,7 +252,7 @@ class Game {
       });
     });
 
-    // Character Purchase Buttons
+    // Human Character Purchase Buttons
     const setupBuyBtn = (btnId, charId, cost) => {
       const btn = document.getElementById(btnId);
       if (!btn) return;
@@ -273,9 +273,9 @@ class Game {
       });
     };
 
-    setupBuyBtn('btn-buy-girl', 'girl', 500);
-    setupBuyBtn('btn-buy-robot', 'robot', 1000);
-    setupBuyBtn('btn-buy-fox', 'fox', 1500);
+    setupBuyBtn('btn-buy-lana', 'lana', 500);
+    setupBuyBtn('btn-buy-ziyad', 'ziyad', 1000);
+    setupBuyBtn('btn-buy-maryam', 'maryam', 1500);
 
     // Upgrades
     const setupUpBtn = (btn, type) => {

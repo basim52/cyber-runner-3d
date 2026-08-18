@@ -1,11 +1,12 @@
 /**
- * 3D Multi-Character System (Boy, Girl, Robot, Fox) with Dynamic Animations
+ * 3D Human Runner Characters (Sami, Lana, Ziyad, Maryam)
+ * Anatomically detailed human rigs with realistic athletic running & jumping cycles.
  */
 class Player {
   constructor(scene) {
     this.scene = scene;
     
-    // Movement
+    // 3 Lanes
     this.lanes = [-3.5, 0, 3.5];
     this.currentLane = 1;
     this.targetX = 0;
@@ -17,7 +18,7 @@ class Player {
     // Physics
     this.vy = 0;
     this.gravity = -38;
-    this.jumpForce = 13.8;
+    this.jumpForce = 14.0;
     this.isGrounded = true;
     this.jumpCount = 0;
     this.maxJumps = 2;
@@ -27,8 +28,8 @@ class Player {
     this.runTimer = 0;
     this.spinAngle = 0;
 
-    // Active Character: 'boy' | 'girl' | 'robot' | 'fox'
-    this.characterType = 'boy';
+    // Character: 'sami' | 'lana' | 'ziyad' | 'maryam'
+    this.characterType = 'sami';
 
     // Upgrades
     this.magnetRadius = 6.0;
@@ -47,34 +48,42 @@ class Player {
   }
 
   initMaterials() {
-    this.skinMat = new THREE.MeshStandardMaterial({ color: 0xffcc99, roughness: 0.6 });
-    this.eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
-    
-    // Boy Materials
-    this.boyHairMat = new THREE.MeshStandardMaterial({ color: 0x4a2c11, roughness: 0.8 });
-    this.boyShirtMat = new THREE.MeshStandardMaterial({ color: 0x1976d2, roughness: 0.7 });
-    this.boyPantsMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.8 });
-    this.boyShoeMat = new THREE.MeshStandardMaterial({ color: 0xe53935, roughness: 0.5 });
-    this.boyCapMat = new THREE.MeshStandardMaterial({ color: 0xe53935, roughness: 0.6 });
-    this.backpackMat = new THREE.MeshStandardMaterial({ color: 0xf57c00, roughness: 0.8 });
+    // Skin Tones
+    this.skinLightMat = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.65 }); // Natural warm skin
+    this.skinTanMat = new THREE.MeshStandardMaterial({ color: 0xe0ac69, roughness: 0.65 });   // Sun-kissed tan skin
+    this.eyeMat = new THREE.MeshBasicMaterial({ color: 0x1a1a1a });
+    this.lipMat = new THREE.MeshStandardMaterial({ color: 0xd48c80, roughness: 0.7 });
 
-    // Girl Materials
-    this.girlHairMat = new THREE.MeshStandardMaterial({ color: 0xffb300, roughness: 0.7 }); // Blonde ponytail
-    this.girlShirtMat = new THREE.MeshStandardMaterial({ color: 0xe91e63, roughness: 0.6 }); // Pink sporty hoodie
-    this.girlPantsMat = new THREE.MeshStandardMaterial({ color: 0x7b1fa2, roughness: 0.7 }); // Purple leggings
-    this.girlShoeMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, roughness: 0.5 });
-    this.girlGogglesMat = new THREE.MeshStandardMaterial({ color: 0x00bcd4, metalness: 0.8 });
+    // Character 1: سامي (Sami - The Urban Runner Boy)
+    this.samiHairMat = new THREE.MeshStandardMaterial({ color: 0x3d2314, roughness: 0.8 }); // Dark Brown
+    this.samiShirtMat = new THREE.MeshStandardMaterial({ color: 0x1976d2, roughness: 0.7 }); // Royal Blue Hoodie
+    this.samiPantsMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.8 }); // Dark Joggers
+    this.samiShoeMat = new THREE.MeshStandardMaterial({ color: 0xe53935, roughness: 0.5 });  // Red Runners
+    this.samiCapMat = new THREE.MeshStandardMaterial({ color: 0xd32f2f, roughness: 0.6 });
+    this.samiPackMat = new THREE.MeshStandardMaterial({ color: 0xf57c00, roughness: 0.8 });
 
-    // Robot Materials (Sparky)
-    this.botMetalMat = new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.9, roughness: 0.2 });
-    this.botGoldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.2 });
-    this.botScreenMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
-    this.botLightMat = new THREE.MeshBasicMaterial({ color: 0x00ff88 });
+    // Character 2: لانا (Lana - The Athletic Girl)
+    this.lanaHairMat = new THREE.MeshStandardMaterial({ color: 0xfbc02d, roughness: 0.6 }); // Golden Blonde
+    this.lanaShirtMat = new THREE.MeshStandardMaterial({ color: 0xe91e63, roughness: 0.6 }); // Magenta Athletic Top
+    this.lanaPantsMat = new THREE.MeshStandardMaterial({ color: 0x4a148c, roughness: 0.7 }); // Deep Purple Leggings
+    this.lanaShoeMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, roughness: 0.5 });  // Cyan Runners
+    this.lanaBandMat = new THREE.MeshStandardMaterial({ color: 0x00bcd4, roughness: 0.5 });
 
-    // Fox Materials (Swift Fox)
-    this.foxFurMat = new THREE.MeshStandardMaterial({ color: 0xe65100, roughness: 0.8 }); // Orange fur
-    this.foxWhiteFurMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 });
-    this.foxNoseMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    // Character 3: زياد (Ziyad - Parkour Athlete Boy)
+    this.ziyadHairMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 }); // Jet Black Undercut
+    this.ziyadShirtMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.7 }); // Forest Green Windbreaker
+    this.ziyadPantsMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.8 }); // Cargo Grey
+    this.ziyadShoeMat = new THREE.MeshStandardMaterial({ color: 0x76ff03, roughness: 0.5 });  // Neon Green Runners
+    this.ziyadGloveMat = new THREE.MeshStandardMaterial({ color: 0x212121, roughness: 0.9 });
+
+    // Character 4: مريم (Maryam - Explorer Girl)
+    this.maryamHairMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.8 }); // Chestnut Braids
+    this.maryamShirtMat = new THREE.MeshStandardMaterial({ color: 0xf57f17, roughness: 0.7 }); // Amber Explorer Jacket
+    this.maryamPantsMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.8 }); // Earth Brown
+    this.maryamShoeMat = new THREE.MeshStandardMaterial({ color: 0x8d6e63, roughness: 0.6 });  // Adventure Boots
+    this.maryamBeltMat = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.7 });
+
+    this.whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
   }
 
   setCharacter(type) {
@@ -86,32 +95,32 @@ class Player {
   }
 
   setVehicle(type) {
-    // Map selection to characters
-    if (type === 'titan') this.setCharacter('girl');
-    else if (type === 'phantom') this.setCharacter('robot');
-    else if (type === 'fox') this.setCharacter('fox');
-    else this.setCharacter('boy');
+    if (type === 'titan' || type === 'girl' || type === 'lana') this.setCharacter('lana');
+    else if (type === 'phantom' || type === 'ziyad') this.setCharacter('ziyad');
+    else if (type === 'fox' || type === 'maryam') this.setCharacter('maryam');
+    else this.setCharacter('sami');
   }
 
   createMesh() {
     this.group = new THREE.Group();
 
+    // Human Center Root Rig
     this.bodyGroup = new THREE.Group();
-    this.bodyGroup.position.y = 1.35;
+    this.bodyGroup.position.y = 1.38; // Human Center of Mass
     this.group.add(this.bodyGroup);
 
-    if (this.characterType === 'girl') {
-      this.buildGirlCharacter();
-    } else if (this.characterType === 'robot') {
-      this.buildRobotCharacter();
-    } else if (this.characterType === 'fox') {
-      this.buildFoxCharacter();
+    if (this.characterType === 'lana') {
+      this.buildLana();
+    } else if (this.characterType === 'ziyad') {
+      this.buildZiyad();
+    } else if (this.characterType === 'maryam') {
+      this.buildMaryam();
     } else {
-      this.buildBoyCharacter();
+      this.buildSami();
     }
 
-    // Shield Bubble (Universal)
-    const shieldGeom = new THREE.SphereGeometry(1.55, 20, 20);
+    // Shield Bubble (Energy Barrier)
+    const shieldGeom = new THREE.SphereGeometry(1.6, 20, 20);
     const shieldMat = new THREE.MeshStandardMaterial({
       color: 0x00e676,
       emissive: 0x00c853,
@@ -122,7 +131,7 @@ class Player {
       wireframe: true
     });
     this.shieldMesh = new THREE.Mesh(shieldGeom, shieldMat);
-    this.shieldMesh.position.y = 0.3;
+    this.shieldMesh.position.y = 0.35;
     this.shieldMesh.visible = false;
     this.bodyGroup.add(this.shieldMesh);
 
@@ -130,229 +139,319 @@ class Player {
     this.scene.add(this.group);
   }
 
-  // 👦 1. 3D Boy Runner
-  buildBoyCharacter() {
-    // Torso & Jacket
-    const torsoGeom = new THREE.BoxGeometry(0.75, 0.85, 0.45);
-    const torso = new THREE.Mesh(torsoGeom, this.boyShirtMat);
+  // =========================================================================
+  // 👦 1. سامي (Sami - The Urban Runner Boy)
+  // =========================================================================
+  buildSami() {
+    const skin = this.skinLightMat;
+
+    // 1. Torso & Hoodie
+    const torsoGeom = new THREE.BoxGeometry(0.72, 0.85, 0.44);
+    const torso = new THREE.Mesh(torsoGeom, this.samiShirtMat);
     torso.castShadow = true;
     this.bodyGroup.add(torso);
 
-    const packGeom = new THREE.BoxGeometry(0.55, 0.65, 0.3);
-    const pack = new THREE.Mesh(packGeom, this.backpackMat);
-    pack.position.set(0, 0.05, 0.35);
+    // Collar
+    const collar = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.1, 0.46), this.whiteMat);
+    collar.position.set(0, 0.4, 0.01);
+    torso.add(collar);
+
+    // Adventurer Backpack
+    const pack = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.65, 0.28), this.samiPackMat);
+    pack.position.set(0, 0.05, 0.34);
+    pack.castShadow = true;
     torso.add(pack);
 
-    // Head Group
+    // 2. Head & Neck
     this.headGroup = new THREE.Group();
     this.headGroup.position.set(0, 0.65, 0);
     this.bodyGroup.add(this.headGroup);
 
-    const headGeom = new THREE.SphereGeometry(0.36, 12, 12);
-    const head = new THREE.Mesh(headGeom, this.skinMat);
-    this.headGroup.add(head);
+    // Neck
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.2, 8), skin);
+    neck.position.set(0, -0.15, 0);
+    this.headGroup.add(neck);
 
-    const eyeGeom = new THREE.SphereGeometry(0.05, 6, 6);
-    const lEye = new THREE.Mesh(eyeGeom, this.eyeMat); lEye.position.set(0.12, 0.05, -0.32); this.headGroup.add(lEye);
-    const rEye = lEye.clone(); rEye.position.set(-0.12, 0.05, -0.32); this.headGroup.add(rEye);
-
-    const hairGeom = new THREE.DodecahedronGeometry(0.38, 1);
-    const hair = new THREE.Mesh(hairGeom, this.boyHairMat); hair.position.set(0, 0.08, 0.04); this.headGroup.add(hair);
-
-    const capDomeGeom = new THREE.SphereGeometry(0.38, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2);
-    const capDome = new THREE.Mesh(capDomeGeom, this.boyCapMat); capDome.position.set(0, 0.1, 0); this.headGroup.add(capDome);
-    const visorGeom = new THREE.BoxGeometry(0.4, 0.06, 0.3);
-    const visor = new THREE.Mesh(visorGeom, this.boyCapMat); visor.position.set(0, 0.12, 0.38); this.headGroup.add(visor);
-
-    // Arms
-    const armGeom = new THREE.BoxGeometry(0.2, 0.7, 0.2);
-    this.leftArmGroup = new THREE.Group(); this.leftArmGroup.position.set(0.48, 0.35, 0); this.bodyGroup.add(this.leftArmGroup);
-    const lArm = new THREE.Mesh(armGeom, this.boyShirtMat); lArm.position.y = -0.3; this.leftArmGroup.add(lArm);
-
-    this.rightArmGroup = new THREE.Group(); this.rightArmGroup.position.set(-0.48, 0.35, 0); this.bodyGroup.add(this.rightArmGroup);
-    const rArm = new THREE.Mesh(armGeom, this.boyShirtMat); rArm.position.y = -0.3; this.rightArmGroup.add(rArm);
-
-    // Legs
-    const legGeom = new THREE.BoxGeometry(0.24, 0.75, 0.24);
-    this.leftLegGroup = new THREE.Group(); this.leftLegGroup.position.set(0.24, -0.4, 0); this.bodyGroup.add(this.leftLegGroup);
-    const lLeg = new THREE.Mesh(legGeom, this.boyPantsMat); lLeg.position.y = -0.35; this.leftLegGroup.add(lLeg);
-    const shoeGeom = new THREE.BoxGeometry(0.28, 0.18, 0.45);
-    const lShoe = new THREE.Mesh(shoeGeom, this.boyShoeMat); lShoe.position.set(0, -0.75, -0.08); this.leftLegGroup.add(lShoe);
-
-    this.rightLegGroup = new THREE.Group(); this.rightLegGroup.position.set(-0.24, -0.4, 0); this.bodyGroup.add(this.rightLegGroup);
-    const rLeg = new THREE.Mesh(legGeom, this.boyPantsMat); rLeg.position.y = -0.35; this.rightLegGroup.add(rLeg);
-    const rShoe = new THREE.Mesh(shoeGeom, this.boyShoeMat); rShoe.position.set(0, -0.75, -0.08); this.rightLegGroup.add(rShoe);
-  }
-
-  // 👧 2. 3D Girl Runner (Lana)
-  buildGirlCharacter() {
-    // Torso
-    const torsoGeom = new THREE.BoxGeometry(0.7, 0.8, 0.4);
-    const torso = new THREE.Mesh(torsoGeom, this.girlShirtMat);
-    torso.castShadow = true;
-    this.bodyGroup.add(torso);
-
-    // Head
-    this.headGroup = new THREE.Group();
-    this.headGroup.position.set(0, 0.65, 0);
-    this.bodyGroup.add(this.headGroup);
-
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 12), this.skinMat);
+    // Human Head Sphere with Jaw
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 14, 14), skin);
     this.headGroup.add(head);
 
     // Eyes
-    const eyeGeom = new THREE.SphereGeometry(0.05, 6, 6);
-    const lEye = new THREE.Mesh(eyeGeom, this.eyeMat); lEye.position.set(0.12, 0.05, -0.32); this.headGroup.add(lEye);
-    const rEye = lEye.clone(); rEye.position.set(-0.12, 0.05, -0.32); this.headGroup.add(rEye);
+    const lEye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 6), this.eyeMat);
+    lEye.position.set(0.12, 0.04, -0.32);
+    this.headGroup.add(lEye);
+    const rEye = lEye.clone();
+    rEye.position.set(-0.12, 0.04, -0.32);
+    this.headGroup.add(rEye);
 
-    // Blonde Hair & Ponytail
-    const hair = new THREE.Mesh(new THREE.DodecahedronGeometry(0.38, 1), this.girlHairMat);
+    // Hair
+    const hair = new THREE.Mesh(new THREE.DodecahedronGeometry(0.38, 1), this.samiHairMat);
     hair.position.set(0, 0.08, 0.04);
     this.headGroup.add(hair);
 
-    const ponyGeom = new THREE.CylinderGeometry(0.12, 0.2, 0.6, 6);
-    const ponytail = new THREE.Mesh(ponyGeom, this.girlHairMat);
-    ponytail.position.set(0, 0.15, 0.45);
-    ponytail.rotation.x = -0.6;
-    this.headGroup.add(ponytail);
+    // Sporty Cap
+    const capDome = new THREE.Mesh(new THREE.SphereGeometry(0.38, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2), this.samiCapMat);
+    capDome.position.set(0, 0.1, 0);
+    this.headGroup.add(capDome);
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.3), this.samiCapMat);
+    visor.position.set(0, 0.12, 0.38);
+    this.headGroup.add(visor);
 
-    // Explorer Goggles on Head
-    const goggleGeom = new THREE.BoxGeometry(0.5, 0.12, 0.15);
-    const goggles = new THREE.Mesh(goggleGeom, this.girlGogglesMat);
-    goggles.position.set(0, 0.25, -0.25);
-    this.headGroup.add(goggles);
+    // 3. Human Arms (Articulated with bent elbows)
+    this.buildHumanArms(this.samiShirtMat, skin);
 
-    // Arms
-    const armGeom = new THREE.BoxGeometry(0.18, 0.7, 0.18);
-    this.leftArmGroup = new THREE.Group(); this.leftArmGroup.position.set(0.45, 0.35, 0); this.bodyGroup.add(this.leftArmGroup);
-    const lArm = new THREE.Mesh(armGeom, this.girlShirtMat); lArm.position.y = -0.3; this.leftArmGroup.add(lArm);
-
-    this.rightArmGroup = new THREE.Group(); this.rightArmGroup.position.set(-0.45, 0.35, 0); this.bodyGroup.add(this.rightArmGroup);
-    const rArm = new THREE.Mesh(armGeom, this.girlShirtMat); rArm.position.y = -0.3; this.rightArmGroup.add(rArm);
-
-    // Legs
-    const legGeom = new THREE.BoxGeometry(0.22, 0.75, 0.22);
-    this.leftLegGroup = new THREE.Group(); this.leftLegGroup.position.set(0.22, -0.4, 0); this.bodyGroup.add(this.leftLegGroup);
-    const lLeg = new THREE.Mesh(legGeom, this.girlPantsMat); lLeg.position.y = -0.35; this.leftLegGroup.add(lLeg);
-    const shoeGeom = new THREE.BoxGeometry(0.26, 0.18, 0.42);
-    const lShoe = new THREE.Mesh(shoeGeom, this.girlShoeMat); lShoe.position.set(0, -0.75, -0.08); this.leftLegGroup.add(lShoe);
-
-    this.rightLegGroup = new THREE.Group(); this.rightLegGroup.position.set(-0.22, -0.4, 0); this.bodyGroup.add(this.rightLegGroup);
-    const rLeg = new THREE.Mesh(legGeom, this.girlPantsMat); rLeg.position.y = -0.35; this.rightLegGroup.add(rLeg);
-    const rShoe = new THREE.Mesh(shoeGeom, this.girlShoeMat); rShoe.position.set(0, -0.75, -0.08); this.rightLegGroup.add(rShoe);
+    // 4. Human Legs (Thighs + Calves + Running Sneakers)
+    this.buildHumanLegs(this.samiPantsMat, this.samiShoeMat);
   }
 
-  // 🤖 3. 3D Sparky Robot
-  buildRobotCharacter() {
-    // Spherical / Boxy Tech Torso
-    const torsoGeom = new THREE.DodecahedronGeometry(0.65, 1);
-    const torso = new THREE.Mesh(torsoGeom, this.botMetalMat);
+  // =========================================================================
+  // 👧 2. لانا (Lana - The Athletic Girl)
+  // =========================================================================
+  buildLana() {
+    const skin = this.skinLightMat;
+
+    // 1. Sporty Torso
+    const torsoGeom = new THREE.BoxGeometry(0.66, 0.8, 0.38);
+    const torso = new THREE.Mesh(torsoGeom, this.lanaShirtMat);
     torso.castShadow = true;
     this.bodyGroup.add(torso);
 
-    // Digital Screen Visor Eyes
+    // 2. Head & High Ponytail
+    this.headGroup = new THREE.Group();
+    this.headGroup.position.set(0, 0.63, 0);
+    this.bodyGroup.add(this.headGroup);
+
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.2, 8), skin);
+    neck.position.set(0, -0.15, 0);
+    this.headGroup.add(neck);
+
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.33, 14, 14), skin);
+    this.headGroup.add(head);
+
+    // Eyes
+    const lEye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 6), this.eyeMat);
+    lEye.position.set(0.11, 0.04, -0.3);
+    this.headGroup.add(lEye);
+    const rEye = lEye.clone();
+    rEye.position.set(-0.11, 0.04, -0.3);
+    this.headGroup.add(rEye);
+
+    // Blonde Hair & Flowing Ponytail
+    const hair = new THREE.Mesh(new THREE.DodecahedronGeometry(0.36, 1), this.lanaHairMat);
+    hair.position.set(0, 0.06, 0.03);
+    this.headGroup.add(hair);
+
+    // High Ponytail
+    const pony = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.22, 0.7, 8), this.lanaHairMat);
+    pony.position.set(0, 0.18, 0.45);
+    pony.rotation.x = -0.65;
+    this.headGroup.add(pony);
+
+    // Sporty Headband
+    const band = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.04, 6, 16), this.lanaBandMat);
+    band.position.set(0, 0.08, 0);
+    band.rotation.x = Math.PI / 2;
+    this.headGroup.add(band);
+
+    // 3. Arms & Legs
+    this.buildHumanArms(this.lanaShirtMat, skin);
+    this.buildHumanLegs(this.lanaPantsMat, this.lanaShoeMat);
+  }
+
+  // =========================================================================
+  // 🧑 3. زياد (Ziyad - Parkour Athlete Boy)
+  // =========================================================================
+  buildZiyad() {
+    const skin = this.skinTanMat;
+
+    // 1. Windbreaker Torso
+    const torsoGeom = new THREE.BoxGeometry(0.74, 0.86, 0.44);
+    const torso = new THREE.Mesh(torsoGeom, this.ziyadShirtMat);
+    torso.castShadow = true;
+    this.bodyGroup.add(torso);
+
+    // 2. Head & Modern Undercut Hair
     this.headGroup = new THREE.Group();
     this.headGroup.position.set(0, 0.65, 0);
     this.bodyGroup.add(this.headGroup);
 
-    const headGeom = new THREE.BoxGeometry(0.7, 0.5, 0.55);
-    const head = new THREE.Mesh(headGeom, this.botMetalMat);
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.2, 8), skin);
+    neck.position.set(0, -0.15, 0);
+    this.headGroup.add(neck);
+
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 14, 14), skin);
     this.headGroup.add(head);
 
-    const screenGeom = new THREE.PlaneGeometry(0.55, 0.25);
-    const screen = new THREE.Mesh(screenGeom, this.botScreenMat);
-    screen.position.set(0, 0, -0.28);
-    screen.rotation.y = Math.PI;
-    this.headGroup.add(screen);
+    const lEye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 6), this.eyeMat);
+    lEye.position.set(0.12, 0.04, -0.32);
+    this.headGroup.add(lEye);
+    const rEye = lEye.clone();
+    rEye.position.set(-0.12, 0.04, -0.32);
+    this.headGroup.add(rEye);
 
-    // Antenna with Blinking Light
-    const antGeom = new THREE.CylinderGeometry(0.03, 0.03, 0.4, 6);
-    const ant = new THREE.Mesh(antGeom, this.botGoldMat);
-    ant.position.set(0, 0.4, 0);
-    this.headGroup.add(ant);
+    // Stylish Black Hair Undercut
+    const hairTop = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.2, 0.6), this.ziyadHairMat);
+    hairTop.position.set(0, 0.32, -0.05);
+    this.headGroup.add(hairTop);
 
-    const tipGeom = new THREE.SphereGeometry(0.08, 6, 6);
-    const tip = new THREE.Mesh(tipGeom, this.botLightMat);
-    tip.position.set(0, 0.6, 0);
-    this.headGroup.add(tip);
-
-    // Mechanical Arms
-    const armGeom = new THREE.CylinderGeometry(0.1, 0.1, 0.65, 6);
-    this.leftArmGroup = new THREE.Group(); this.leftArmGroup.position.set(0.55, 0.2, 0); this.bodyGroup.add(this.leftArmGroup);
-    const lArm = new THREE.Mesh(armGeom, this.botGoldMat); lArm.position.y = -0.3; this.leftArmGroup.add(lArm);
-
-    this.rightArmGroup = new THREE.Group(); this.rightArmGroup.position.set(-0.55, 0.2, 0); this.bodyGroup.add(this.rightArmGroup);
-    const rArm = new THREE.Mesh(armGeom, this.botGoldMat); rArm.position.y = -0.3; this.rightArmGroup.add(rArm);
-
-    // Jet / Piston Legs
-    const legGeom = new THREE.CylinderGeometry(0.12, 0.15, 0.7, 8);
-    this.leftLegGroup = new THREE.Group(); this.leftLegGroup.position.set(0.25, -0.4, 0); this.bodyGroup.add(this.leftLegGroup);
-    const lLeg = new THREE.Mesh(legGeom, this.botMetalMat); lLeg.position.y = -0.35; this.leftLegGroup.add(lLeg);
-
-    this.rightLegGroup = new THREE.Group(); this.rightLegGroup.position.set(-0.25, -0.4, 0); this.bodyGroup.add(this.rightLegGroup);
-    const rLeg = new THREE.Mesh(legGeom, this.botMetalMat); rLeg.position.y = -0.35; this.rightLegGroup.add(rLeg);
+    // 3. Arms with Fingerless Gloves
+    this.buildHumanArms(this.ziyadShirtMat, this.ziyadGloveMat);
+    this.buildHumanLegs(this.ziyadPantsMat, this.ziyadShoeMat);
   }
 
-  // 🦊 4. 3D Swift Fox Runner
-  buildFoxCharacter() {
-    // Fox Body
-    const bodyGeom = new THREE.BoxGeometry(0.7, 0.75, 1.1);
-    const body = new THREE.Mesh(bodyGeom, this.foxFurMat);
-    body.castShadow = true;
-    this.bodyGroup.add(body);
+  // =========================================================================
+  // 👩 4. مريم (Maryam - Explorer Girl)
+  // =========================================================================
+  buildMaryam() {
+    const skin = this.skinTanMat;
 
-    const bellyGeom = new THREE.BoxGeometry(0.5, 0.6, 0.6);
-    const belly = new THREE.Mesh(bellyGeom, this.foxWhiteFurMat);
-    belly.position.set(0, -0.1, -0.3);
-    this.bodyGroup.add(belly);
+    // 1. Explorer Jacket Torso
+    const torsoGeom = new THREE.BoxGeometry(0.68, 0.82, 0.4);
+    const torso = new THREE.Mesh(torsoGeom, this.maryamShirtMat);
+    torso.castShadow = true;
+    this.bodyGroup.add(torso);
 
-    // Fox Head
+    // Tactical Leather Belt
+    const belt = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.12, 0.44), this.maryamBeltMat);
+    belt.position.set(0, -0.35, 0);
+    torso.add(belt);
+
+    // 2. Head & Braided Hair
     this.headGroup = new THREE.Group();
-    this.headGroup.position.set(0, 0.55, -0.45);
+    this.headGroup.position.set(0, 0.64, 0);
     this.bodyGroup.add(this.headGroup);
 
-    const headGeom = new THREE.ConeGeometry(0.45, 0.8, 6);
-    headGeom.rotateX(-Math.PI / 2);
-    const head = new THREE.Mesh(headGeom, this.foxFurMat);
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.15, 0.2, 8), skin);
+    neck.position.set(0, -0.15, 0);
+    this.headGroup.add(neck);
+
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.34, 14, 14), skin);
     this.headGroup.add(head);
 
-    // Pointy Fox Ears
-    const earGeom = new THREE.ConeGeometry(0.18, 0.45, 4);
-    const lEar = new THREE.Mesh(earGeom, this.foxFurMat); lEar.position.set(0.25, 0.4, 0); lEar.rotation.z = -0.2; this.headGroup.add(lEar);
-    const rEar = new THREE.Mesh(earGeom, this.foxFurMat); rEar.position.set(-0.25, 0.4, 0); rEar.rotation.z = 0.2; this.headGroup.add(rEar);
+    const lEye = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 6), this.eyeMat);
+    lEye.position.set(0.11, 0.04, -0.31);
+    this.headGroup.add(lEye);
+    const rEye = lEye.clone();
+    rEye.position.set(-0.11, 0.04, -0.31);
+    this.headGroup.add(rEye);
 
-    // Bushy Tail
-    this.tailGroup = new THREE.Group();
-    this.tailGroup.position.set(0, 0.2, 0.6);
-    this.bodyGroup.add(this.tailGroup);
+    // Braids
+    const hair = new THREE.Mesh(new THREE.DodecahedronGeometry(0.37, 1), this.maryamHairMat);
+    hair.position.set(0, 0.07, 0.03);
+    this.headGroup.add(hair);
 
-    const tailGeom = new THREE.ConeGeometry(0.3, 1.1, 6);
-    tailGeom.rotateX(Math.PI / 3);
-    const tail = new THREE.Mesh(tailGeom, this.foxFurMat);
-    tail.position.set(0, 0.3, 0.3);
-    this.tailGroup.add(tail);
+    const lBraid = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.05, 0.6, 6), this.maryamHairMat);
+    lBraid.position.set(0.3, -0.1, 0.1);
+    this.headGroup.add(lBraid);
 
-    // Front Paws (Arms)
-    const pawGeom = new THREE.BoxGeometry(0.18, 0.65, 0.18);
-    this.leftArmGroup = new THREE.Group(); this.leftArmGroup.position.set(0.35, -0.2, -0.35); this.bodyGroup.add(this.leftArmGroup);
-    const lArm = new THREE.Mesh(pawGeom, this.foxFurMat); lArm.position.y = -0.3; this.leftArmGroup.add(lArm);
+    const rBraid = lBraid.clone();
+    rBraid.position.set(-0.3, -0.1, 0.1);
+    this.headGroup.add(rBraid);
 
-    this.rightArmGroup = new THREE.Group(); this.rightArmGroup.position.set(-0.35, -0.2, -0.35); this.bodyGroup.add(this.rightArmGroup);
-    const rArm = new THREE.Mesh(pawGeom, this.foxFurMat); rArm.position.y = -0.3; this.rightArmGroup.add(rArm);
+    // 3. Arms & Boots
+    this.buildHumanArms(this.maryamShirtMat, skin);
+    this.buildHumanLegs(this.maryamPantsMat, this.maryamShoeMat);
+  }
 
-    // Hind Legs
-    this.leftLegGroup = new THREE.Group(); this.leftLegGroup.position.set(0.35, -0.2, 0.35); this.bodyGroup.add(this.leftLegGroup);
-    const lLeg = new THREE.Mesh(pawGeom, this.foxFurMat); lLeg.position.y = -0.3; this.leftLegGroup.add(lLeg);
+  // =========================================================================
+  // Human Arm Rigging with Sprinter Elbow Bend
+  // =========================================================================
+  buildHumanArms(sleeveMat, handMat) {
+    // Left Arm Hierarchy (Shoulder -> Upper Arm -> Forearm -> Hand)
+    this.leftArmGroup = new THREE.Group();
+    this.leftArmGroup.position.set(0.46, 0.32, 0);
+    this.bodyGroup.add(this.leftArmGroup);
 
-    this.rightLegGroup = new THREE.Group(); this.rightLegGroup.position.set(-0.35, -0.2, 0.35); this.bodyGroup.add(this.rightLegGroup);
-    const rLeg = new THREE.Mesh(pawGeom, this.foxFurMat); rLeg.position.y = -0.3; this.rightLegGroup.add(rLeg);
+    const upperArmGeom = new THREE.BoxGeometry(0.18, 0.38, 0.18);
+    const lUpperArm = new THREE.Mesh(upperArmGeom, sleeveMat);
+    lUpperArm.position.y = -0.16;
+    lUpperArm.castShadow = true;
+    this.leftArmGroup.add(lUpperArm);
+
+    // Forearm bent at elbow
+    const forearmGeom = new THREE.BoxGeometry(0.16, 0.36, 0.16);
+    const lForearm = new THREE.Mesh(forearmGeom, sleeveMat);
+    lForearm.position.set(0, -0.38, -0.1);
+    lForearm.rotation.x = -0.55; // Natural running arm bend
+    lForearm.castShadow = true;
+    this.leftArmGroup.add(lForearm);
+
+    // Hand
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 6), handMat);
+    hand.position.set(0, -0.52, -0.2);
+    this.leftArmGroup.add(hand);
+
+    // Right Arm Hierarchy
+    this.rightArmGroup = new THREE.Group();
+    this.rightArmGroup.position.set(-0.46, 0.32, 0);
+    this.bodyGroup.add(this.rightArmGroup);
+
+    const rUpperArm = new THREE.Mesh(upperArmGeom, sleeveMat);
+    rUpperArm.position.y = -0.16;
+    rUpperArm.castShadow = true;
+    this.rightArmGroup.add(rUpperArm);
+
+    const rForearm = new THREE.Mesh(forearmGeom, sleeveMat);
+    rForearm.position.set(0, -0.38, -0.1);
+    rForearm.rotation.x = -0.55;
+    rForearm.castShadow = true;
+    this.rightArmGroup.add(rForearm);
+
+    const rHand = hand.clone();
+    rHand.position.set(0, -0.52, -0.2);
+    this.rightArmGroup.add(rHand);
+  }
+
+  // =========================================================================
+  // Human Leg Rigging with Thigh, Calf & Runner Sneakers
+  // =========================================================================
+  buildHumanLegs(pantsMat, shoeMat) {
+    const legWidth = 0.22;
+    const legLength = 0.72;
+
+    // Left Leg
+    this.leftLegGroup = new THREE.Group();
+    this.leftLegGroup.position.set(0.22, -0.38, 0);
+    this.bodyGroup.add(this.leftLegGroup);
+
+    const lLeg = new THREE.Mesh(new THREE.BoxGeometry(legWidth, legLength, legWidth), pantsMat);
+    lLeg.position.y = -0.32;
+    lLeg.castShadow = true;
+    this.leftLegGroup.add(lLeg);
+
+    // Running Sneaker
+    const lShoe = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.16, 0.44), shoeMat);
+    lShoe.position.set(0, -0.72, -0.06);
+    this.leftLegGroup.add(lShoe);
+
+    const lSole = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.06, 0.46), this.whiteMat);
+    lSole.position.set(0, -0.81, -0.06);
+    this.leftLegGroup.add(lSole);
+
+    // Right Leg
+    this.rightLegGroup = new THREE.Group();
+    this.rightLegGroup.position.set(-0.22, -0.38, 0);
+    this.bodyGroup.add(this.rightLegGroup);
+
+    const rLeg = new THREE.Mesh(new THREE.BoxGeometry(legWidth, legLength, legWidth), pantsMat);
+    rLeg.position.y = -0.32;
+    rLeg.castShadow = true;
+    this.rightLegGroup.add(rLeg);
+
+    const rShoe = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.16, 0.44), shoeMat);
+    rShoe.position.set(0, -0.72, -0.06);
+    this.rightLegGroup.add(rShoe);
+
+    const rSole = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.06, 0.46), this.whiteMat);
+    rSole.position.set(0, -0.81, -0.06);
+    this.rightLegGroup.add(rSole);
   }
 
   moveLeft() {
     if (this.currentLane > 0) {
       this.currentLane--;
       this.targetX = this.lanes[this.currentLane];
-      this.targetTilt = 0.4;
+      this.targetTilt = 0.35;
     }
   }
 
@@ -360,7 +459,7 @@ class Player {
     if (this.currentLane < this.lanes.length - 1) {
       this.currentLane++;
       this.targetX = this.lanes[this.currentLane];
-      this.targetTilt = -0.4;
+      this.targetTilt = -0.35;
     }
   }
 
@@ -372,7 +471,7 @@ class Player {
       this.jumpCount++;
 
       if (isDouble) {
-        this.spinAngle = Math.PI * 2;
+        this.spinAngle = Math.PI * 2; // Acrobatic parkour front flip
       }
       if (window.sound) window.sound.playJump(isDouble);
     }
@@ -398,11 +497,12 @@ class Player {
   }
 
   update(delta, particleSystem) {
+    // 1. Horizontal Movement (Lerp)
     this.x += (this.targetX - this.x) * 14 * delta;
     this.tiltAngle += (this.targetTilt - this.tiltAngle) * 10 * delta;
     this.targetTilt *= Math.pow(0.05, delta);
 
-    // Vertical Physics
+    // 2. Vertical Physics
     if (!this.isGrounded) {
       this.vy += this.gravity * delta;
       this.y += this.vy * delta;
@@ -415,39 +515,36 @@ class Player {
       }
     }
 
-    // Animation Cycles
+    // 3. Humanoid Sprinting & Jumping Kinematics
     if (this.isGrounded) {
       const runSpeed = this.isBoosting ? 26 : 18;
       this.runTimer += delta * runSpeed;
 
       const legAngle = Math.sin(this.runTimer) * 0.75;
-      const armAngle = Math.sin(this.runTimer) * 0.65;
+      const armAngle = Math.sin(this.runTimer) * 0.7;
 
-      if (this.leftLegGroup) this.leftLegGroup.rotation.x = legAngle;
-      if (this.rightLegGroup) this.rightLegGroup.rotation.x = -legAngle;
-      if (this.leftArmGroup) this.leftArmGroup.rotation.x = -armAngle;
-      if (this.rightArmGroup) this.rightArmGroup.rotation.x = armAngle;
+      // Human Arms Pump in opposition to legs
+      this.leftLegGroup.rotation.x = legAngle;
+      this.rightLegGroup.rotation.x = -legAngle;
+      this.leftArmGroup.rotation.x = -armAngle;
+      this.rightArmGroup.rotation.x = armAngle;
 
+      // Subtle torso twisting for human realism
+      this.bodyGroup.rotation.y = -legAngle * 0.12;
+
+      // Center of mass vertical bounce
       const bounce = Math.abs(Math.cos(this.runTimer)) * 0.12;
-      this.bodyGroup.position.y = 1.35 + bounce;
-      this.bodyGroup.rotation.x = this.isBoosting ? 0.35 : 0.12;
-
-      // Fox Tail Wagging
-      if (this.tailGroup) {
-        this.tailGroup.rotation.z = Math.sin(this.runTimer * 0.8) * 0.4;
-      }
+      this.bodyGroup.position.y = 1.38 + bounce;
+      this.bodyGroup.rotation.x = this.isBoosting ? 0.35 : 0.12; // Forward lean
     } else {
-      if (this.leftLegGroup) this.leftLegGroup.rotation.x = -0.5;
-      if (this.rightLegGroup) this.rightLegGroup.rotation.x = -0.3;
-      if (this.leftArmGroup) {
-        this.leftArmGroup.rotation.x = -0.7;
-        this.leftArmGroup.rotation.z = 0.5;
-      }
-      if (this.rightArmGroup) {
-        this.rightArmGroup.rotation.x = -0.7;
-        this.rightArmGroup.rotation.z = -0.5;
-      }
-      this.bodyGroup.position.y = 1.35;
+      // Jump Pose
+      this.leftLegGroup.rotation.x = -0.5;
+      this.rightLegGroup.rotation.x = -0.3;
+      this.leftArmGroup.rotation.x = -0.7;
+      this.rightArmGroup.rotation.x = -0.7;
+      this.leftArmGroup.rotation.z = 0.45;
+      this.rightArmGroup.rotation.z = -0.45;
+      this.bodyGroup.position.y = 1.38;
 
       if (this.spinAngle > 0) {
         const spinStep = 18 * delta;
@@ -458,6 +555,7 @@ class Player {
       }
     }
 
+    // Apply Position & Tilt
     this.group.position.set(this.x, this.y, this.z);
     this.group.rotation.z = this.tiltAngle;
     this.group.rotation.y = this.tiltAngle * 0.5;
@@ -467,7 +565,7 @@ class Player {
     }
 
     if (particleSystem && Math.random() > 0.2) {
-      const sparkColor = this.isBoosting ? 0xff3d00 : (this.characterType === 'robot' ? 0x00e5ff : 0x4caf50);
+      const sparkColor = this.isBoosting ? 0xff3d00 : 0x4caf50;
       particleSystem.createThrusterSpark(
         new THREE.Vector3(this.x, this.y + 0.6, this.z),
         this.isBoosting,
