@@ -387,7 +387,7 @@ html, body {
 }
 
 .btn-firebase-google {
-  width: 100%;
+  flex: 1;
   background: #ffffff;
   border: 1.5px solid #dadce0;
   border-radius: var(--radius-sm);
@@ -410,6 +410,48 @@ html, body {
   border-color: #4285f4;
   box-shadow: 0 4px 14px rgba(66, 133, 244, 0.3);
   transform: translateY(-1px);
+}
+
+.btn-config-icon {
+  background: #f1f3f4;
+  border: 1.5px solid #dadce0;
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-config-icon:hover {
+  background: #e8f0fe;
+  border-color: #4285f4;
+  transform: rotate(45deg);
+}
+
+.logged-in-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.firebase-status-msg {
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.firebase-status-msg.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1.5px solid #81c784;
+}
+
+.firebase-status-msg.error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1.5px solid #ef9a9a;
 }
 
 .google-icon-svg {

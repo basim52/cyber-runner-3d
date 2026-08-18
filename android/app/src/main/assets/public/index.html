@@ -112,6 +112,7 @@
               </svg>
               <span>تسجيل الدخول عبر Google (Firebase Cloud) ☁️</span>
             </button>
+            <button id="btn-open-firebase-config" class="btn-config-icon" title="إعدادات وربط مشروع Firebase">⚙️</button>
           </div>
 
           <!-- Logged In State -->
@@ -120,10 +121,36 @@
               <img id="google-avatar-img" class="google-avatar-img" src="" alt="صورة الحساب">
               <div class="google-user-details">
                 <strong id="google-user-name">اسم اللاعب</strong>
-                <span id="google-user-email" class="google-email-tag">🔥 متصل بـ Firebase سحابياً</span>
+                <span id="google-user-email" class="google-email-tag">🔥 متصل بـ Firebase Firestore</span>
               </div>
             </div>
-            <button id="btn-google-logout" class="btn-google-logout" type="button">🚪 خروج</button>
+            <div class="logged-in-actions">
+              <button id="btn-open-firebase-config-logged" class="btn-config-icon" title="إعدادات Firebase">⚙️</button>
+              <button id="btn-google-logout" class="btn-google-logout" type="button">🚪 خروج</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Firebase & Firestore Setup Modal -->
+        <div id="firebase-config-modal" class="google-login-modal hidden">
+          <div class="google-modal-inner glass-panel">
+            <div class="google-modal-header">
+              <span style="font-size: 1.6rem;">🔥</span>
+              <h3>ربط مشروعك في Firebase & Firestore</h3>
+            </div>
+            <p class="google-modal-desc">انسخ كود إعدادات مشروعك <code>firebaseConfig</code> من لوحة تحكم Firebase والصقه هنا لربط قاعدة بيانات Firestore مباشرة:</p>
+            
+            <div class="google-input-group">
+              <label for="firebase-config-json">كود إعدادات Firebase (JSON / JavaScript):</label>
+              <textarea id="firebase-config-json" class="google-modal-input" rows="6" placeholder='{\n  "apiKey": "AIzaSy...",\n  "authDomain": "your-app.firebaseapp.com",\n  "projectId": "your-app",\n  "storageBucket": "your-app.appspot.com",\n  "messagingSenderId": "...",\n  "appId": "..."\n}'></textarea>
+            </div>
+
+            <div id="firebase-test-status" class="firebase-status-msg hidden"></div>
+
+            <div class="google-modal-actions">
+              <button id="btn-save-firebase-config" class="btn-primary">حفظ وربط Firestore فوراً 🚀</button>
+              <button id="btn-close-firebase-config" class="btn-secondary">إلغاء ✖️</button>
+            </div>
           </div>
         </div>
 
@@ -435,14 +462,14 @@
   </div>
 
   <!-- Firebase Configuration & Helper -->
-  <script src="js/firebase-config.js?v=15.0.0"></script>
+  <script src="js/firebase-config.js?v=16.0.0"></script>
 
-  <!-- Game Scripts with v15.0.0 cache buster -->
-  <script src="js/audio.js?v=15.0.0"></script>
-  <script src="js/particles.js?v=15.0.0"></script>
-  <script src="js/player.js?v=15.0.0"></script>
-  <script src="js/world.js?v=15.0.0"></script>
-  <script src="js/controls.js?v=15.0.0"></script>
-  <script src="js/game.js?v=15.0.0"></script>
+  <!-- Game Scripts with v16.0.0 cache buster -->
+  <script src="js/audio.js?v=16.0.0"></script>
+  <script src="js/particles.js?v=16.0.0"></script>
+  <script src="js/player.js?v=16.0.0"></script>
+  <script src="js/world.js?v=16.0.0"></script>
+  <script src="js/controls.js?v=16.0.0"></script>
+  <script src="js/game.js?v=16.0.0"></script>
 </body>
 </html>

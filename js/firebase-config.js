@@ -158,9 +158,68 @@ class FirebaseService {
         console.warn('Firestore read warning:', err.message);
       }
     }
-    return null;
+  setupConfigModal() {
+    const modal = document.getElementById('firebase-config-modal');
+    const btnOpen = document.getElementById('btn-open-firebase-config');
+    const btnOpenLogged = document.getElementById('btn-open-firebase-config-logged');
+    const btnClose = document.getElementById('btn-close-firebase-config');
+    const btnSave = document.getElementById('btn-save-firebase-config');
+    const textarea = document.getElementById('firebase-config-json');
+    const statusMsg = document.getElementById('firebase-test-status');
+
+    const openModal = () => {
+      if (textarea) {
+        textarea.value = JSON.stringify(this.getConfig(), null, 2);
+      }
+      if (modal) modal.classList.remove('hidden');
+    };
+
+    if (btnOpen) btnOpen.addEventListener('click', openModal);
+    if (btnOpenLogged) btnOpenLogged.addEventListener('click', openModal);
+    if (btnClose) btnClose.addEventListener('click', () => {
+      if (modal) modal.classList.add('hidden');
+    });
+
+    if (btnSave && textarea) {
+      btnSave.addEventListener('click', async () => {
+        const rawText = textarea.value.trim();
+        if (!rawText) return;
+
+        try {
+          // Parse either raw JSON or JS object syntax
+          let cleanJson = rawText;
+          if (cleanJson.includes('const firebaseConfig =')) {
+            cleanJson = cleanJson.replace(/const\s+firebaseConfig\s*=\s*/, '').replace(/;\s*$/, '');
+          }
+          // Fix unquoted keys if pasted from JS
+          cleanJson = cleanJson.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+          const parsedConfig = JSON.parse(cleanJson);
+
+          if (!parsedConfig.projectId || !parsedConfig.apiKey) {
+            throw new Error('يجب أن يحتوي الكود على apiKey و projectId');
+          }
+
+          if (statusMsg) {
+            statusMsg.textContent = 'جاري اختبار الاتصال بقاعدة بيانات Firestore... ⏳';
+            statusMsg.className = 'firebase-status-msg';
+            statusMsg.classList.remove('hidden');
+          }
+
+          this.saveConfig(parsedConfig);
+        } catch (err) {
+          if (statusMsg) {
+            statusMsg.textContent = `⚠️ خطأ في صيغة الكود: ${err.message}`;
+            statusMsg.className = 'firebase-status-msg error';
+            statusMsg.classList.remove('hidden');
+          }
+        }
+      });
+    }
   }
 }
 
 // Global Singleton
 window.firebaseService = new FirebaseService();
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.firebaseService) window.firebaseService.setupConfigModal();
+});
