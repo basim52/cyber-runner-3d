@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Nature Runner 3D | مغامر الغابة والطبيعة</title>
-  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة ومبهجة في عوالم الطبيعة الساحرة مع تحكم لمسي احترافي">
+  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة ومبهجة في عوالم الطبيعة مع شخصية ولد متحرك">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,9 +88,9 @@
     <!-- Start / Main Menu Screen -->
     <div id="start-screen" class="screen-modal active">
       <div class="modal-card glass-panel">
-        <div class="brand-badge">🌳 3D NATURE ADVENTURE</div>
+        <div class="brand-badge">🌳 3D BOY RUNNER ADVENTURE</div>
         <h1 class="game-title glow-text">NATURE RUNNER <span class="accent-title">3D</span></h1>
-        <p class="game-subtitle">انطلق عبر عوالم الطبيعة الساحرة، تفادَ جذوع الأشجار والصخور، واجمع التفاح الذهبي برفقة الحيوانات اللطيفة!</p>
+        <p class="game-subtitle">ساعد الولد المغامر على الركض عبر الغابات والطبيعة الساحرة، تفادَ جذوع الأشجار، واجمع التفاح الذهبي!</p>
         
         <div class="user-stats-bar">
           <div class="user-stat-item">
@@ -109,8 +109,8 @@
             <span class="nav-text">اختيار عوالم الطبيعة</span>
           </button>
           <button id="btn-open-garage" class="nav-feature-btn">
-            <span class="nav-icon">🚀</span>
-            <span class="nav-text">المرآب وترقية المركبات</span>
+            <span class="nav-icon">👦</span>
+            <span class="nav-text">شخصيات وأزياء الولد</span>
           </button>
         </div>
 
@@ -124,7 +124,7 @@
         </div>
 
         <button id="btn-start" class="btn-primary pulse-btn">
-          <span>انطلاق للمغامرة 🌲🚀</span>
+          <span>انطلاق للمغامرة 🏃‍♂️🌲</span>
         </button>
       </div>
     </div>
@@ -179,11 +179,11 @@
       </div>
     </div>
 
-    <!-- Garage Modal -->
+    <!-- Boy Characters & Outfits Wardrobe Modal -->
     <div id="garage-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel garage-modal-card">
         <div class="garage-header">
-          <h2 class="glow-text">مرآب المركبات وترقيات الطبيعة 🚀</h2>
+          <h2 class="glow-text">خزانة أزياء وشخصيات الولد 👦🎒</h2>
           <div class="garage-bank">
             <span>رصيدك:</span>
             <strong id="garage-gems-count" class="digit-font">0 🍎</strong>
@@ -191,33 +191,35 @@
         </div>
 
         <div class="vehicles-slider">
+          <!-- Outfit 1 -->
           <div class="vehicle-card active" data-vehicle="dart">
             <div class="veh-status-badge owned">مملوكة ✅</div>
-            <div class="veh-visual">⚡</div>
-            <h3>Nature Glider</h3>
-            <p class="veh-desc">مركبة هجومية خفيفة رشيقة ومتوازنة</p>
+            <div class="veh-visual">🧢</div>
+            <h3>الولد المغامر (الكلاسيكي)</h3>
+            <p class="veh-desc">سترة زرقاء وحذاء أحمر رياضي مع حقيبة ظهر</p>
             <div class="veh-stats">
               <div class="stat-row">
                 <span>السرعة:</span>
                 <div class="stat-bar"><div style="width: 70%"></div></div>
               </div>
               <div class="stat-row">
-                <span>الدرع:</span>
-                <div class="stat-bar"><div style="width: 50%"></div></div>
+                <span>الرشاقة:</span>
+                <div class="stat-bar"><div style="width: 80%"></div></div>
               </div>
             </div>
             <button class="veh-select-btn btn-primary btn-sm selected">محددة للسباق</button>
           </div>
 
+          <!-- Outfit 2 -->
           <div class="vehicle-card" data-vehicle="titan">
             <div id="titan-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
-            <div class="veh-visual">🛡️</div>
-            <h3>Forest Titan</h3>
-            <p class="veh-desc">مدرعة غابات صلبة تتحمل الصدمات ولديها درع إضافي</p>
+            <div class="veh-visual">🌲</div>
+            <h3>عداء الغابة الأخضر</h3>
+            <p class="veh-desc">زي غابات تمويهي صلب بدرع حماية إضافي</p>
             <div class="veh-stats">
               <div class="stat-row">
                 <span>السرعة:</span>
-                <div class="stat-bar"><div style="width: 55%"></div></div>
+                <div class="stat-bar"><div style="width: 65%"></div></div>
               </div>
               <div class="stat-row">
                 <span>الدرع:</span>
@@ -227,19 +229,20 @@
             <button id="btn-buy-titan" class="veh-select-btn btn-secondary btn-sm" data-cost="500">فتح بـ 500 🍎</button>
           </div>
 
+          <!-- Outfit 3 -->
           <div class="vehicle-card" data-vehicle="phantom">
             <div id="phantom-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
-            <div class="veh-visual">🌌</div>
-            <h3>Phantom Falcon</h3>
-            <p class="veh-desc">صقر السرعة الخارق بمغناطيس تفاح وجواهر واسع النطاق</p>
+            <div class="veh-visual">🌟</div>
+            <h3>المستكشف الذهبي الخارق</h3>
+            <p class="veh-desc">زي ذهبي لامع بسرعة فائقة ومغناطيس واسع</p>
             <div class="veh-stats">
               <div class="stat-row">
                 <span>السرعة:</span>
                 <div class="stat-bar"><div style="width: 98%"></div></div>
               </div>
               <div class="stat-row">
-                <span>الدرع:</span>
-                <div class="stat-bar"><div style="width: 40%"></div></div>
+                <span>المغناطيس:</span>
+                <div class="stat-bar"><div style="width: 95%"></div></div>
               </div>
             </div>
             <button id="btn-buy-phantom" class="veh-select-btn btn-secondary btn-sm" data-cost="1200">فتح بـ 1200 🍎</button>
@@ -247,7 +250,7 @@
         </div>
 
         <div class="upgrades-container">
-          <h3 class="upgrade-sec-title">ترقيات وتطوير الأنظمة 🛠️</h3>
+          <h3 class="upgrade-sec-title">ترقيات وتطوير المهارات 🛠️</h3>
           <div class="upgrades-grid">
             <div class="upgrade-card">
               <div class="upgrade-info">
@@ -264,7 +267,7 @@
               <div class="upgrade-info">
                 <span class="up-icon">🛡️</span>
                 <div>
-                  <strong>صمود الدرع السحري</strong>
+                  <strong>صمود درع الحماية</strong>
                   <span id="shield-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
@@ -275,7 +278,7 @@
               <div class="upgrade-info">
                 <span class="up-icon">⚡</span>
                 <div>
-                  <strong>طاقة التوربو Boost</strong>
+                  <strong>سرعة الاندفاع السريع</strong>
                   <span id="boost-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
@@ -345,15 +348,9 @@
       </div>
     </div>
 
-    <!-- ====================================================================
-         🚀 ADVANCED HIGH-FIDELITY MOBILE TOUCH CONTROLS
-         Ergonomic, Ultra-Responsive Touch Buttons with Custom Vector Graphics
-         ==================================================================== -->
+    <!-- Mobile Touch Controls -->
     <div id="mobile-controls" class="mobile-controls-layer">
-      
-      <!-- Left Steering D-Pad (Left & Right Glowing Chevrons) -->
       <div class="mobile-dpad-cluster">
-        <!-- Move Left Button -->
         <button id="touch-left" class="touch-ctrl-btn touch-steer-btn" aria-label="تحرك يسار">
           <div class="btn-inner-glow"></div>
           <svg class="touch-svg-icon" viewBox="0 0 32 32" fill="none">
@@ -362,7 +359,6 @@
           <span class="btn-sub-label">يسار</span>
         </button>
 
-        <!-- Move Right Button -->
         <button id="touch-right" class="touch-ctrl-btn touch-steer-btn" aria-label="تحرك يمين">
           <div class="btn-inner-glow"></div>
           <svg class="touch-svg-icon" viewBox="0 0 32 32" fill="none">
@@ -372,10 +368,7 @@
         </button>
       </div>
 
-      <!-- Right Action Cluster (Super Jump & Turbo Boost) -->
       <div class="mobile-action-cluster">
-        
-        <!-- Turbo Boost Action Button -->
         <button id="touch-boost" class="touch-ctrl-btn touch-boost-btn" aria-label="تسارع توربو">
           <div class="btn-inner-glow boost-glow"></div>
           <svg class="touch-svg-icon" viewBox="0 0 32 32" fill="none">
@@ -384,10 +377,8 @@
           <span class="btn-sub-label">توربو</span>
         </button>
 
-        <!-- Dynamic Jump Action Button (High Jump / Double Jump) -->
         <button id="touch-jump" class="touch-ctrl-btn touch-jump-btn" aria-label="قفز فوق الحواجز">
           <div class="btn-inner-glow jump-glow"></div>
-          <!-- Double Spring Arrow Jump Vector Icon -->
           <svg class="touch-svg-icon jump-svg" viewBox="0 0 36 36" fill="none">
             <path d="M18 4L7 15M18 4L29 15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M18 14L10 22M18 14L26 22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
@@ -395,7 +386,6 @@
           </svg>
           <span class="btn-sub-label">قفز</span>
         </button>
-
       </div>
     </div>
 
