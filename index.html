@@ -2,9 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Nature Runner 3D | مغامر الغابة والطبيعة</title>
-  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة ومبهجة في عوالم الطبيعة الساحرة مع أشجار وحيوانات وتفاح ذهبي">
+  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة ومبهجة في عوالم الطبيعة الساحرة مع تحكم لمسي احترافي">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,6 @@
       </div>
 
       <div class="hud-group hud-center">
-        <!-- Stage Progress & Biome Tag -->
         <div class="stage-tracker">
           <div class="stage-header-row">
             <span id="current-biome-badge" class="biome-badge">🌲 الغابة الساحرة</span>
@@ -51,7 +50,6 @@
           </div>
         </div>
 
-        <!-- Shield & Powerup Active Bar -->
         <div id="powerup-status" class="powerup-bar hidden">
           <span id="powerup-icon">⚡</span>
           <div class="powerup-progress-track">
@@ -138,7 +136,6 @@
         <p class="sub-text">انطلق في عالم محدد أو اختر نمط الرحلة اللانهائية للتنقل بين كل العوالم الطبيعية!</p>
         
         <div class="stages-grid">
-          <!-- Stage 0: Endless Odyssey -->
           <div class="stage-card active" data-world="odyssey">
             <div class="stage-tag">الموصى به ⭐</div>
             <div class="stage-card-icon">🌀</div>
@@ -146,7 +143,6 @@
             <p>انتقال تلقائي بين كل العوالم الطبيعية عبر بوابات الورد</p>
           </div>
 
-          <!-- Stage 1: Enchanted Forest -->
           <div class="stage-card" data-world="forest">
             <div class="stage-tag forest-tag">العالم 1</div>
             <div class="stage-card-icon">🌲</div>
@@ -154,7 +150,6 @@
             <p>مروج خضراء، أشجار صنوبر وزهور، غزلان وأرانب تقفز</p>
           </div>
 
-          <!-- Stage 2: Golden Savannah -->
           <div class="stage-card" data-world="savannah">
             <div class="stage-tag savannah-tag">العالم 2</div>
             <div class="stage-card-icon">🌴</div>
@@ -162,7 +157,6 @@
             <p>رمال ذهبية، أشجار نخيل، جمال وغزلان وشموس دافئة</p>
           </div>
 
-          <!-- Stage 3: Winter Wonderland -->
           <div class="stage-card" data-world="winter">
             <div class="stage-tag winter-tag">العالم 3</div>
             <div class="stage-card-icon">❄️</div>
@@ -170,7 +164,6 @@
             <p>ثلوج ناصعة، أشجار مغطاة بالثلج، وبطاريق مرحة</p>
           </div>
 
-          <!-- Stage 4: Tropical Jungle -->
           <div class="stage-card" data-world="jungle">
             <div class="stage-tag jungle-tag">العالم 4</div>
             <div class="stage-card-icon">🌿</div>
@@ -198,7 +191,6 @@
         </div>
 
         <div class="vehicles-slider">
-          <!-- Vehicle 1 -->
           <div class="vehicle-card active" data-vehicle="dart">
             <div class="veh-status-badge owned">مملوكة ✅</div>
             <div class="veh-visual">⚡</div>
@@ -217,7 +209,6 @@
             <button class="veh-select-btn btn-primary btn-sm selected">محددة للسباق</button>
           </div>
 
-          <!-- Vehicle 2 -->
           <div class="vehicle-card" data-vehicle="titan">
             <div id="titan-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
             <div class="veh-visual">🛡️</div>
@@ -236,7 +227,6 @@
             <button id="btn-buy-titan" class="veh-select-btn btn-secondary btn-sm" data-cost="500">فتح بـ 500 🍎</button>
           </div>
 
-          <!-- Vehicle 3 -->
           <div class="vehicle-card" data-vehicle="phantom">
             <div id="phantom-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
             <div class="veh-visual">🌌</div>
@@ -355,16 +345,57 @@
       </div>
     </div>
 
-    <!-- Mobile Touch Controls -->
+    <!-- ====================================================================
+         🚀 ADVANCED HIGH-FIDELITY MOBILE TOUCH CONTROLS
+         Ergonomic, Ultra-Responsive Touch Buttons with Custom Vector Graphics
+         ==================================================================== -->
     <div id="mobile-controls" class="mobile-controls-layer">
-      <div class="mobile-dpad">
-        <button id="touch-left" class="touch-btn touch-steer" aria-label="يسار">◀</button>
-        <button id="touch-right" class="touch-btn touch-steer" aria-label="يمين">▶</button>
+      
+      <!-- Left Steering D-Pad (Left & Right Glowing Chevrons) -->
+      <div class="mobile-dpad-cluster">
+        <!-- Move Left Button -->
+        <button id="touch-left" class="touch-ctrl-btn touch-steer-btn" aria-label="تحرك يسار">
+          <div class="btn-inner-glow"></div>
+          <svg class="touch-svg-icon" viewBox="0 0 32 32" fill="none">
+            <path d="M20 6L10 16L20 26" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="btn-sub-label">يسار</span>
+        </button>
+
+        <!-- Move Right Button -->
+        <button id="touch-right" class="touch-ctrl-btn touch-steer-btn" aria-label="تحرك يمين">
+          <div class="btn-inner-glow"></div>
+          <svg class="touch-svg-icon" viewBox="0 0 32 32" fill="none">
+            <path d="M12 6L22 16L12 26" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="btn-sub-label">يمين</span>
+        </button>
       </div>
 
-      <div class="mobile-actions">
-        <button id="touch-boost" class="touch-btn touch-action boost-btn" aria-label="تعزيز">⚡</button>
-        <button id="touch-jump" class="touch-btn touch-action jump-btn" aria-label="قفز">▲</button>
+      <!-- Right Action Cluster (Super Jump & Turbo Boost) -->
+      <div class="mobile-action-cluster">
+        
+        <!-- Turbo Boost Action Button -->
+        <button id="touch-boost" class="touch-ctrl-btn touch-boost-btn" aria-label="تسارع توربو">
+          <div class="btn-inner-glow boost-glow"></div>
+          <svg class="touch-svg-icon" viewBox="0 0 32 32" fill="none">
+            <path d="M18 3L6 17H16L14 29L26 15H16L18 3Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="btn-sub-label">توربو</span>
+        </button>
+
+        <!-- Dynamic Jump Action Button (High Jump / Double Jump) -->
+        <button id="touch-jump" class="touch-ctrl-btn touch-jump-btn" aria-label="قفز فوق الحواجز">
+          <div class="btn-inner-glow jump-glow"></div>
+          <!-- Double Spring Arrow Jump Vector Icon -->
+          <svg class="touch-svg-icon jump-svg" viewBox="0 0 36 36" fill="none">
+            <path d="M18 4L7 15M18 4L29 15" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 14L10 22M18 14L26 22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+            <path d="M18 4V31" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <span class="btn-sub-label">قفز</span>
+        </button>
+
       </div>
     </div>
 

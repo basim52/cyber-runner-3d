@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Nature Runner 3D - Vibrant Living Nature Stylesheet
+   Nature Runner 3D - Stylesheet with Pro Mobile Touch Controls
    ========================================================================== */
 
 :root {
@@ -847,49 +847,147 @@ html, body {
   font-weight: 800;
 }
 
-/* Mobile Controls */
+/* ==========================================================================
+   🚀 PRO HIGH-FIDELITY MOBILE TOUCH CONTROLS
+   ========================================================================== */
 .mobile-controls-layer {
   display: none;
   pointer-events: auto;
   position: absolute;
-  bottom: 20px;
+  bottom: 18px;
   left: 0;
   width: 100%;
-  padding: 0 20px;
+  padding: 0 18px;
   justify-content: space-between;
   align-items: flex-end;
-  z-index: 20;
+  z-index: 22;
 }
 
-.mobile-dpad, .mobile-actions {
+.mobile-dpad-cluster, .mobile-action-cluster {
   display: flex;
+  align-items: center;
   gap: 14px;
 }
 
-.touch-btn {
-  width: 62px;
-  height: 62px;
+/* Base High-End Touch Button */
+.touch-ctrl-btn {
+  position: relative;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(76, 175, 80, 0.5);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 3px solid rgba(76, 175, 80, 0.45);
   color: var(--forest-green);
-  font-size: 1.3rem;
-  font-weight: 900;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   touch-action: none;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  transition: transform 0.1s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.touch-btn:active, .touch-btn.active {
-  transform: scale(0.92);
-  background: rgba(76, 175, 80, 0.3);
+/* Inner Glow Effect */
+.btn-inner-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+/* SVG Vector Icon inside Button */
+.touch-svg-icon {
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+}
+
+.btn-sub-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  pointer-events: none;
+  margin-top: -2px;
+  font-family: var(--font-arabic);
+}
+
+/* Steer Left/Right Special Styling */
+.touch-steer-btn {
+  border-color: rgba(46, 125, 50, 0.5);
+  color: var(--forest-green);
+}
+
+.touch-steer-btn:active, .touch-steer-btn.active {
+  transform: scale(0.88);
+  background: rgba(76, 175, 80, 0.35);
   border-color: var(--forest-green);
+  box-shadow: 0 0 24px rgba(76, 175, 80, 0.6), inset 0 2px 6px rgba(0,0,0,0.15);
 }
 
+.touch-steer-btn:active .btn-inner-glow, .touch-steer-btn.active .btn-inner-glow {
+  opacity: 1;
+}
+
+/* Super Jump Button Special Styling */
+.touch-jump-btn {
+  width: 82px;
+  height: 82px;
+  border-color: rgba(2, 136, 209, 0.6);
+  color: var(--sky-blue);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 24px rgba(2, 136, 209, 0.28), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+}
+
+.jump-glow {
+  background: radial-gradient(circle, rgba(2, 136, 209, 0.35) 0%, transparent 70%);
+}
+
+.touch-jump-btn .jump-svg {
+  width: 38px;
+  height: 38px;
+}
+
+.touch-jump-btn:active, .touch-jump-btn.active {
+  transform: scale(0.88);
+  background: rgba(2, 136, 209, 0.3);
+  border-color: var(--sky-blue);
+  box-shadow: 0 0 28px rgba(2, 136, 209, 0.7);
+}
+
+.touch-jump-btn:active .jump-svg, .touch-jump-btn.active .jump-svg {
+  transform: translateY(-4px) scale(1.1);
+}
+
+/* Turbo Boost Button Special Styling */
+.touch-boost-btn {
+  border-color: rgba(251, 140, 0, 0.6);
+  color: var(--warm-orange);
+  box-shadow: 0 6px 20px rgba(251, 140, 0, 0.22);
+}
+
+.boost-glow {
+  background: radial-gradient(circle, rgba(251, 140, 0, 0.35) 0%, transparent 70%);
+}
+
+.touch-boost-btn:active, .touch-boost-btn.active {
+  transform: scale(0.88);
+  background: rgba(251, 140, 0, 0.3);
+  border-color: var(--warm-orange);
+  box-shadow: 0 0 24px rgba(251, 140, 0, 0.7);
+}
+
+/* Screen Damage Overlay */
 .damage-flash-overlay {
   position: absolute;
   top: 0;
@@ -911,12 +1009,37 @@ html, body {
   display: none !important;
 }
 
-/* Responsive */
-@media (max-width: 768px), (pointer: coarse) {
+/* ==========================================================================
+   Mobile & Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 900px), (pointer: coarse) {
   .mobile-controls-layer {
     display: flex;
   }
+
+  .speed-meter-container {
+    bottom: 110px;
+    left: 18px;
+    padding: 6px 12px;
+  }
+
+  .hud-layer {
+    padding: 10px 14px;
+  }
+
+  .hud-card {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
   
+  .hud-value {
+    font-size: 1rem;
+  }
+
+  .modal-card {
+    padding: 22px 16px;
+  }
+
   .vehicles-slider, .upgrades-grid {
     grid-template-columns: 1fr;
   }
