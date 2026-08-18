@@ -9,7 +9,7 @@ class SoundEngine {
     this.sfxGain = null;
     this.isMusicPlaying = false;
     this.musicInterval = null;
-    this.currentBiome = 'city';
+    this.currentBiome = 'candy';
     this.initAudioContext();
   }
 
@@ -272,7 +272,7 @@ class SoundEngine {
     });
   }
 
-  // Dynamic Multi-World Synthwave Music Engine
+  // Dynamic Multi-World Music Engine
   startMusic() {
     if (!this.ctx || this.isMusicPlaying) return;
     this.resume();
@@ -291,23 +291,23 @@ class SoundEngine {
       const filter = this.ctx.createBiquadFilter();
 
       // World specific melody pattern
-      let scale = [110, 110, 130.81, 146.83, 110, 110, 164.81, 146.83]; // City
-      if (this.currentBiome === 'lava') {
-        scale = [82.41, 82.41, 98.0, 110.0, 82.41, 82.41, 123.47, 110.0]; // Heavy Aggressive E minor
-      } else if (this.currentBiome === 'nebula') {
-        scale = [146.83, 164.81, 196.0, 220.0, 196.0, 164.81, 246.94, 220.0]; // Ethereal High D
-      } else if (this.currentBiome === 'abyss') {
-        scale = [98.0, 110.0, 123.47, 130.81, 98.0, 123.47, 146.83, 130.81]; // Underwater deep G
+      let scale = [110, 110, 130.81, 146.83, 110, 110, 164.81, 146.83];
+      if (this.currentBiome === 'castle') {
+        scale = [146.83, 164.81, 196.0, 220.0, 196.0, 164.81, 246.94, 220.0];
+      } else if (this.currentBiome === 'crystal') {
+        scale = [82.41, 82.41, 98.0, 110.0, 82.41, 82.41, 123.47, 110.0];
+      } else if (this.currentBiome === 'oasis') {
+        scale = [98.0, 110.0, 123.47, 130.81, 98.0, 123.47, 146.83, 130.81];
       }
 
       const freq = scale[noteIndex % scale.length];
       noteIndex++;
 
-      osc.type = (this.currentBiome === 'lava') ? 'sawtooth' : 'triangle';
+      osc.type = (this.currentBiome === 'crystal') ? 'sawtooth' : 'triangle';
       osc.frequency.setValueAtTime(freq, now);
 
       filter.type = 'lowpass';
-      const cutoff = (this.currentBiome === 'nebula') ? 600 : 350;
+      const cutoff = (this.currentBiome === 'castle') ? 600 : 350;
       filter.frequency.setValueAtTime(cutoff, now);
       filter.frequency.exponentialRampToValueAtTime(120, now + stepTime * 0.9);
 

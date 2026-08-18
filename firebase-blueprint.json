@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FantasyRunnerSchema",
+  "entities": {
+    "UserProfile": {
+      "collection": "users",
+      "description": "User profile with saved scores, gems, unlocked characters and upgrades",
+      "fields": {
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "gems": { "type": "number" },
+        "highScore": { "type": "number" },
+        "activeCharacter": { "type": "string" },
+        "unlockedChars": { "type": "array" },
+        "upgrades": { "type": "object" },
+        "lastSaved": { "type": "string" }
+      }
+    },
+    "LeaderboardEntry": {
+      "collection": "scores",
+      "description": "Global leaderboard entries",
+      "fields": {
+        "playerName": { "type": "string" },
+        "score": { "type": "number" },
+        "character": { "type": "string" },
+        "timestamp": { "type": "string" }
+      }
+    }
+  }
+}

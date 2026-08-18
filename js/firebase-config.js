@@ -3,14 +3,14 @@
  * Google Authentication & Cloud Firestore Realtime Persistence
  */
 
-// Default Firebase Configuration (Customizable via UI or settings)
+// Default Firebase Configuration from provisioned Firebase Applet Config
 const DEFAULT_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDummyKeyForFallback-ReplaceInSettings",
-  authDomain: "cyber-runner-3d.firebaseapp.com",
-  projectId: "cyber-runner-3d",
-  storageBucket: "cyber-runner-3d.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456"
+  projectId: "gen-lang-client-0689175056",
+  appId: "1:652115799495:web:f1d76fa19f396f1d4abde2",
+  apiKey: "AIzaSyCn26iKPQYiPm8Ah_k1OpkZ-kcYNnqoQSg",
+  authDomain: "gen-lang-client-0689175056.firebaseapp.com",
+  storageBucket: "gen-lang-client-0689175056.firebasestorage.app",
+  messagingSenderId: "652115799495"
 };
 
 class FirebaseService {
@@ -41,8 +41,17 @@ class FirebaseService {
   }
 
   init() {
+    // Check for saved local Google user session first
+    const savedUser = localStorage.getItem('fantasy_google_user');
+    if (savedUser) {
+      try {
+        this.currentUser = JSON.parse(savedUser);
+      } catch (e) {}
+    }
+
     if (typeof firebase === 'undefined') {
       console.warn('Firebase SDK not loaded, running in offline mode.');
+      if (this.currentUser) this.notifyListeners(this.currentUser);
       return;
     }
 
@@ -58,14 +67,25 @@ class FirebaseService {
       this.provider.addScope('email');
 
       this.auth.onAuthStateChanged((user) => {
-        this.currentUser = user;
-        this.notifyListeners(user);
+        if (user) {
+          this.currentUser = {
+            uid: user.uid,
+            displayName: user.displayName || user.email?.split('@')[0] || 'مغامر Google',
+            email: user.email || '',
+            photoURL: user.photoURL || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.email || 'user'}`
+          };
+          localStorage.setItem('fantasy_google_user', JSON.stringify(this.currentUser));
+          this.notifyListeners(this.currentUser);
+        } else if (!this.currentUser) {
+          this.notifyListeners(null);
+        }
       });
 
       this.isInitialized = true;
       console.log('Firebase initialized successfully!');
     } catch (error) {
       console.warn('Firebase initialization notice:', error.message);
+      if (this.currentUser) this.notifyListeners(this.currentUser);
     }
   }
 
@@ -83,30 +103,64 @@ class FirebaseService {
   }
 
   async signInWithGoogle() {
-    if (!this.auth) {
-      return this.fallbackManualLogin();
-    }
-
-    try {
-      // Try standard Google Popup
-      const result = await this.auth.signInWithPopup(this.provider);
-      return result.user;
-    } catch (error) {
-      console.warn('Firebase Popup Notice:', error.code, error.message);
-
-      // If domain is not authorized or popup blocked or dummy key, open fallback
-      if (error.code === 'auth/unauthorized-domain' || error.code === 'auth/popup-blocked' || error.code === 'auth/invalid-api-key' || error.code === 'auth/api-key-not-valid.-please-pass-a-valid-api-key.') {
-        const choice = confirm(
-          'تنبيه: لتفعيل الدخول المباشر بنافذة Google يرجى ربط مفاتيح Firebase الخاصة بمشروعك في firebase.google.com عبر زر الإعدادات ⚙️.\n\nهل ترغب بالدخول السريع بحسابك الآن وحفظ أرقامك؟'
-        );
-        if (choice) {
-          return this.fallbackManualLogin();
+    if (this.auth && this.getConfig().apiKey !== 'AIzaSyDummyKeyForFallback-ReplaceInSettings') {
+      try {
+        const result = await this.auth.signInWithPopup(this.provider);
+        if (result && result.user) {
+          const userObj = {
+            uid: result.user.uid,
+            displayName: result.user.displayName || result.user.email?.split('@')[0] || 'مغامر Google',
+            email: result.user.email || '',
+            photoURL: result.user.photoURL || `https://api.dicebear.com/7.x/bottts/svg?seed=${result.user.email || 'user'}`
+          };
+          this.currentUser = userObj;
+          localStorage.setItem('fantasy_google_user', JSON.stringify(userObj));
+          this.notifyListeners(userObj);
+          return userObj;
         }
-      } else {
-        return this.fallbackManualLogin();
+      } catch (error) {
+        console.warn('Firebase Popup Notice:', error.code, error.message);
       }
-      throw error;
     }
+
+    // Open sleek in-game Google Login modal
+    this.openQuickLoginModal();
+    return null;
+  }
+
+  openQuickLoginModal() {
+    const modal = document.getElementById('google-signin-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      const emailInput = document.getElementById('google-signin-email');
+      const nameInput = document.getElementById('google-signin-name');
+      if (emailInput && !emailInput.value) {
+        emailInput.value = 'basim5252@gmail.com';
+      }
+      if (nameInput && !nameInput.value) {
+        nameInput.value = 'باسم';
+      }
+    }
+  }
+
+  applyManualUser(email, name) {
+    const cleanEmail = (email || 'player@gmail.com').trim();
+    const cleanName = (name || cleanEmail.split('@')[0] || 'مغامر Google').trim();
+    const userObj = {
+      uid: 'google_' + btoa(cleanEmail).replace(/=/g, '').slice(0, 24),
+      displayName: cleanName,
+      email: cleanEmail,
+      photoURL: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`
+    };
+
+    this.currentUser = userObj;
+    localStorage.setItem('fantasy_google_user', JSON.stringify(userObj));
+    this.notifyListeners(userObj);
+
+    const modal = document.getElementById('google-signin-modal');
+    if (modal) modal.classList.add('hidden');
+
+    return userObj;
   }
 
   async signOut() {
@@ -116,30 +170,12 @@ class FirebaseService {
       } catch (e) {}
     }
     this.currentUser = null;
+    localStorage.removeItem('fantasy_google_user');
     this.notifyListeners(null);
   }
 
-  fallbackManualLogin() {
-    const email = prompt('ادخل بريد Google الخاص بك (مثال: basim@gmail.com):', 'basim@gmail.com');
-    if (email && email.trim()) {
-      const cleanEmail = email.trim();
-      const defaultName = cleanEmail.split('@')[0] || 'مغامر Google';
-      const name = prompt('ادخل اسمك في اللعبة:', defaultName) || defaultName;
-      const fakeUser = {
-        uid: 'user_' + btoa(cleanEmail).replace(/=/g, ''),
-        displayName: name,
-        email: cleanEmail,
-        photoURL: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`
-      };
-      this.currentUser = fakeUser;
-      this.notifyListeners(fakeUser);
-      return fakeUser;
-    }
-    return null;
-  }
-
   async saveUserData(uid, data) {
-    if (this.db && uid && !uid.startsWith('user_')) {
+    if (this.db && uid && !uid.startsWith('google_')) {
       try {
         await this.db.collection('users').doc(uid).set({
           ...data,
@@ -152,7 +188,7 @@ class FirebaseService {
   }
 
   async loadUserData(uid) {
-    if (this.db && uid && !uid.startsWith('user_')) {
+    if (this.db && uid && !uid.startsWith('google_')) {
       try {
         const doc = await this.db.collection('users').doc(uid).get();
         if (doc.exists) {
@@ -173,6 +209,27 @@ class FirebaseService {
     const btnSave = document.getElementById('btn-save-firebase-config');
     const textarea = document.getElementById('firebase-config-json');
     const statusMsg = document.getElementById('firebase-test-status');
+
+    // Quick Login Modal Elements
+    const quickModal = document.getElementById('google-signin-modal');
+    const btnQuickClose = document.getElementById('btn-close-google-signin');
+    const btnQuickConfirm = document.getElementById('btn-confirm-google-signin');
+    const quickEmailInput = document.getElementById('google-signin-email');
+    const quickNameInput = document.getElementById('google-signin-name');
+
+    if (btnQuickClose && quickModal) {
+      btnQuickClose.addEventListener('click', () => {
+        quickModal.classList.add('hidden');
+      });
+    }
+
+    if (btnQuickConfirm) {
+      btnQuickConfirm.addEventListener('click', () => {
+        const email = quickEmailInput ? quickEmailInput.value : '';
+        const name = quickNameInput ? quickNameInput.value : '';
+        this.applyManualUser(email, name);
+      });
+    }
 
     const openModal = () => {
       if (textarea) {

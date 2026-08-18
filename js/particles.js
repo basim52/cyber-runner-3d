@@ -1,11 +1,11 @@
 /**
- * Vibrant Nature Particle Engine (Falling Leaves, Petals, Snowflakes & Fireflies)
+ * Vibrant Nature & Fantasy Particle Engine (Falling Leaves, Petals, Snowflakes & Fireflies)
  */
 class ParticleSystem {
   constructor(scene) {
     this.scene = scene;
     this.particles = [];
-    this.currentBiome = 'forest';
+    this.currentBiome = 'candy';
     this.initNatureParticles();
   }
 
@@ -14,7 +14,7 @@ class ParticleSystem {
     this.updateNatureColors();
   }
 
-  // Floating Leaves / Petals / Snowflakes
+  // Floating Leaves / Petals / Snowflakes / Sparks
   initNatureParticles() {
     this.ambientCount = 300;
     const geometry = new THREE.BufferGeometry();
@@ -26,10 +26,9 @@ class ParticleSystem {
       positions[i * 3 + 1] = Math.random() * 30;
       positions[i * 3 + 2] = -Math.random() * 200;
 
-      // Fresh Green / Pink Petals
-      this.ambientColors[i * 3] = 0.3;
-      this.ambientColors[i * 3 + 1] = 0.85;
-      this.ambientColors[i * 3 + 2] = 0.3;
+      this.ambientColors[i * 3] = 1.0;
+      this.ambientColors[i * 3 + 1] = 0.5;
+      this.ambientColors[i * 3 + 2] = 0.7;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -52,27 +51,27 @@ class ParticleSystem {
     const colors = colorAttr.array;
 
     for (let i = 0; i < this.ambientCount; i++) {
-      if (this.currentBiome === 'savannah') {
-        // Golden pollen & warm sun dust
+      if (this.currentBiome === 'castle') {
+        // Pure white & gold stardust
         colors[i * 3] = 1.0;
-        colors[i * 3 + 1] = 0.85;
-        colors[i * 3 + 2] = 0.2;
-      } else if (this.currentBiome === 'winter') {
-        // Pure white snowflakes
-        colors[i * 3] = 0.95;
-        colors[i * 3 + 1] = 0.98;
-        colors[i * 3 + 2] = 1.0;
-      } else if (this.currentBiome === 'jungle') {
-        // Glowing jungle fireflies
+        colors[i * 3 + 1] = 0.95;
+        colors[i * 3 + 2] = 0.8;
+      } else if (this.currentBiome === 'crystal') {
+        // Glowing cyan & violet stardust
         colors[i * 3] = 0.4;
-        colors[i * 3 + 1] = 1.0;
-        colors[i * 3 + 2] = 0.5;
+        colors[i * 3 + 1] = 0.8;
+        colors[i * 3 + 2] = 1.0;
+      } else if (this.currentBiome === 'oasis') {
+        // Golden sun dust
+        colors[i * 3] = 1.0;
+        colors[i * 3 + 1] = 0.8;
+        colors[i * 3 + 2] = 0.2;
       } else {
-        // Forest: Emerald leaves and pink blossoms
-        const isPink = Math.random() > 0.6;
-        colors[i * 3] = isPink ? 1.0 : 0.3;
-        colors[i * 3 + 1] = isPink ? 0.4 : 0.85;
-        colors[i * 3 + 2] = isPink ? 0.7 : 0.3;
+        // Candy: Sweet pink and rainbow confetti
+        const isPink = Math.random() > 0.5;
+        colors[i * 3] = isPink ? 1.0 : 0.4;
+        colors[i * 3 + 1] = isPink ? 0.4 : 0.9;
+        colors[i * 3 + 2] = isPink ? 0.8 : 1.0;
       }
     }
     colorAttr.needsUpdate = true;
@@ -84,7 +83,7 @@ class ParticleSystem {
       const geom = new THREE.BoxGeometry(0.2, 0.2, 0.2);
       const isRed = Math.random() > 0.5;
       const mat = new THREE.MeshBasicMaterial({
-        color: isRed ? 0xff3344 : 0xffffff,
+        color: isRed ? 0xff4081 : 0xffffff,
         transparent: true,
         opacity: 1
       });
@@ -141,7 +140,7 @@ class ParticleSystem {
       const size = 0.2 + Math.random() * 0.3;
       const geom = new THREE.BoxGeometry(size, size, size);
       const mat = new THREE.MeshBasicMaterial({
-        color: 0x8d6e63, // Wood chips / rock chunks
+        color: 0x8d6e63,
         transparent: true,
         opacity: 1
       });
@@ -198,7 +197,6 @@ class ParticleSystem {
       const count = positions.length / 3;
 
       for (let i = 0; i < count; i++) {
-        // Gentle downward floating & forward movement
         positions[i * 3 + 1] -= (1.5 + Math.sin(positions[i * 3 + 2] * 0.1)) * delta;
         positions[i * 3 + 2] += gameSpeed * 1.2 * delta;
 

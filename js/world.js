@@ -341,7 +341,7 @@ class WorldManager {
     }
   }
 
-  // ⚠️ New Fantasy Obstacles (Rolling Donuts, Electric Totems, Crystal Boulders)
+  // ⚠️ Fantasy Obstacles (Rolling Donuts, Electric Totems, Crystal Boulders)
   spawnFantasyObstacle(x, z, laneIndex) {
     const typeRoll = Math.random();
     let mesh;
@@ -511,7 +511,7 @@ class WorldManager {
     for (let i = this.obstacles.length - 1; i >= 0; i--) {
       const obs = this.obstacles[i];
       if (obs.type === 'donut' || obs.type === 'boulder') {
-        obs.mesh.rotation.x -= 6 * delta; // Roll towards player
+        obs.mesh.rotation.x -= 6 * delta;
       } else if (obs.type === 'totem') {
         obs.mesh.rotation.y += 2 * delta;
       }

@@ -79,16 +79,16 @@ class Player {
 
     // 3. Ziyad Materials (Parkour Pro Athlete)
     this.ziyadHairMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
-    this.ziyadJacketMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.6 }); // Forest Green Windbreaker
+    this.ziyadJacketMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.6 });
     this.ziyadNeonMat = new THREE.MeshStandardMaterial({ color: 0x76ff03, emissive: 0x64dd17, emissiveIntensity: 0.4, roughness: 0.3 });
     this.ziyadBlackMat = new THREE.MeshStandardMaterial({ color: 0x1e1e1e, roughness: 0.7 });
-    this.ziyadPantsMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.8 }); // Cargo Joggers
+    this.ziyadPantsMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.8 });
     this.ziyadGloveMat = new THREE.MeshStandardMaterial({ color: 0x212121, roughness: 0.9 });
     this.ziyadSneakerMat = new THREE.MeshStandardMaterial({ color: 0x1b5e20, roughness: 0.4 });
 
     // 4. Maryam Materials (Safari Explorer Girl)
     this.maryamHairMat = new THREE.MeshStandardMaterial({ color: 0x4a2c11, roughness: 0.75 });
-    this.maryamJacketMat = new THREE.MeshStandardMaterial({ color: 0xd4883b, roughness: 0.7 }); // Desert Amber Safari Jacket
+    this.maryamJacketMat = new THREE.MeshStandardMaterial({ color: 0xd4883b, roughness: 0.7 });
     this.maryamKhakiPantsMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.8 });
     this.maryamBeltLeatherMat = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.6 });
     this.maryamGoldBuckleMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.85, roughness: 0.2 });
@@ -145,9 +145,7 @@ class Player {
     this.scene.add(this.group);
   }
 
-  // =========================================================================
-  // 👦 1. سامي (Sami - Exact Reference Replica)
-  // =========================================================================
+  // 👦 1. Sami
   buildSami() {
     const skin = this.skinBronzeMat;
 
@@ -317,19 +315,15 @@ class Player {
     rForearmGroup.add(rHand);
   }
 
-  // =========================================================================
-  // 🧑 2. زياد (Ziyad - Parkour Athlete Pro)
-  // =========================================================================
+  // 🧑 2. Ziyad
   buildZiyad() {
     const skin = this.skinTanMat;
 
-    // Windbreaker Torso (Forest Green with Neon Accents)
     const torsoGeom = new THREE.CylinderGeometry(0.39, 0.33, 0.88, 20);
     const torso = new THREE.Mesh(torsoGeom, this.ziyadJacketMat);
     torso.castShadow = true;
     this.bodyGroup.add(torso);
 
-    // Black & Neon Chest Trim
     const trim = new THREE.Mesh(new THREE.CylinderGeometry(0.40, 0.40, 0.16, 20), this.ziyadBlackMat);
     trim.position.set(0, 0.34, 0);
     torso.add(trim);
@@ -339,13 +333,11 @@ class Player {
     neonStripe.rotation.x = Math.PI / 2;
     torso.add(neonStripe);
 
-    // Athletic Back Hood
     const hood = new THREE.Mesh(new THREE.SphereGeometry(0.24, 14, 14), this.ziyadJacketMat);
     hood.position.set(0, 0.32, 0.24);
     hood.scale.set(1.0, 0.7, 0.6);
     torso.add(hood);
 
-    // Head with Modern Black Undercut Quiff
     this.headGroup = new THREE.Group();
     this.headGroup.position.set(0, 0.68, 0);
     this.bodyGroup.add(this.headGroup);
@@ -360,7 +352,6 @@ class Player {
     head.castShadow = true;
     this.headGroup.add(head);
 
-    // Undercut Sculpted Hair
     const baseHair = new THREE.Mesh(new THREE.SphereGeometry(0.37, 20, 16), this.ziyadHairMat);
     baseHair.position.set(0, 0.04, 0.04);
     this.headGroup.add(baseHair);
@@ -373,36 +364,27 @@ class Player {
       this.headGroup.add(tuft);
     }
 
-    // Green Eyes & Headband
     this.createStylizedEye(0.12, 0.06, -0.32, this.irisGreenMat);
     this.createStylizedEye(-0.12, 0.06, -0.32, this.irisGreenMat);
 
-    // Arms with Fingerless Tactical Gloves
     this.buildHumanArms(this.ziyadJacketMat, this.ziyadGloveMat);
-
-    // Legs with Neon High-Top Sneakers
     this.buildHumanLegs(this.ziyadPantsMat, this.ziyadNeonMat, this.ziyadBlackMat, 'sneaker');
   }
 
-  // =========================================================================
-  // 👩 3. مريم (Maryam - Safari Explorer Girl)
-  // =========================================================================
+  // 👩 3. Maryam
   buildMaryam() {
     const skin = this.skinWarmMat;
 
-    // Safari Jacket Torso (Desert Amber with Pockets)
     const torsoGeom = new THREE.CylinderGeometry(0.36, 0.30, 0.84, 20);
     const torso = new THREE.Mesh(torsoGeom, this.maryamJacketMat);
     torso.castShadow = true;
     this.bodyGroup.add(torso);
 
-    // Jacket Collar & Lapels
     const collar = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.05, 8, 20), this.maryamJacketMat);
     collar.position.set(0, 0.40, 0);
     collar.rotation.x = Math.PI / 2;
     torso.add(collar);
 
-    // Safari Chest Pockets with Gold Buttons
     for (let p = -1; p <= 1; p += 2) {
       const pocket = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.04), this.maryamJacketMat);
       pocket.position.set(p * 0.18, 0.18, -0.32);
@@ -413,7 +395,6 @@ class Player {
       torso.add(btn);
     }
 
-    // Leather Tactical Belt & Gold Buckle
     const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.12, 20), this.maryamBeltLeatherMat);
     belt.position.set(0, -0.35, 0);
     torso.add(belt);
@@ -422,12 +403,10 @@ class Player {
     buckle.position.set(0, -0.35, -0.33);
     torso.add(buckle);
 
-    // Leather Pouch on Side
     const sidePouch = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.14, 0.08), this.maryamBeltLeatherMat);
     sidePouch.position.set(0.32, -0.35, 0);
     torso.add(sidePouch);
 
-    // Head with Braided Volumetric Hair
     this.headGroup = new THREE.Group();
     this.headGroup.position.set(0, 0.66, 0);
     this.bodyGroup.add(this.headGroup);
@@ -442,12 +421,10 @@ class Player {
     head.castShadow = true;
     this.headGroup.add(head);
 
-    // Braided Chestnut Hair
     const crown = new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 16), this.maryamHairMat);
     crown.position.set(0, 0.06, 0.04);
     this.headGroup.add(crown);
 
-    // Two Braids Hanging Over Shoulders with Golden Hair Ties
     for (let b = 0; b < 2; b++) {
       const side = b === 0 ? 1 : -1;
       for (let s = 0; s < 6; s++) {
@@ -463,20 +440,13 @@ class Player {
       }
     }
 
-    // Warm Brown Eyes
     this.createStylizedEye(0.11, 0.06, -0.3, this.irisBrownMat);
     this.createStylizedEye(-0.11, 0.06, -0.3, this.irisBrownMat);
 
-    // Arms
     this.buildHumanArms(this.maryamJacketMat, skin);
-
-    // Legs with Rugged Explorer Boots
     this.buildHumanLegs(this.maryamKhakiPantsMat, this.maryamBootsMat, this.maryamBeltLeatherMat, 'boot');
   }
 
-  // =========================================================================
-  // Helper: Stylized Expressive Eye
-  // =========================================================================
   createStylizedEye(x, y, z, irisMat) {
     const eyeGroup = new THREE.Group();
     eyeGroup.position.set(x, y, z);
@@ -502,9 +472,6 @@ class Player {
     this.headGroup.add(eyeGroup);
   }
 
-  // =========================================================================
-  // Helper: Anatomical Arms
-  // =========================================================================
   buildHumanArms(sleeveMat, handMat) {
     this.leftArmGroup = new THREE.Group();
     this.leftArmGroup.position.set(0.46, 0.32, 0);
@@ -554,9 +521,6 @@ class Player {
     rForearmGroup.add(rFist);
   }
 
-  // =========================================================================
-  // Helper: Anatomical Legs & Footwear
-  // =========================================================================
   buildHumanLegs(pantsMat, shoeColorMat, soleMat, type = 'sneaker') {
     // Left Leg
     this.leftLegGroup = new THREE.Group();

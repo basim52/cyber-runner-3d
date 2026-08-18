@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/style.css?v=15.0.0">
+  <link rel="stylesheet" href="/css/style.css">
   
   <!-- Firebase SDKs (firebase.google.com) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -127,6 +127,37 @@
             <div class="logged-in-actions">
               <button id="btn-open-firebase-config-logged" class="btn-config-icon" title="إعدادات Firebase">⚙️</button>
               <button id="btn-google-logout" class="btn-google-logout" type="button">🚪 خروج</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Fast Sign-In & Profile Modal -->
+        <div id="google-signin-modal" class="google-login-modal hidden">
+          <div class="google-modal-inner glass-panel">
+            <div class="google-modal-header">
+              <svg class="google-icon-svg" viewBox="0 0 24 24" width="28" height="28">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+              <h3>تسجيل الدخول السريع بحساب Google 🌐</h3>
+            </div>
+            <p class="google-modal-desc">سجل دخولك لحفظ وتزامن نقاطك وأرقامك القياسية وتطويرات الشخصيات بأمان عبر السحابة:</p>
+            
+            <div class="google-input-group">
+              <label for="google-signin-email">بريد حساب Google:</label>
+              <input type="email" id="google-signin-email" class="google-modal-input" placeholder="basim5252@gmail.com" value="basim5252@gmail.com">
+            </div>
+
+            <div class="google-input-group">
+              <label for="google-signin-name">اسم اللاعب المفضل:</label>
+              <input type="text" id="google-signin-name" class="google-modal-input" placeholder="باسم" value="باسم">
+            </div>
+
+            <div class="google-modal-actions">
+              <button id="btn-confirm-google-signin" class="btn-primary">تأكيد الدخول وحفظ التقدم 💾</button>
+              <button id="btn-close-google-signin" class="btn-secondary">إلغاء ✖️</button>
             </div>
           </div>
         </div>
@@ -462,14 +493,14 @@
   </div>
 
   <!-- Firebase Configuration & Helper -->
-  <script src="js/firebase-config.js?v=17.0.0"></script>
+  <script src="/js/firebase-config.js"></script>
 
-  <!-- Game Scripts with v17.0.0 cache buster -->
-  <script src="js/audio.js?v=17.0.0"></script>
-  <script src="js/particles.js?v=17.0.0"></script>
-  <script src="js/player.js?v=17.0.0"></script>
-  <script src="js/world.js?v=17.0.0"></script>
-  <script src="js/controls.js?v=17.0.0"></script>
-  <script src="js/game.js?v=17.0.0"></script>
+  <!-- Game Scripts -->
+  <script src="/js/audio.js"></script>
+  <script src="/js/particles.js"></script>
+  <script src="/js/player.js"></script>
+  <script src="/js/world.js"></script>
+  <script src="/js/controls.js"></script>
+  <script src="/js/game.js"></script>
 </body>
 </html>

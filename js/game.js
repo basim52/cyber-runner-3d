@@ -62,16 +62,22 @@ class Game {
     this.userEmail = localStorage.getItem('fantasy_runner_email') || '';
     this.userName = localStorage.getItem('fantasy_runner_name') || 'مغامر الغابة';
     this.userUid = '';
+    this.userAvatar = '';
 
     // Multi-tier data loading: check if email profile exists, otherwise fallback to standard storage
     this.loadProfileData();
 
     // Game Config & Modes
     this.gameMode = 'odyssey';
+    this.selectedWorld = 'candy';
+    this.biomeOrder = ['candy', 'castle', 'crystal', 'oasis'];
+    this.biomeIndex = 0;
+    this.difficulty = 'normal';
     this.timeAttackDuration = 35;
     this.timeAttackRemaining = 35;
     this.frenzyMultiplier = 10;
     this.isOneLifeMode = false;
+    this.nextWarpDistance = 1000;
 
     // Time Attack Timer
     this.timeAttackTimer = 30.0;
@@ -172,6 +178,18 @@ class Game {
 
     this.updateUserStatsUI();
     this.updateAccountUI();
+  }
+
+  updateUserStatsUI() {
+    if (this.ui.startHighScore) {
+      this.ui.startHighScore.textContent = this.highScore.toLocaleString('ar-EG');
+    }
+    if (this.ui.totalBankedGems) {
+      this.ui.totalBankedGems.textContent = `${this.totalGems.toLocaleString('ar-EG')} 🍎`;
+    }
+    if (this.ui.garageGemsCount) {
+      this.ui.garageGemsCount.textContent = `${this.totalGems.toLocaleString('ar-EG')} 🍎`;
+    }
   }
 
   initThree() {
@@ -474,7 +492,6 @@ class Game {
       if (loggedInState) loggedInState.classList.add('hidden');
     }
   }
-  }
 
   updateGarageUI() {
     if (this.ui.garageGemsCount) this.ui.garageGemsCount.textContent = `${this.totalGems} 🍎`;
@@ -684,10 +701,12 @@ class Game {
   }
 
   flashDamage() {
-    this.ui.damageFlash.classList.add('flash');
-    setTimeout(() => {
-      this.ui.damageFlash.classList.remove('flash');
-    }, 120);
+    if (this.ui.damageFlash) {
+      this.ui.damageFlash.classList.add('flash');
+      setTimeout(() => {
+        this.ui.damageFlash.classList.remove('flash');
+      }, 120);
+    }
   }
 
   activatePowerup(type) {
@@ -697,12 +716,12 @@ class Game {
 
     if (type === 'shield') {
       this.player.setShield(true);
-      this.ui.powerupIcon.textContent = '🛡️';
+      if (this.ui.powerupIcon) this.ui.powerupIcon.textContent = '🛡️';
     } else if (type === 'boost') {
-      this.ui.powerupIcon.textContent = '⚡';
+      if (this.ui.powerupIcon) this.ui.powerupIcon.textContent = '⚡';
     }
 
-    this.ui.powerupStatus.classList.remove('hidden');
+    if (this.ui.powerupStatus) this.ui.powerupStatus.classList.remove('hidden');
   }
 
   checkCollisions() {
@@ -740,7 +759,7 @@ class Game {
           this.player.setShield(false);
           this.powerupType = null;
           this.powerupTimer = 0;
-          this.ui.powerupStatus.classList.add('hidden');
+          if (this.ui.powerupStatus) this.ui.powerupStatus.classList.add('hidden');
           if (window.sound) window.sound.playHit();
           this.shakeScreen(0.4);
         } else {
@@ -772,7 +791,7 @@ class Game {
         this.world.collectibles.splice(i, 1);
 
         if (isHourglass) {
-          this.timeAttackTimer += 6.0; // Add 6 seconds in time attack!
+          this.timeAttackTimer += 6.0;
           this.score += 400 * this.combo;
           this.gems += 2;
         } else {
@@ -831,10 +850,10 @@ class Game {
     });
 
     if (this.combo > 1) {
-      this.ui.comboBadge.classList.remove('hidden');
-      this.ui.comboText.textContent = `COMBO x${this.combo}`;
+      if (this.ui.comboBadge) this.ui.comboBadge.classList.remove('hidden');
+      if (this.ui.comboText) this.ui.comboText.textContent = `COMBO x${this.combo}`;
     } else {
-      this.ui.comboBadge.classList.add('hidden');
+      if (this.ui.comboBadge) this.ui.comboBadge.classList.add('hidden');
     }
   }
 
@@ -849,22 +868,24 @@ class Game {
     const isNewHigh = this.score > this.highScore;
     if (isNewHigh) {
       this.highScore = Math.floor(this.score);
-      this.ui.newHighBadge.classList.remove('hidden');
+      if (this.ui.newHighBadge) this.ui.newHighBadge.classList.remove('hidden');
     } else {
-      this.ui.newHighBadge.classList.add('hidden');
+      if (this.ui.newHighBadge) this.ui.newHighBadge.classList.add('hidden');
     }
 
     this.syncAllData();
 
-    this.ui.finalScore.textContent = Math.floor(this.score).toLocaleString('ar-EG');
-    this.ui.bestScore.textContent = this.highScore.toLocaleString('ar-EG');
-    this.ui.finalDistance.textContent = Math.floor(this.distance) + 'm';
-    this.ui.finalGems.textContent = this.gems + ' 🍎';
+    if (this.ui.finalScore) this.ui.finalScore.textContent = Math.floor(this.score).toLocaleString('ar-EG');
+    if (this.ui.bestScore) this.ui.bestScore.textContent = this.highScore.toLocaleString('ar-EG');
+    if (this.ui.finalDistance) this.ui.finalDistance.textContent = Math.floor(this.distance) + 'm';
+    if (this.ui.finalGems) this.ui.finalGems.textContent = this.gems + ' 🍎';
 
-    this.ui.hud.classList.add('hidden');
-    this.ui.speedMeter.classList.add('hidden');
-    this.ui.gameoverScreen.classList.remove('hidden');
-    this.ui.gameoverScreen.classList.add('active');
+    if (this.ui.hud) this.ui.hud.classList.add('hidden');
+    if (this.ui.speedMeter) this.ui.speedMeter.classList.add('hidden');
+    if (this.ui.gameoverScreen) {
+      this.ui.gameoverScreen.classList.remove('hidden');
+      this.ui.gameoverScreen.classList.add('active');
+    }
   }
 
   animate(timestamp) {
@@ -915,7 +936,7 @@ class Game {
       if (this.powerupTimer > 0) {
         this.powerupTimer -= delta;
         const progressPct = (this.powerupTimer / this.powerupMaxTime) * 100;
-        this.ui.powerupProgress.style.width = `${progressPct}%`;
+        if (this.ui.powerupProgress) this.ui.powerupProgress.style.width = `${progressPct}%`;
 
         if (this.powerupType === 'boost') this.player.setBoosting(true);
 
@@ -923,7 +944,7 @@ class Game {
           if (this.powerupType === 'shield') this.player.setShield(false);
           if (this.powerupType === 'boost') this.player.setBoosting(false);
           this.powerupType = null;
-          this.ui.powerupStatus.classList.add('hidden');
+          if (this.ui.powerupStatus) this.ui.powerupStatus.classList.add('hidden');
         }
       }
 
@@ -963,7 +984,9 @@ class Game {
       if (this.player) {
         this.player.runTimer += delta * 2.2;
         const breath = Math.sin(this.player.runTimer) * 0.04;
-        this.player.bodyGroup.position.y = 1.38 + breath;
+        if (this.player.bodyGroup) {
+          this.player.bodyGroup.position.y = 1.38 + breath;
+        }
         
         // Left arm holding compass steadily in front
         if (this.player.leftArmGroup) {
@@ -977,8 +1000,10 @@ class Game {
         }
 
         // Face front/camera with slight natural head tilt
-        this.player.group.rotation.y = Math.sin(this.player.runTimer * 0.4) * 0.2;
-        this.player.group.position.set(0, 0, -2.2);
+        if (this.player.group) {
+          this.player.group.rotation.y = Math.sin(this.player.runTimer * 0.4) * 0.2;
+          this.player.group.position.set(0, 0, -2.2);
+        }
       }
     }
 

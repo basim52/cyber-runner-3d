@@ -62,7 +62,7 @@ class InputManager {
     });
   }
 
-  // Professional Mobile Multi-Touch Buttons (Instant Zero-Latency Response)
+  // Mobile Multi-Touch Buttons (Instant Zero-Latency Response)
   initTouchButtons() {
     const btnLeft = document.getElementById('touch-left');
     const btnRight = document.getElementById('touch-right');

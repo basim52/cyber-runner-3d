@@ -1,21 +1,14 @@
 {
   "name": "threejs-cyber-runner-3d",
   "version": "1.0.0",
-  "description": "A high-performance 3D Cyber Runner game built with Three.js and Capacitor.js",
+  "description": "A high-performance 3D Fantasy Runner game built with Three.js",
+  "type": "module",
   "scripts": {
-    "dev": "vite --port 3000 --host",
+    "dev": "vite --port 3000 --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview",
-    "cap:sync": "cap sync android",
-    "cap:open": "cap open android",
-    "cap:build": "cap build android"
-  },
-  "dependencies": {
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/core": "^6.0.0"
+    "preview": "vite preview --port 3000 --host 0.0.0.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.0.0",
-    "vite": "^5.0.0"
+    "vite": "^5.4.0"
   }
 }

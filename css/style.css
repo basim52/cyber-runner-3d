@@ -606,139 +606,6 @@ html, body {
   margin-top: 6px;
 }
 
-.btn-google-logout {
-  background: #f1f3f4;
-  color: #5f6368;
-  border: 1px solid #dadce0;
-  border-radius: var(--radius-sm);
-  padding: 5px 10px;
-  font-family: var(--font-arabic);
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-google-logout:hover {
-  background: #ffebee;
-  color: #c62828;
-  border-color: #ef9a9a;
-}
-
-.profile-avatar-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  text-align: right;
-}
-
-.profile-avatar {
-  font-size: 1.6rem;
-  background: rgba(76, 175, 80, 0.15);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile-texts {
-  display: flex;
-  flex-direction: column;
-}
-
-.profile-texts strong {
-  font-size: 0.9rem;
-  color: var(--text-main);
-}
-
-.cloud-status-badge {
-  font-size: 0.72rem;
-  color: var(--forest-green);
-  font-weight: 700;
-}
-
-.account-btn {
-  background: linear-gradient(135deg, #2e7d32, #1b5e20);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 6px 12px;
-  font-family: var(--font-arabic);
-  font-size: 0.8rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
-}
-
-.account-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.45);
-}
-
-/* Account Modal Form */
-.account-modal-card {
-  max-width: 440px;
-}
-
-.account-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
-  text-align: right;
-}
-
-.account-form-group label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 800;
-}
-
-.form-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1.5px solid rgba(0, 0, 0, 0.15);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  font-family: var(--font-arabic);
-  font-size: 0.9rem;
-  color: var(--text-main);
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.form-input:focus {
-  border-color: var(--leaf-green);
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-}
-
-.backup-divider {
-  width: 100%;
-  text-align: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  line-height: 0.1em;
-  margin: 14px 0 10px;
-}
-
-.backup-divider span {
-  background: #fff;
-  padding: 0 10px;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-.backup-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  width: 100%;
-}
-
 .brand-badge {
   font-family: var(--font-digital);
   font-size: 0.7rem;
@@ -893,48 +760,6 @@ html, body {
 .nav-text {
   font-weight: 800;
   font-size: 0.85rem;
-}
-
-/* Difficulty Selector */
-.difficulty-picker {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.difficulty-picker label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-.diff-buttons {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.diff-btn {
-  flex: 1;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: var(--text-main);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-arabic);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 600;
-}
-
-.diff-btn.active {
-  background: var(--leaf-green);
-  border-color: var(--forest-green);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
-  font-weight: 800;
 }
 
 /* Action Buttons */
@@ -1231,6 +1056,63 @@ html, body {
   cursor: not-allowed;
   border-color: #888;
   color: #888;
+}
+
+/* Results & GameOver */
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.result-box {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.res-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.res-value {
+  font-size: 1.25rem;
+  color: var(--forest-green);
+  font-weight: 900;
+}
+
+.high-score-alert {
+  background: linear-gradient(135deg, #ffd700, #ff9800);
+  color: #fff;
+  font-weight: 900;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 14px rgba(255, 152, 0, 0.4);
+}
+
+.gameover-title {
+  font-size: 1.8rem;
+  color: var(--apple-red);
+  font-weight: 900;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.horizontal-actions {
+  flex-direction: row;
 }
 
 /* Warp Portal Overlay */
