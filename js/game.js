@@ -1,11 +1,83 @@
 /**
- * Cyber Runner 3D - Vibrant Living Nature Game Engine
+ * Game Core Controller with 4 Modes (Odyssey, Time Attack, Frenzy, Survival) & 4 Characters
  */
 class Game {
   constructor() {
+    this.container = document.getElementById('canvas-container');
+
+    // UI Cache
+    this.ui = {
+      hud: document.getElementById('hud'),
+      score: document.getElementById('score-display'),
+      gems: document.getElementById('gems-display'),
+      distance: document.getElementById('distance-display'),
+      lives: document.querySelectorAll('.life-heart'),
+      comboBadge: document.getElementById('combo-badge'),
+      comboText: document.getElementById('combo-text'),
+      speedMeter: document.getElementById('speed-meter'),
+      speedBarFill: document.getElementById('speed-bar-fill'),
+      currentBiomeBadge: document.getElementById('current-biome-badge'),
+      stageDistanceBadge: document.getElementById('stage-distance-badge'),
+      stageProgressFill: document.getElementById('stage-progress-fill'),
+      powerupStatus: document.getElementById('powerup-status'),
+      powerupIcon: document.getElementById('powerup-icon'),
+      powerupProgress: document.getElementById('powerup-progress-fill'),
+      startScreen: document.getElementById('start-screen'),
+      stagesScreen: document.getElementById('stages-screen'),
+      garageScreen: document.getElementById('garage-screen'),
+      pauseScreen: document.getElementById('pause-screen'),
+      gameoverScreen: document.getElementById('gameover-screen'),
+      damageFlash: document.getElementById('damage-flash'),
+      warpOverlay: document.getElementById('warp-overlay'),
+      warpWorldName: document.getElementById('warp-world-name'),
+      startHighScore: document.getElementById('start-high-score'),
+      totalBankedGems: document.getElementById('total-banked-gems'),
+      garageGemsCount: document.getElementById('garage-gems-count'),
+      finalScore: document.getElementById('final-score'),
+      bestScore: document.getElementById('best-score'),
+      finalDistance: document.getElementById('final-distance'),
+      finalGems: document.getElementById('final-gems'),
+      newHighBadge: document.getElementById('new-high-badge'),
+      btnStart: document.getElementById('btn-start'),
+      btnOpenStages: document.getElementById('btn-open-stages'),
+      btnOpenGarage: document.getElementById('btn-open-garage'),
+      btnCloseStages: document.getElementById('btn-close-stages'),
+      btnConfirmStage: document.getElementById('btn-confirm-stage'),
+      btnCloseGarage: document.getElementById('btn-close-garage'),
+      btnSoundToggle: document.getElementById('btn-sound-toggle'),
+      btnPause: document.getElementById('btn-pause'),
+      btnResume: document.getElementById('btn-resume'),
+      btnRestartPause: document.getElementById('btn-restart-pause'),
+      btnRetry: document.getElementById('btn-retry'),
+      btnMenu: document.getElementById('btn-menu'),
+      btnUpMagnet: document.getElementById('btn-up-magnet'),
+      btnUpShield: document.getElementById('btn-up-shield'),
+      btnUpBoost: document.getElementById('btn-up-boost'),
+      magnetLevelText: document.getElementById('magnet-level-text'),
+      shieldLevelText: document.getElementById('shield-level-text'),
+      boostLevelText: document.getElementById('boost-level-text')
+    };
+
+    // Persistence
+    this.totalGems = parseInt(localStorage.getItem('cyber_runner_gems') || '0');
+    this.highScore = parseInt(localStorage.getItem('cyber_runner_highscore') || '0');
+    this.activeCharacter = localStorage.getItem('cyber_runner_active_char') || 'boy';
+    this.unlockedChars = JSON.parse(localStorage.getItem('cyber_runner_unlocked_chars') || '["boy"]');
+    this.upgrades = JSON.parse(localStorage.getItem('cyber_runner_upgrades') || '{"magnet":1,"shield":1,"boost":1}');
+
+    // Game Config & Modes
+    this.gameMode = 'odyssey'; // 'odyssey' | 'time_attack' | 'frenzy' | 'survival'
+    this.selectedWorld = 'candy';
+    this.biomeOrder = ['candy', 'castle', 'crystal', 'oasis'];
+    this.biomeIndex = 0;
+    this.currentBiome = 'candy';
+    this.nextWarpDistance = 1000;
+
+    // Time Attack Timer
+    this.timeAttackTimer = 30.0;
+
+    // State
     this.state = 'START';
-    
-    // Core Game Stats
     this.score = 0;
     this.distance = 0;
     this.gems = 0;
@@ -15,362 +87,282 @@ class Game {
     this.comboTimer = 0;
     this.maxCombo = 1;
 
-    // Speeds & Physics
-    this.baseSpeed = 26;
-    this.currentSpeed = 26;
+    // Speed
+    this.baseSpeed = 27;
+    this.currentSpeed = 27;
     this.boostSpeed = 44;
     this.isManualBoost = false;
-    this.difficulty = 'normal';
 
-    // Nature Biomes: 'odyssey' | 'forest' | 'savannah' | 'winter' | 'jungle'
-    this.selectedWorld = 'odyssey';
-    this.currentBiome = 'forest';
-    this.biomeOrder = ['forest', 'savannah', 'winter', 'jungle'];
-    this.biomeIndex = 0;
-    this.nextWarpDistance = 1000;
-    this.stageGoal = 1000;
-    
-    // Powerup Timers
+    // Powerup
     this.powerupType = null;
     this.powerupTimer = 0;
-    this.powerupMaxTime = 8;
+    this.powerupMaxTime = 8.0;
 
-    // Screen Shake FX
+    // Camera Shake
     this.shakeIntensity = 0;
-    this.shakeDecay = 4.0;
-
-    // Persistence
-    this.highScore = parseInt(localStorage.getItem('cyber_runner_highscore') || '0', 10);
-    this.totalGems = parseInt(localStorage.getItem('cyber_runner_gems') || '0', 10);
-    this.unlockedVehicles = JSON.parse(localStorage.getItem('cyber_runner_unlocked_veh') || '["dart"]');
-    this.activeVehicle = localStorage.getItem('cyber_runner_active_veh') || 'dart';
-    this.upgrades = JSON.parse(localStorage.getItem('cyber_runner_upgrades') || '{"magnet":1,"shield":1,"boost":1}');
+    this.shakeDecay = 4.5;
+    this.lastTime = 0;
 
     this.initThree();
-    this.initEntities();
-    this.initUI();
+    this.initGameSystems();
+    this.initEvents();
+    this.updateUserStatsUI();
     this.applyGarageUpgrades();
-    this.bindEvents();
+    this.updateUpgradesUI();
 
-    this.lastTime = performance.now();
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
   }
 
-  // Initialize Three.js Scene with Bright Natural Daylight & Sky
   initThree() {
-    this.container = document.getElementById('canvas-container');
-
     this.scene = new THREE.Scene();
-    // Vibrant Blue Sky & Soft Horizon Fog
-    this.scene.background = new THREE.Color(0x64b5f6);
-    this.scene.fog = new THREE.FogExp2(0xbbdefb, 0.008);
+    this.scene.background = new THREE.Color(0xf8bbd0);
+    this.scene.fog = new THREE.FogExp2(0xfce4ec, 0.012);
 
-    this.camera = new THREE.PerspectiveCamera(
-      60,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      350
-    );
-    this.camera.position.set(0, 4.2, 7.5);
-    this.camera.lookAt(0, 1.5, -10);
+    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 400);
+    this.camera.position.set(0, 4.0, 7.2);
 
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.25;
-
     this.container.appendChild(this.renderer.domElement);
 
     // Warm Sun Daylight Lighting
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
-    this.scene.add(this.ambientLight);
-
-    this.hemiLight = new THREE.HemisphereLight(0x81d4fa, 0x4caf50, 0.65);
+    this.hemiLight = new THREE.HemisphereLight(0xfff9c4, 0x81d4fa, 0.9);
     this.scene.add(this.hemiLight);
 
-    // Main Sun Directional Light
-    this.dirLight = new THREE.DirectionalLight(0xfffaed, 1.35);
+    this.dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
     this.dirLight.position.set(25, 45, 25);
     this.dirLight.castShadow = true;
     this.dirLight.shadow.mapSize.width = 1024;
     this.dirLight.shadow.mapSize.height = 1024;
     this.dirLight.shadow.camera.near = 0.5;
-    this.dirLight.shadow.camera.far = 140;
-    this.dirLight.shadow.camera.left = -25;
-    this.dirLight.shadow.camera.right = 25;
-    this.dirLight.shadow.camera.top = 25;
-    this.dirLight.shadow.camera.bottom = -25;
+    this.dirLight.shadow.camera.far = 120;
+    this.dirLight.shadow.camera.left = -20;
+    this.dirLight.shadow.camera.right = 20;
+    this.dirLight.shadow.camera.top = 20;
+    this.dirLight.shadow.camera.bottom = -20;
     this.scene.add(this.dirLight);
 
-    // Player Warm Glow Light
-    this.playerLight = new THREE.PointLight(0xffeb3b, 1.2, 16);
-    this.playerLight.position.set(0, 2, 0);
+    this.playerLight = new THREE.PointLight(0xffd54f, 0.8, 16);
     this.scene.add(this.playerLight);
   }
 
-  initEntities() {
+  initGameSystems() {
     this.particles = new ParticleSystem(this.scene);
-    this.player = new Player(this.scene);
     this.world = new WorldManager(this.scene);
+    this.player = new Player(this.scene);
     this.input = new InputManager(this.player, this);
 
-    this.player.setVehicle(this.activeVehicle);
+    this.player.setCharacter(this.activeCharacter);
+    this.switchBiome(this.selectedWorld, false);
   }
 
-  initUI() {
-    this.ui = {
-      score: document.getElementById('score-display'),
-      gems: document.getElementById('gems-display'),
-      distance: document.getElementById('distance-display'),
-      comboBadge: document.getElementById('combo-badge'),
-      comboText: document.getElementById('combo-text'),
-      currentBiomeBadge: document.getElementById('current-biome-badge'),
-      stageDistanceBadge: document.getElementById('stage-distance-badge'),
-      stageProgressFill: document.getElementById('stage-progress-fill'),
-
-      powerupStatus: document.getElementById('powerup-status'),
-      powerupIcon: document.getElementById('powerup-icon'),
-      powerupProgress: document.getElementById('powerup-progress-fill'),
-      lives: document.querySelectorAll('.life-heart'),
-      speedMeter: document.getElementById('speed-meter'),
-      speedBarFill: document.getElementById('speed-bar-fill'),
-
-      startScreen: document.getElementById('start-screen'),
-      startHighScore: document.getElementById('start-high-score'),
-      totalBankedGems: document.getElementById('total-banked-gems'),
-      pauseScreen: document.getElementById('pause-screen'),
-      gameoverScreen: document.getElementById('gameover-screen'),
-      stagesScreen: document.getElementById('stages-screen'),
-      garageScreen: document.getElementById('garage-screen'),
-      garageGemsCount: document.getElementById('garage-gems-count'),
-      warpOverlay: document.getElementById('warp-overlay'),
-      warpWorldName: document.getElementById('warp-world-name'),
-      hud: document.getElementById('hud'),
-
-      finalScore: document.getElementById('final-score'),
-      bestScore: document.getElementById('best-score'),
-      finalDistance: document.getElementById('final-distance'),
-      finalGems: document.getElementById('final-gems'),
-      newHighBadge: document.getElementById('new-high-badge'),
-      damageFlash: document.getElementById('damage-flash'),
-
-      btnSound: document.getElementById('btn-sound-toggle'),
-      btnPause: document.getElementById('btn-pause'),
-      btnStart: document.getElementById('btn-start'),
-      btnRetry: document.getElementById('btn-retry'),
-      btnMenu: document.getElementById('btn-menu'),
-      btnResume: document.getElementById('btn-resume'),
-      btnRestartPause: document.getElementById('btn-restart-pause'),
-      btnOpenStages: document.getElementById('btn-open-stages'),
-      btnCloseStages: document.getElementById('btn-close-stages'),
-      btnConfirmStage: document.getElementById('btn-confirm-stage'),
-      btnOpenGarage: document.getElementById('btn-open-garage'),
-      btnCloseGarage: document.getElementById('btn-close-garage'),
-
-      diffBtns: document.querySelectorAll('.diff-btn'),
-      stageCards: document.querySelectorAll('.stage-card'),
-      vehicleCards: document.querySelectorAll('.vehicle-card'),
-
-      btnBuyTitan: document.getElementById('btn-buy-titan'),
-      btnBuyPhantom: document.getElementById('btn-buy-phantom'),
-      titanStatusBadge: document.getElementById('titan-status-badge'),
-      phantomStatusBadge: document.getElementById('phantom-status-badge'),
-
-      btnUpMagnet: document.getElementById('btn-up-magnet'),
-      btnUpShield: document.getElementById('btn-up-shield'),
-      btnUpBoost: document.getElementById('btn-up-boost'),
-      magnetLevelText: document.getElementById('magnet-level-text'),
-      shieldLevelText: document.getElementById('shield-level-text'),
-      boostLevelText: document.getElementById('boost-level-text')
-    };
-
-    this.updateUserStatsUI();
-    this.updateGarageUI();
-  }
-
-  updateUserStatsUI() {
-    if (this.ui.startHighScore) this.ui.startHighScore.textContent = this.highScore.toLocaleString('ar-EG');
-    if (this.ui.totalBankedGems) this.ui.totalBankedGems.textContent = this.totalGems.toLocaleString('ar-EG');
-    if (this.ui.garageGemsCount) this.ui.garageGemsCount.textContent = this.totalGems.toLocaleString('ar-EG') + ' 💎';
-  }
-
-  bindEvents() {
+  initEvents() {
     window.addEventListener('resize', () => this.onWindowResize());
 
-    this.ui.diffBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.ui.diffBtns.forEach(b => b.classList.remove('active'));
+    // Main Menu & Buttons
+    if (this.ui.btnStart) this.ui.btnStart.addEventListener('click', () => this.start());
+
+    // Game Mode Buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.gameMode = btn.dataset.mode || 'odyssey';
+      });
+    });
+
+    // Difficulty
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.difficulty = btn.dataset.diff;
       });
     });
 
-    this.ui.btnStart.addEventListener('click', () => this.start());
-    this.ui.btnRetry.addEventListener('click', () => this.restart());
-    this.ui.btnMenu.addEventListener('click', () => this.showMenu());
-    this.ui.btnPause.addEventListener('click', () => this.togglePause());
-    this.ui.btnResume.addEventListener('click', () => this.togglePause());
-    this.ui.btnRestartPause.addEventListener('click', () => {
-      this.togglePause();
-      this.restart();
-    });
-
-    this.ui.btnSound.addEventListener('click', () => {
-      const isMuted = window.sound.toggleMute();
-      this.ui.btnSound.textContent = isMuted ? '🔇' : '🔊';
-    });
-
-    this.ui.btnOpenStages.addEventListener('click', () => {
-      this.ui.startScreen.classList.add('hidden');
-      this.ui.stagesScreen.classList.remove('hidden');
-      this.ui.stagesScreen.classList.add('active');
-    });
-
-    this.ui.btnCloseStages.addEventListener('click', () => {
-      this.ui.stagesScreen.classList.remove('active');
-      this.ui.stagesScreen.classList.add('hidden');
-      this.ui.startScreen.classList.remove('hidden');
-    });
-
-    this.ui.btnConfirmStage.addEventListener('click', () => {
-      this.ui.stagesScreen.classList.remove('active');
-      this.ui.stagesScreen.classList.add('hidden');
-      this.ui.startScreen.classList.remove('hidden');
-    });
-
-    this.ui.stageCards.forEach(card => {
-      card.addEventListener('click', () => {
-        this.ui.stageCards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        this.selectedWorld = card.dataset.world;
+    // Stage Selector
+    if (this.ui.btnOpenStages) {
+      this.ui.btnOpenStages.addEventListener('click', () => {
+        this.ui.stagesScreen.classList.remove('hidden');
+        this.ui.stagesScreen.classList.add('active');
       });
-    });
+    }
 
-    this.ui.btnOpenGarage.addEventListener('click', () => {
-      this.ui.startScreen.classList.add('hidden');
-      this.ui.garageScreen.classList.remove('hidden');
-      this.ui.garageScreen.classList.add('active');
-      this.updateGarageUI();
-    });
+    if (this.ui.btnCloseStages) {
+      this.ui.btnCloseStages.addEventListener('click', () => {
+        this.ui.stagesScreen.classList.remove('active');
+        this.ui.stagesScreen.classList.add('hidden');
+      });
+    }
 
-    this.ui.btnCloseGarage.addEventListener('click', () => {
-      this.ui.garageScreen.classList.remove('active');
-      this.ui.garageScreen.classList.add('hidden');
-      this.ui.startScreen.classList.remove('hidden');
-      this.updateUserStatsUI();
-    });
+    if (this.ui.btnConfirmStage) {
+      this.ui.btnConfirmStage.addEventListener('click', () => {
+        this.ui.stagesScreen.classList.remove('active');
+        this.ui.stagesScreen.classList.add('hidden');
+      });
+    }
 
-    this.ui.vehicleCards.forEach(card => {
-      const vehKey = card.dataset.vehicle;
-      const btn = card.querySelector('.veh-select-btn');
-
-      btn.addEventListener('click', () => {
-        if (this.unlockedVehicles.includes(vehKey)) {
-          this.activeVehicle = vehKey;
-          localStorage.setItem('cyber_runner_active_veh', this.activeVehicle);
-          this.player.setVehicle(this.activeVehicle);
-          this.applyGarageUpgrades();
-          this.updateGarageUI();
-          window.sound.playPurchase();
+    document.querySelectorAll('.stage-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        const worldKey = card.dataset.world;
+        if (worldKey === 'odyssey') {
+          this.gameMode = 'odyssey';
+          this.selectedWorld = 'candy';
         } else {
-          const cost = parseInt(btn.dataset.cost || '500', 10);
-          if (this.totalGems >= cost) {
-            this.totalGems -= cost;
-            this.unlockedVehicles.push(vehKey);
-            this.activeVehicle = vehKey;
-            localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
-            localStorage.setItem('cyber_runner_unlocked_veh', JSON.stringify(this.unlockedVehicles));
-            localStorage.setItem('cyber_runner_active_veh', this.activeVehicle);
-            this.player.setVehicle(this.activeVehicle);
-            this.applyGarageUpgrades();
-            this.updateGarageUI();
-            this.updateUserStatsUI();
-            window.sound.playPurchase();
-          } else {
-            alert('عفواً! ليس لديك ثمار ذهبية كافية لفتح هذه المركبة.');
-          }
+          this.selectedWorld = worldKey;
+          this.switchBiome(worldKey, false);
         }
       });
     });
 
-    const buyUpgrade = (type, btn) => {
-      const curLvl = this.upgrades[type] || 1;
-      if (curLvl >= 5) return;
-      const cost = curLvl * 200;
-
-      if (this.totalGems >= cost) {
-        this.totalGems -= cost;
-        this.upgrades[type] = curLvl + 1;
-        localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
-        localStorage.setItem('cyber_runner_upgrades', JSON.stringify(this.upgrades));
-        this.applyGarageUpgrades();
+    // Garage / Character Wardrobe
+    if (this.ui.btnOpenGarage) {
+      this.ui.btnOpenGarage.addEventListener('click', () => {
+        this.ui.garageScreen.classList.remove('hidden');
+        this.ui.garageScreen.classList.add('active');
         this.updateGarageUI();
-        this.updateUserStatsUI();
-        window.sound.playPurchase();
-      } else {
-        alert('النقاط غير كافية للترقية.');
-      }
+      });
+    }
+
+    if (this.ui.btnCloseGarage) {
+      this.ui.btnCloseGarage.addEventListener('click', () => {
+        this.ui.garageScreen.classList.remove('active');
+        this.ui.garageScreen.classList.add('hidden');
+      });
+    }
+
+    // Character Selection Cards
+    document.querySelectorAll('.vehicle-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const charId = card.dataset.char || card.dataset.vehicle;
+        const isUnlocked = this.unlockedChars.includes(charId);
+
+        if (isUnlocked) {
+          this.activeCharacter = charId;
+          localStorage.setItem('cyber_runner_active_char', charId);
+          this.player.setCharacter(charId);
+          this.updateGarageUI();
+        }
+      });
+    });
+
+    // Character Purchase Buttons
+    const setupBuyBtn = (btnId, charId, cost) => {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.totalGems >= cost && !this.unlockedChars.includes(charId)) {
+          this.totalGems -= cost;
+          this.unlockedChars.push(charId);
+          localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
+          localStorage.setItem('cyber_runner_unlocked_chars', JSON.stringify(this.unlockedChars));
+          this.activeCharacter = charId;
+          localStorage.setItem('cyber_runner_active_char', charId);
+          this.player.setCharacter(charId);
+          this.updateGarageUI();
+          this.updateUserStatsUI();
+          if (window.sound) window.sound.playPowerup();
+        }
+      });
     };
 
-    this.ui.btnUpMagnet.addEventListener('click', () => buyUpgrade('magnet', this.ui.btnUpMagnet));
-    this.ui.btnUpShield.addEventListener('click', () => buyUpgrade('shield', this.ui.btnUpShield));
-    this.ui.btnUpBoost.addEventListener('click', () => buyUpgrade('boost', this.ui.btnUpBoost));
+    setupBuyBtn('btn-buy-girl', 'girl', 500);
+    setupBuyBtn('btn-buy-robot', 'robot', 1000);
+    setupBuyBtn('btn-buy-fox', 'fox', 1500);
+
+    // Upgrades
+    const setupUpBtn = (btn, type) => {
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        const curLvl = this.upgrades[type] || 1;
+        if (curLvl < 5) {
+          const cost = curLvl * 200;
+          if (this.totalGems >= cost) {
+            this.totalGems -= cost;
+            this.upgrades[type] = curLvl + 1;
+            localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
+            localStorage.setItem('cyber_runner_upgrades', JSON.stringify(this.upgrades));
+            this.applyGarageUpgrades();
+            this.updateUpgradesUI();
+            this.updateUserStatsUI();
+            this.updateGarageUI();
+            if (window.sound) window.sound.playPowerup();
+          }
+        }
+      });
+    };
+
+    setupUpBtn(this.ui.btnUpMagnet, 'magnet');
+    setupUpBtn(this.ui.btnUpShield, 'shield');
+    setupUpBtn(this.ui.btnUpBoost, 'boost');
+
+    // Controls HUD
+    if (this.ui.btnSoundToggle) {
+      this.ui.btnSoundToggle.addEventListener('click', () => {
+        const enabled = window.sound.toggleMute();
+        this.ui.btnSoundToggle.textContent = enabled ? '🔊' : '🔇';
+      });
+    }
+
+    if (this.ui.btnPause) this.ui.btnPause.addEventListener('click', () => this.togglePause());
+    if (this.ui.btnResume) this.ui.btnResume.addEventListener('click', () => this.togglePause());
+    if (this.ui.btnRestartPause) this.ui.btnRestartPause.addEventListener('click', () => this.restart());
+    if (this.ui.btnRetry) this.ui.btnRetry.addEventListener('click', () => this.restart());
+    if (this.ui.btnMenu) this.ui.btnMenu.addEventListener('click', () => this.showMenu());
+  }
+
+  updateUserStatsUI() {
+    if (this.ui.startHighScore) this.ui.startHighScore.textContent = this.highScore.toLocaleString('ar-EG');
+    if (this.ui.totalBankedGems) this.ui.totalBankedGems.textContent = this.totalGems.toLocaleString('ar-EG');
   }
 
   updateGarageUI() {
-    if (this.ui.garageGemsCount) {
-      this.ui.garageGemsCount.textContent = this.totalGems.toLocaleString('ar-EG') + ' 💎';
-    }
+    if (this.ui.garageGemsCount) this.ui.garageGemsCount.textContent = `${this.totalGems} 🍎`;
 
-    this.ui.vehicleCards.forEach(card => {
-      const vKey = card.dataset.vehicle;
-      const isOwned = this.unlockedVehicles.includes(vKey);
-      const isSelected = (this.activeVehicle === vKey);
-      const btn = card.querySelector('.veh-select-btn');
+    document.querySelectorAll('.vehicle-card').forEach(card => {
+      const charId = card.dataset.char || card.dataset.vehicle;
+      const isUnlocked = this.unlockedChars.includes(charId);
+      const isCurrent = (this.activeCharacter === charId);
 
-      if (isSelected) {
-        card.classList.add('active');
-        btn.textContent = 'محددة للسباق ✅';
-        btn.className = 'veh-select-btn btn-primary btn-sm selected';
-      } else if (isOwned) {
-        card.classList.remove('active');
-        btn.textContent = 'اختيار المركبة';
-        btn.className = 'veh-select-btn btn-secondary btn-sm';
-      } else {
-        card.classList.remove('active');
-        const cost = btn.dataset.cost;
-        btn.textContent = `فتح بـ ${cost} 💎`;
-        btn.className = 'veh-select-btn btn-secondary btn-sm';
+      card.classList.toggle('active', isCurrent);
+      const badge = card.querySelector('.veh-status-badge');
+      const actionBtn = card.querySelector('.veh-select-btn');
+
+      if (badge) {
+        badge.textContent = isUnlocked ? 'مملوكة ✅' : 'مغلقة 🔒';
+        badge.className = `veh-status-badge ${isUnlocked ? 'owned' : 'locked'}`;
+      }
+
+      if (actionBtn) {
+        if (isCurrent) {
+          actionBtn.textContent = 'محددة للسباق ⭐';
+          actionBtn.className = 'veh-select-btn btn-primary btn-sm selected';
+        } else if (isUnlocked) {
+          actionBtn.textContent = 'اختيار الشخصية';
+          actionBtn.className = 'veh-select-btn btn-primary btn-sm';
+        }
       }
     });
+  }
 
-    if (this.ui.titanStatusBadge) {
-      const isTitanOwned = this.unlockedVehicles.includes('titan');
-      this.ui.titanStatusBadge.className = isTitanOwned ? 'veh-status-badge owned' : 'veh-status-badge locked';
-      this.ui.titanStatusBadge.textContent = isTitanOwned ? 'مملوكة ✅' : 'مغلقة 🔒';
-    }
-
-    if (this.ui.phantomStatusBadge) {
-      const isPhantomOwned = this.unlockedVehicles.includes('phantom');
-      this.ui.phantomStatusBadge.className = isPhantomOwned ? 'veh-status-badge owned' : 'veh-status-badge locked';
-      this.ui.phantomStatusBadge.textContent = isPhantomOwned ? 'مملوكة ✅' : 'مغلقة 🔒';
-    }
-
+  updateUpgradesUI() {
     const updateUpBtn = (type, btn, lvlText) => {
+      if (!btn || !lvlText) return;
       const lvl = this.upgrades[type] || 1;
       lvlText.textContent = `المستوى ${lvl} / 5`;
       if (lvl >= 5) {
-        btn.textContent = 'الحد الأقصى (MAX)';
+        btn.textContent = 'المستوى الأقصى ⭐';
         btn.classList.add('maxed');
       } else {
-        btn.textContent = `ترقية بـ ${lvl * 200} 💎`;
+        const cost = lvl * 200;
+        btn.textContent = `ترقية بـ ${cost} 🍎`;
         btn.classList.remove('maxed');
       }
     };
@@ -385,11 +377,11 @@ class Game {
     const shieldLvl = this.upgrades.shield || 1;
     const boostLvl = this.upgrades.boost || 1;
 
-    this.player.magnetRadius = 5.0 + (magnetLvl * 1.6);
-    if (this.activeVehicle === 'phantom') this.player.magnetRadius += 3.0;
+    this.player.magnetRadius = 5.5 + (magnetLvl * 1.8);
+    if (this.activeCharacter === 'robot') this.player.magnetRadius += 3.5;
 
     this.player.shieldDurationBonus = (shieldLvl - 1) * 1.5;
-    this.player.boostFactor = 1.0 + (boostLvl * 0.08);
+    this.player.boostFactor = 1.0 + (boostLvl * 0.1);
     this.boostSpeed = 44 * this.player.boostFactor;
   }
 
@@ -403,7 +395,7 @@ class Game {
     this.currentBiome = biomeKey;
     this.world.setBiome(biomeKey);
     this.particles.setBiome(biomeKey);
-    window.sound.setBiome(biomeKey);
+    if (window.sound) window.sound.setBiome(biomeKey);
 
     const biomeData = this.world.biomes[biomeKey];
     if (this.ui.currentBiomeBadge && biomeData) {
@@ -413,7 +405,7 @@ class Game {
     if (showWarpFX && this.ui.warpOverlay) {
       this.ui.warpWorldName.textContent = `الانتقال إلى ${biomeData.name}!`;
       this.ui.warpOverlay.classList.add('active');
-      window.sound.playWarp();
+      if (window.sound) window.sound.playWarp();
       this.shakeScreen(0.8);
 
       setTimeout(() => {
@@ -429,22 +421,26 @@ class Game {
     this.ui.hud.classList.remove('hidden');
     this.ui.speedMeter.classList.remove('hidden');
 
-    if (this.difficulty === 'easy') {
-      this.baseSpeed = 22;
-      this.maxLives = 4;
-    } else if (this.difficulty === 'normal') {
+    if (this.gameMode === 'survival') {
+      this.baseSpeed = 36;
+      this.maxLives = 1;
+    } else if (this.gameMode === 'time_attack') {
+      this.baseSpeed = 28;
+      this.maxLives = 3;
+      this.timeAttackTimer = 35.0;
+    } else if (this.gameMode === 'frenzy') {
+      this.baseSpeed = 26;
+      this.maxLives = 3;
+      this.player.magnetRadius = 14.0;
+    } else {
       this.baseSpeed = 27;
       this.maxLives = 3;
-    } else {
-      this.baseSpeed = 35;
-      this.maxLives = 2;
     }
 
-    if (this.selectedWorld === 'odyssey') {
+    if (this.gameMode === 'odyssey') {
       this.biomeIndex = 0;
       this.switchBiome(this.biomeOrder[0], false);
       this.nextWarpDistance = 1000;
-      this.stageGoal = 1000;
     } else {
       this.switchBiome(this.selectedWorld, false);
       this.nextWarpDistance = 999999;
@@ -452,7 +448,7 @@ class Game {
 
     this.currentSpeed = this.baseSpeed;
     this.resetStats();
-    window.sound.startMusic();
+    if (window.sound) window.sound.startMusic();
   }
 
   restart() {
@@ -467,7 +463,7 @@ class Game {
     this.world.reset();
     this.particles.clear();
 
-    if (this.selectedWorld === 'odyssey') {
+    if (this.gameMode === 'odyssey') {
       this.biomeIndex = 0;
       this.switchBiome(this.biomeOrder[0], false);
       this.nextWarpDistance = 1000;
@@ -475,7 +471,7 @@ class Game {
       this.switchBiome(this.selectedWorld, false);
     }
 
-    window.sound.startMusic();
+    if (window.sound) window.sound.startMusic();
   }
 
   showMenu() {
@@ -490,7 +486,7 @@ class Game {
     this.player.reset();
     this.world.reset();
     this.particles.clear();
-    window.sound.stopMusic();
+    if (window.sound) window.sound.stopMusic();
     this.updateUserStatsUI();
   }
 
@@ -499,12 +495,12 @@ class Game {
       this.state = 'PAUSED';
       this.ui.pauseScreen.classList.remove('hidden');
       this.ui.pauseScreen.classList.add('active');
-      window.sound.stopMusic();
+      if (window.sound) window.sound.stopMusic();
     } else if (this.state === 'PAUSED') {
       this.state = 'PLAYING';
       this.ui.pauseScreen.classList.remove('active');
       this.ui.pauseScreen.classList.add('hidden');
-      window.sound.startMusic();
+      if (window.sound) window.sound.startMusic();
     }
   }
 
@@ -518,13 +514,14 @@ class Game {
     this.maxCombo = 1;
     this.powerupType = null;
     this.powerupTimer = 0;
+    this.timeAttackTimer = 35.0;
     this.updateHUD();
   }
 
   triggerBoost(isBoosting) {
     this.isManualBoost = isBoosting;
     if (isBoosting) {
-      window.sound.playBoost();
+      if (window.sound) window.sound.playBoost();
       this.shakeScreen(0.2);
     }
   }
@@ -543,7 +540,7 @@ class Game {
   activatePowerup(type) {
     this.powerupType = type;
     this.powerupTimer = this.powerupMaxTime + this.player.shieldDurationBonus;
-    window.sound.playPowerup();
+    if (window.sound) window.sound.playPowerup();
 
     if (type === 'shield') {
       this.player.setShield(true);
@@ -559,7 +556,7 @@ class Game {
     const playerBox = this.player.boxCollider;
     const playerPos = this.player.group.position;
 
-    // 1. Jump Pads (Mushroom Bouncers)
+    // 1. Jump Pads
     for (let pad of this.world.jumpPads) {
       if (playerBox.intersectsBox(pad.box)) {
         this.player.launchJumpPad();
@@ -578,7 +575,7 @@ class Game {
       }
     }
 
-    // 3. Nature Obstacles
+    // 3. Obstacles (Rolling Donuts, Totems, Boulders)
     for (let i = this.world.obstacles.length - 1; i >= 0; i--) {
       const obs = this.world.obstacles[i];
       if (playerBox.intersectsBox(obs.box)) {
@@ -591,7 +588,7 @@ class Game {
           this.powerupType = null;
           this.powerupTimer = 0;
           this.ui.powerupStatus.classList.add('hidden');
-          window.sound.playHit();
+          if (window.sound) window.sound.playHit();
           this.shakeScreen(0.4);
         } else {
           this.lives--;
@@ -599,7 +596,7 @@ class Game {
           this.comboTimer = 0;
           this.flashDamage();
           this.shakeScreen(0.6);
-          window.sound.playHit();
+          if (window.sound) window.sound.playHit();
           this.input.vibrate(80);
 
           if (this.lives <= 0) {
@@ -611,23 +608,31 @@ class Game {
       }
     }
 
-    // 4. Collectibles (Golden Apples & Gems)
+    // 4. Collectibles (Golden Apples, Gems, Hourglasses ⏳)
     for (let i = this.world.collectibles.length - 1; i >= 0; i--) {
       const col = this.world.collectibles[i];
       const dist = playerPos.distanceTo(col.mesh.position);
-      if (dist < 1.7) {
-        this.particles.createCollectBurst(col.mesh.position, 0xffd700);
+      if (dist < 1.8) {
+        const isHourglass = col.isHourglass;
+        this.particles.createCollectBurst(col.mesh.position, isHourglass ? 0x00e5ff : 0xffd700);
         this.scene.remove(col.mesh);
         this.world.collectibles.splice(i, 1);
 
-        this.gems++;
-        this.score += col.points * this.combo;
+        if (isHourglass) {
+          this.timeAttackTimer += 6.0; // Add 6 seconds in time attack!
+          this.score += 400 * this.combo;
+          this.gems += 2;
+        } else {
+          const mult = (this.gameMode === 'frenzy') ? 10 : 1;
+          this.gems += (1 * mult);
+          this.score += col.points * this.combo * mult;
+        }
 
         this.combo = Math.min(10, this.combo + 1);
         this.comboTimer = 3.8;
         if (this.combo > this.maxCombo) this.maxCombo = this.combo;
 
-        window.sound.playCollect(this.combo);
+        if (window.sound) window.sound.playCollect(this.combo);
         this.updateHUD();
       }
     }
@@ -650,7 +655,13 @@ class Game {
     if (this.ui.gems) this.ui.gems.textContent = this.gems.toLocaleString('ar-EG');
     if (this.ui.distance) this.ui.distance.textContent = Math.floor(this.distance) + 'm';
 
-    if (this.selectedWorld === 'odyssey') {
+    if (this.gameMode === 'time_attack') {
+      if (this.ui.stageDistanceBadge) {
+        this.ui.stageDistanceBadge.textContent = `⏳ ${Math.ceil(this.timeAttackTimer)}s`;
+      }
+      const pct = Math.min(100, (this.timeAttackTimer / 40.0) * 100);
+      if (this.ui.stageProgressFill) this.ui.stageProgressFill.style.width = `${pct}%`;
+    } else if (this.gameMode === 'odyssey') {
       const cycleDist = this.distance % 1000;
       const pct = Math.min(100, (cycleDist / 1000) * 100);
       if (this.ui.stageProgressFill) this.ui.stageProgressFill.style.width = `${pct}%`;
@@ -662,11 +673,8 @@ class Game {
     }
 
     this.ui.lives.forEach((heart, idx) => {
-      if (idx < this.lives) {
-        heart.classList.remove('lost');
-      } else {
-        heart.classList.add('lost');
-      }
+      if (idx < this.lives) heart.classList.remove('lost');
+      else heart.classList.add('lost');
     });
 
     if (this.combo > 1) {
@@ -679,8 +687,10 @@ class Game {
 
   gameOver() {
     this.state = 'GAMEOVER';
-    window.sound.stopMusic();
-    window.sound.playGameOver();
+    if (window.sound) {
+      window.sound.stopMusic();
+      window.sound.playGameOver();
+    }
 
     this.totalGems += this.gems;
     localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
@@ -697,7 +707,7 @@ class Game {
     this.ui.finalScore.textContent = Math.floor(this.score).toLocaleString('ar-EG');
     this.ui.bestScore.textContent = this.highScore.toLocaleString('ar-EG');
     this.ui.finalDistance.textContent = Math.floor(this.distance) + 'm';
-    this.ui.finalGems.textContent = this.gems + ' 💎';
+    this.ui.finalGems.textContent = this.gems + ' 🍎';
 
     this.ui.hud.classList.add('hidden');
     this.ui.speedMeter.classList.add('hidden');
@@ -712,6 +722,15 @@ class Game {
     this.lastTime = timestamp;
 
     if (this.state === 'PLAYING') {
+      // Time Attack Countdown
+      if (this.gameMode === 'time_attack') {
+        this.timeAttackTimer -= delta;
+        if (this.timeAttackTimer <= 0) {
+          this.gameOver();
+          return;
+        }
+      }
+
       const targetSpeed = (this.powerupType === 'boost' || this.isManualBoost) ? this.boostSpeed : this.baseSpeed + (this.distance * 0.005);
       this.currentSpeed += (targetSpeed - this.currentSpeed) * 4 * delta;
 
@@ -725,7 +744,7 @@ class Game {
       this.distance += forwardStep * 0.5;
       this.score += forwardStep * 1.2 * this.combo;
 
-      if (this.selectedWorld === 'odyssey' && this.distance >= this.nextWarpDistance - 60 && this.world.warpGates.length === 0) {
+      if (this.gameMode === 'odyssey' && this.distance >= this.nextWarpDistance - 60 && this.world.warpGates.length === 0) {
         const warpZ = this.player.z - 80;
         this.world.spawnWarpGate(warpZ);
         this.nextWarpDistance += 1000;
@@ -746,9 +765,7 @@ class Game {
         const progressPct = (this.powerupTimer / this.powerupMaxTime) * 100;
         this.ui.powerupProgress.style.width = `${progressPct}%`;
 
-        if (this.powerupType === 'boost') {
-          this.player.setBoosting(true);
-        }
+        if (this.powerupType === 'boost') this.player.setBoosting(true);
 
         if (this.powerupTimer <= 0) {
           if (this.powerupType === 'shield') this.player.setShield(false);
@@ -790,20 +807,17 @@ class Game {
 
       this.camera.lookAt(this.player.x * 0.2, this.player.y * 0.5 + 1.2, this.player.z - 12);
     } else {
-      // Idle on start / menu screens
+      // Idle Animation on Start / Menu Screen
       if (this.player) {
         this.player.runTimer += delta * 2.5;
-        // Breathing body bounce
         const breath = Math.sin(this.player.runTimer) * 0.05;
         this.player.bodyGroup.position.y = 1.35 + breath;
         
-        // Gentle wave with right arm
         if (this.player.rightArmGroup) {
           this.player.rightArmGroup.rotation.x = -1.2 + Math.sin(this.player.runTimer * 3) * 0.25;
           this.player.rightArmGroup.rotation.z = -0.4 + Math.cos(this.player.runTimer * 3) * 0.2;
         }
 
-        // Face front/camera with slight slow sway
         this.player.group.rotation.y = Math.sin(this.player.runTimer * 0.5) * 0.25;
         this.player.group.position.set(0, 0, -2.0);
       }

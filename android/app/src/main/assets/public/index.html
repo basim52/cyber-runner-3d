@@ -3,15 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Nature Runner 3D | مغامر الغابة والطبيعة</title>
-  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة ومبهجة في عوالم الطبيعة مع شخصية ولد متحرك">
+  <!-- Cache Control -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
+  <title>Fantasy Runner 3D | مغامر العوالم التخيلية</title>
+  <meta name="description" content="لعبة ثلاثية الأبعاد ممتعة في عوالم تخيلية ساحرة مع شخصيات متنوعة وأنماط لعب إبداعية">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=5.0.0">
   
   <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -42,7 +47,7 @@
       <div class="hud-group hud-center">
         <div class="stage-tracker">
           <div class="stage-header-row">
-            <span id="current-biome-badge" class="biome-badge">🌲 الغابة الساحرة</span>
+            <span id="current-biome-badge" class="biome-badge">🍭 مملكة الحلوى</span>
             <span id="stage-distance-badge" class="digit-font">0 / 1000m</span>
           </div>
           <div class="stage-progress-track">
@@ -88,9 +93,9 @@
     <!-- Start / Main Menu Screen -->
     <div id="start-screen" class="screen-modal active">
       <div class="modal-card glass-panel">
-        <div class="brand-badge">🌳 3D BOY RUNNER ADVENTURE</div>
-        <h1 class="game-title glow-text">NATURE RUNNER <span class="accent-title">3D</span></h1>
-        <p class="game-subtitle">ساعد الولد المغامر على الركض عبر الغابات والطبيعة الساحرة، تفادَ جذوع الأشجار، واجمع التفاح الذهبي!</p>
+        <div class="brand-badge">✨ 3D FANTASY RUNNER</div>
+        <h1 class="game-title glow-text">FANTASY RUNNER <span class="accent-title">3D</span></h1>
+        <p class="game-subtitle">انطلق في عوالم تخيلية ساحرة، تفادَ الدوناتس المتدحرجة والأبراج السحرية، واجمع الحلوى والبلورات النادرة!</p>
         
         <div class="user-stats-bar">
           <div class="user-stat-item">
@@ -98,77 +103,96 @@
             <strong id="start-high-score" class="digit-font">0</strong>
           </div>
           <div class="user-stat-item">
-            <span>🍎 التفاح المجمّع:</span>
+            <span>🍎 الحلوى والجواهر:</span>
             <strong id="total-banked-gems" class="digit-font">0</strong>
+          </div>
+        </div>
+
+        <!-- Game Modes Picker -->
+        <div class="mode-picker-container">
+          <label class="section-label">اختر نمط اللعب 🎮:</label>
+          <div class="game-modes-grid">
+            <button class="mode-btn active" data-mode="odyssey">
+              <span class="mode-icon">🏆</span>
+              <div class="mode-details">
+                <strong>المغامرة اللانهائية</strong>
+                <span>بوابات سحرية كل 1000m</span>
+              </div>
+            </button>
+            <button class="mode-btn" data-mode="time_attack">
+              <span class="mode-icon">⏱️</span>
+              <div class="mode-details">
+                <strong>سباق الزمن ⏳</strong>
+                <span>اجمع الساعات للبقاء</span>
+              </div>
+            </button>
+            <button class="mode-btn" data-mode="frenzy">
+              <span class="mode-icon">🧲</span>
+              <div class="mode-details">
+                <strong>حمى الحلوى x10</strong>
+                <span>مغناطيس دائم ونقاط مضاعفة</span>
+              </div>
+            </button>
+            <button class="mode-btn" data-mode="survival">
+              <span class="mode-icon">🔥</span>
+              <div class="mode-details">
+                <strong>تحدي النجاة</strong>
+                <span>سرعة قصوى وفرصة واحدة</span>
+              </div>
+            </button>
           </div>
         </div>
 
         <div class="menu-nav-buttons">
           <button id="btn-open-stages" class="nav-feature-btn">
-            <span class="nav-icon">🗺️</span>
-            <span class="nav-text">اختيار عوالم الطبيعة</span>
+            <span class="nav-icon">🪐</span>
+            <span class="nav-text">العوالم التخيلية</span>
           </button>
           <button id="btn-open-garage" class="nav-feature-btn">
-            <span class="nav-icon">👦</span>
-            <span class="nav-text">شخصيات وأزياء الولد</span>
+            <span class="nav-icon">🎭</span>
+            <span class="nav-text">اختيار الشخصيات</span>
           </button>
-        </div>
-
-        <div class="difficulty-picker">
-          <label>مستوى التحدي:</label>
-          <div class="diff-buttons">
-            <button class="diff-btn" data-diff="easy">سهل</button>
-            <button class="diff-btn active" data-diff="normal">متوسط</button>
-            <button class="diff-btn" data-diff="hard">خبير ⚡</button>
-          </div>
         </div>
 
         <button id="btn-start" class="btn-primary pulse-btn">
-          <span>انطلاق للمغامرة 🏃‍♂️🌲</span>
+          <span>انطلاق للمغامرة الساحرة 🚀✨</span>
         </button>
       </div>
     </div>
 
-    <!-- Stage Select Modal -->
+    <!-- Fantasy Stages Screen -->
     <div id="stages-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel stage-modal-card">
-        <h2 class="glow-text">اختر عالم المغامرة 🗺️</h2>
-        <p class="sub-text">انطلق في عالم محدد أو اختر نمط الرحلة اللانهائية للتنقل بين كل العوالم الطبيعية!</p>
+        <h2 class="glow-text">اختر العالم التخيلي 🪐</h2>
+        <p class="sub-text">انطلق في بيئة خيالية فريدة أو اترك اللعبة تنقلك بين كل العوالم عبر بوابات الورد!</p>
         
         <div class="stages-grid">
-          <div class="stage-card active" data-world="odyssey">
-            <div class="stage-tag">الموصى به ⭐</div>
-            <div class="stage-card-icon">🌀</div>
-            <h3>الرحلة اللانهائية</h3>
-            <p>انتقال تلقائي بين كل العوالم الطبيعية عبر بوابات الورد</p>
+          <div class="stage-card active" data-world="candy">
+            <div class="stage-tag candy-tag">العالم 1 🍭</div>
+            <div class="stage-card-icon">🍭</div>
+            <h3>مملكة الحلوى والسكاكر</h3>
+            <p>مسار جيلي وردي وشوكولاتة، مصاصات سكر ملونة ودوناتس متدحرجة</p>
           </div>
 
-          <div class="stage-card" data-world="forest">
-            <div class="stage-tag forest-tag">العالم 1</div>
-            <div class="stage-card-icon">🌲</div>
-            <h3>الغابة الساحرة</h3>
-            <p>مروج خضراء، أشجار صنوبر وزهور، غزلان وأرانب تقفز</p>
+          <div class="stage-card" data-world="castle">
+            <div class="stage-tag castle-tag">العالم 2 🏰</div>
+            <div class="stage-card-icon">🏰</div>
+            <h3>قلعة الغيوم وقوس قزح</h3>
+            <p>مسار رخامي أبيض ذهبي يطفو في السماء مع قلاع سحرية وقوس قزح</p>
           </div>
 
-          <div class="stage-card" data-world="savannah">
-            <div class="stage-tag savannah-tag">العالم 2</div>
-            <div class="stage-card-icon">🌴</div>
-            <h3>السافانا وواحة النخيل</h3>
-            <p>رمال ذهبية، أشجار نخيل، جمال وغزلان وشموس دافئة</p>
+          <div class="stage-card" data-world="crystal">
+            <div class="stage-tag crystal-tag">العالم 3 🪐</div>
+            <div class="stage-card-icon">🪐</div>
+            <h3>كوكب الكريستال السديمي</h3>
+            <p>مسار بلوري بنفسجي متوهج مع أبراج طاقة وكواكب ومذنبات فضائية</p>
           </div>
 
-          <div class="stage-card" data-world="winter">
-            <div class="stage-tag winter-tag">العالم 3</div>
-            <div class="stage-card-icon">❄️</div>
-            <h3>غابة الثلج والقطب</h3>
-            <p>ثلوج ناصعة، أشجار مغطاة بالثلج، وبطاريق مرحة</p>
-          </div>
-
-          <div class="stage-card" data-world="jungle">
-            <div class="stage-tag jungle-tag">العالم 4</div>
-            <div class="stage-card-icon">🌿</div>
-            <h3>الغابة الاستوائية</h3>
-            <p>فطور عملاقة، نباتات خصبة، وبحيرات زمردية</p>
+          <div class="stage-card" data-world="oasis">
+            <div class="stage-tag oasis-tag">العالم 4 🏺</div>
+            <div class="stage-card-icon">🏺</div>
+            <h3>واحة الأهرامات الذهبية</h3>
+            <p>رمال ذهبية متلألئة، أهرامات عائمة في السماء، وأبراج طاقة قديمة</p>
           </div>
         </div>
 
@@ -179,11 +203,11 @@
       </div>
     </div>
 
-    <!-- Boy Characters & Outfits Wardrobe Modal -->
+    <!-- Characters & Wardrobe Modal -->
     <div id="garage-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel garage-modal-card">
         <div class="garage-header">
-          <h2 class="glow-text">خزانة أزياء وشخصيات الولد 👦🎒</h2>
+          <h2 class="glow-text">خزانة الشخصيات التخيلية 🎭✨</h2>
           <div class="garage-bank">
             <span>رصيدك:</span>
             <strong id="garage-gems-count" class="digit-font">0 🍎</strong>
@@ -191,72 +215,68 @@
         </div>
 
         <div class="vehicles-slider">
-          <!-- Outfit 1 -->
-          <div class="vehicle-card active" data-vehicle="dart">
+          <!-- Char 1: Boy -->
+          <div class="vehicle-card active" data-char="boy">
             <div class="veh-status-badge owned">مملوكة ✅</div>
-            <div class="veh-visual">🧢</div>
-            <h3>الولد المغامر (الكلاسيكي)</h3>
-            <p class="veh-desc">سترة زرقاء وحذاء أحمر رياضي مع حقيبة ظهر</p>
+            <div class="veh-visual">👦</div>
+            <h3>المغامر سامي</h3>
+            <p class="veh-desc">ولد مغامر رشيق بحقيبة ظهر وقبعة رياضية</p>
             <div class="veh-stats">
-              <div class="stat-row">
-                <span>السرعة:</span>
-                <div class="stat-bar"><div style="width: 70%"></div></div>
-              </div>
-              <div class="stat-row">
-                <span>الرشاقة:</span>
-                <div class="stat-bar"><div style="width: 80%"></div></div>
-              </div>
+              <div class="stat-row"><span>السرعة:</span><div class="stat-bar"><div style="width: 75%"></div></div></div>
+              <div class="stat-row"><span>الرشاقة:</span><div class="stat-bar"><div style="width: 85%"></div></div></div>
             </div>
-            <button class="veh-select-btn btn-primary btn-sm selected">محددة للسباق</button>
+            <button class="veh-select-btn btn-primary btn-sm selected">محددة للسباق ⭐</button>
           </div>
 
-          <!-- Outfit 2 -->
-          <div class="vehicle-card" data-vehicle="titan">
-            <div id="titan-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
-            <div class="veh-visual">🌲</div>
-            <h3>عداء الغابة الأخضر</h3>
-            <p class="veh-desc">زي غابات تمويهي صلب بدرع حماية إضافي</p>
+          <!-- Char 2: Girl -->
+          <div class="vehicle-card" data-char="girl">
+            <div id="girl-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
+            <div class="veh-visual">👧</div>
+            <h3>المغامرة لانا</h3>
+            <p class="veh-desc">فتاة سريعة ونظارات استكشاف وقفزات رشيقة</p>
             <div class="veh-stats">
-              <div class="stat-row">
-                <span>السرعة:</span>
-                <div class="stat-bar"><div style="width: 65%"></div></div>
-              </div>
-              <div class="stat-row">
-                <span>الدرع:</span>
-                <div class="stat-bar"><div style="width: 95%"></div></div>
-              </div>
+              <div class="stat-row"><span>السرعة:</span><div class="stat-bar"><div style="width: 82%"></div></div></div>
+              <div class="stat-row"><span>القفز المزدوج:</span><div class="stat-bar"><div style="width: 90%"></div></div></div>
             </div>
-            <button id="btn-buy-titan" class="veh-select-btn btn-secondary btn-sm" data-cost="500">فتح بـ 500 🍎</button>
+            <button id="btn-buy-girl" class="veh-select-btn btn-secondary btn-sm">فتح بـ 500 🍎</button>
           </div>
 
-          <!-- Outfit 3 -->
-          <div class="vehicle-card" data-vehicle="phantom">
-            <div id="phantom-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
-            <div class="veh-visual">🌟</div>
-            <h3>المستكشف الذهبي الخارق</h3>
-            <p class="veh-desc">زي ذهبي لامع بسرعة فائقة ومغناطيس واسع</p>
+          <!-- Char 3: Robot -->
+          <div class="vehicle-card" data-char="robot">
+            <div id="bot-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
+            <div class="veh-visual">🤖</div>
+            <h3>الروبوت سباركي</h3>
+            <p class="veh-desc">روبوت كروي لطيف بمغناطيس سحب واسع النطاق</p>
             <div class="veh-stats">
-              <div class="stat-row">
-                <span>السرعة:</span>
-                <div class="stat-bar"><div style="width: 98%"></div></div>
-              </div>
-              <div class="stat-row">
-                <span>المغناطيس:</span>
-                <div class="stat-bar"><div style="width: 95%"></div></div>
-              </div>
+              <div class="stat-row"><span>المغناطيس:</span><div class="stat-bar"><div style="width: 98%"></div></div></div>
+              <div class="stat-row"><span>الدرع:</span><div class="stat-bar"><div style="width: 88%"></div></div></div>
             </div>
-            <button id="btn-buy-phantom" class="veh-select-btn btn-secondary btn-sm" data-cost="1200">فتح بـ 1200 🍎</button>
+            <button id="btn-buy-robot" class="veh-select-btn btn-secondary btn-sm">فتح بـ 1000 🍎</button>
+          </div>
+
+          <!-- Char 4: Fox -->
+          <div class="vehicle-card" data-char="fox">
+            <div id="fox-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
+            <div class="veh-visual">🦊</div>
+            <h3>الثعلب السريع كيت</h3>
+            <p class="veh-desc">ثعلب ذكي ورشيق بذيل كثيف وسرعة اندفاع فائقة</p>
+            <div class="veh-stats">
+              <div class="stat-row"><span>السرعة:</span><div class="stat-bar"><div style="width: 99%"></div></div></div>
+              <div class="stat-row"><span>التفادي:</span><div class="stat-bar"><div style="width: 95%"></div></div></div>
+            </div>
+            <button id="btn-buy-fox" class="veh-select-btn btn-secondary btn-sm">فتح بـ 1500 🍎</button>
           </div>
         </div>
 
+        <!-- Upgrades Section -->
         <div class="upgrades-container">
-          <h3 class="upgrade-sec-title">ترقيات وتطوير المهارات 🛠️</h3>
+          <h3 class="upgrade-sec-title">تطوير المهارات والأنظمة 🛠️</h3>
           <div class="upgrades-grid">
             <div class="upgrade-card">
               <div class="upgrade-info">
                 <span class="up-icon">🧲</span>
                 <div>
-                  <strong>مجال سحب التفاح</strong>
+                  <strong>مجال سحب الحلوى</strong>
                   <span id="magnet-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
@@ -267,7 +287,7 @@
               <div class="upgrade-info">
                 <span class="up-icon">🛡️</span>
                 <div>
-                  <strong>صمود درع الحماية</strong>
+                  <strong>درع الصمود السحري</strong>
                   <span id="shield-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
@@ -278,7 +298,7 @@
               <div class="upgrade-info">
                 <span class="up-icon">⚡</span>
                 <div>
-                  <strong>سرعة الاندفاع السريع</strong>
+                  <strong>سرعة الاندفاع Boost</strong>
                   <span id="boost-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
@@ -294,8 +314,8 @@
     <!-- Pause Screen -->
     <div id="pause-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel small-modal">
-        <h2 class="glow-text">اللعبة متوقفة</h2>
-        <p>استمتع بهدوء الطبيعة وعد إلى المغامرة!</p>
+        <h2 class="glow-text">اللعبة متوقفة ⏸️</h2>
+        <p>استمتع بجمال العوالم الساحرة واستعد للمتابعة!</p>
         <div class="modal-actions">
           <button id="btn-resume" class="btn-primary">متابعة اللعب ▶️</button>
           <button id="btn-restart-pause" class="btn-secondary">إعادة البدء 🔄</button>
@@ -323,7 +343,7 @@
             <span id="final-distance" class="res-value digit-font">0m</span>
           </div>
           <div class="result-box">
-            <span class="res-label">التفاح المجمّع</span>
+            <span class="res-label">الحلوى المجمّعة</span>
             <span id="final-gems" class="res-value digit-font">0 🍎</span>
           </div>
         </div>
@@ -339,12 +359,12 @@
       </div>
     </div>
 
-    <!-- Nature Warp Portal Overlay -->
+    <!-- Warp Portal Overlay -->
     <div id="warp-overlay" class="warp-portal-overlay">
       <div class="warp-content">
         <div class="warp-spin-ring"></div>
-        <h2 id="warp-world-name" class="warp-title">الانتقال إلى واحة السافانا!</h2>
-        <span class="warp-sub">EXPLORING NEW BIOME 🌿</span>
+        <h2 id="warp-world-name" class="warp-title">الانتقال إلى عالم جديد!</h2>
+        <span class="warp-sub">EXPLORING FANTASY REALM ✨</span>
       </div>
     </div>
 
@@ -393,12 +413,12 @@
 
   </div>
 
-  <!-- Game Scripts -->
-  <script src="js/audio.js"></script>
-  <script src="js/particles.js"></script>
-  <script src="js/player.js"></script>
-  <script src="js/world.js"></script>
-  <script src="js/controls.js"></script>
-  <script src="js/game.js"></script>
+  <!-- Scripts -->
+  <script src="js/audio.js?v=5.0.0"></script>
+  <script src="js/particles.js?v=5.0.0"></script>
+  <script src="js/player.js?v=5.0.0"></script>
+  <script src="js/world.js?v=5.0.0"></script>
+  <script src="js/controls.js?v=5.0.0"></script>
+  <script src="js/game.js?v=5.0.0"></script>
 </body>
 </html>
