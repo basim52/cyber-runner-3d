@@ -1,6 +1,13 @@
 /**
- * AAA Stylized 3D Human Runner Characters (Sami, Lana, Ziyad, Maryam)
- * Built with smooth organic geometries, expressive sculpted faces, layered hair, and high-top sneakers.
+ * Exact 3D Replica of the Explorer Boy from reference image:
+ * - Bronze warm skin tone
+ * - Textured Crimson Red hair with dark base
+ * - Brick-red / Maroon Headband
+ * - Stonewash Denim Jacket with rolled-up 3/4 sleeves & collar
+ * - Khaki Canvas Vintage Backpack with leather flap, straps & buckles
+ * - Silver Watch on left wrist & Antique Brass Compass
+ * - Charcoal Grey Pants
+ * - Burgundy/Reddish-Brown Rugged Leather Boots with white laces
  */
 class Player {
   constructor(scene) {
@@ -28,8 +35,8 @@ class Player {
     this.runTimer = 0;
     this.spinAngle = 0;
 
-    // Character: 'sami' | 'lana' | 'ziyad' | 'maryam'
-    this.characterType = 'sami';
+    // Active Character
+    this.characterType = 'explorer';
 
     // Upgrades
     this.magnetRadius = 6.0;
@@ -48,61 +55,92 @@ class Player {
   }
 
   initMaterials() {
-    // 1. Organic Skin Materials
-    this.skinLightMat = new THREE.MeshStandardMaterial({
-      color: 0xffdfc4,
-      roughness: 0.5,
-      metalness: 0.05
-    });
-    this.skinTanMat = new THREE.MeshStandardMaterial({
-      color: 0xe5a663,
-      roughness: 0.5,
+    // 1. Bronze Skin Material (Exact match)
+    this.skinBronzeMat = new THREE.MeshStandardMaterial({
+      color: 0x8a5229,
+      roughness: 0.55,
       metalness: 0.05
     });
 
-    // 2. Facial Features
-    this.eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
-    this.eyeIrisBlueMat = new THREE.MeshStandardMaterial({ color: 0x1976d2, roughness: 0.2 });
-    this.eyeIrisGreenMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.2 });
-    this.eyeIrisBrownMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.2 });
-    this.pupilMat = new THREE.MeshBasicMaterial({ color: 0x050505 });
-    this.eyeHighlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    this.eyebrowMat = new THREE.MeshStandardMaterial({ color: 0x2d1a0e, roughness: 0.8 });
-    this.lipMat = new THREE.MeshStandardMaterial({ color: 0xd37d73, roughness: 0.6 });
+    // 2. Hair Materials (Crimson Red Tips + Dark Base)
+    this.hairRedMat = new THREE.MeshStandardMaterial({
+      color: 0xaa2828,
+      roughness: 0.75
+    });
+    this.hairDarkMat = new THREE.MeshStandardMaterial({
+      color: 0x241208,
+      roughness: 0.85
+    });
 
-    // 3. Fabrics & Clothes
-    this.whiteFabricMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.7 });
-    this.blackFabricMat = new THREE.MeshStandardMaterial({ color: 0x1e1e1e, roughness: 0.8 });
-    this.goldTrimMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 });
+    // 3. Headband (Brick Red / Maroon)
+    this.headbandMat = new THREE.MeshStandardMaterial({
+      color: 0x822222,
+      roughness: 0.65
+    });
 
-    // Sami Materials (Urban Runner)
-    this.samiHairMat = new THREE.MeshStandardMaterial({ color: 0x422613, roughness: 0.6 });
-    this.samiHoodieMat = new THREE.MeshStandardMaterial({ color: 0x0288d1, roughness: 0.65 });
-    this.samiJoggersMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.8 });
-    this.samiSneakerRedMat = new THREE.MeshStandardMaterial({ color: 0xe53935, roughness: 0.4 });
-    this.samiCapMat = new THREE.MeshStandardMaterial({ color: 0xd32f2f, roughness: 0.5 });
-    this.samiPackMat = new THREE.MeshStandardMaterial({ color: 0xf57c00, roughness: 0.7 });
+    // 4. Denim Jacket (Stonewash Blue)
+    this.denimMat = new THREE.MeshStandardMaterial({
+      color: 0x5e85a3,
+      roughness: 0.7
+    });
+    this.denimDarkMat = new THREE.MeshStandardMaterial({
+      color: 0x486982,
+      roughness: 0.75
+    });
 
-    // Lana Materials (Athletic Pro)
-    this.lanaHairMat = new THREE.MeshStandardMaterial({ color: 0xfbc02d, roughness: 0.45 });
-    this.lanaTopMat = new THREE.MeshStandardMaterial({ color: 0xe91e63, roughness: 0.6 });
-    this.lanaLeggingsMat = new THREE.MeshStandardMaterial({ color: 0x4a148c, roughness: 0.7 });
-    this.lanaSneakerCyanMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, roughness: 0.35 });
-    this.lanaBandMat = new THREE.MeshStandardMaterial({ color: 0x00bcd4, roughness: 0.4 });
+    // 5. Vintage Backpack (Khaki Canvas + Leather)
+    this.backpackCanvasMat = new THREE.MeshStandardMaterial({
+      color: 0xbf9860,
+      roughness: 0.8
+    });
+    this.backpackLeatherMat = new THREE.MeshStandardMaterial({
+      color: 0x6e3d1b,
+      roughness: 0.55
+    });
+    this.brassBuckleMat = new THREE.MeshStandardMaterial({
+      color: 0xd4af37,
+      metalness: 0.85,
+      roughness: 0.25
+    });
 
-    // Ziyad Materials (Parkour Pro)
-    this.ziyadHairMat = new THREE.MeshStandardMaterial({ color: 0x0d0d0d, roughness: 0.7 });
-    this.ziyadJacketMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.6 });
-    this.ziyadPantsMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.8 });
-    this.ziyadSneakerNeonMat = new THREE.MeshStandardMaterial({ color: 0x76ff03, roughness: 0.35 });
-    this.ziyadGloveMat = new THREE.MeshStandardMaterial({ color: 0x212121, roughness: 0.9 });
+    // 6. Accessories (Silver Watch + Compass)
+    this.silverWatchMat = new THREE.MeshStandardMaterial({
+      color: 0xe0e0e0,
+      metalness: 0.9,
+      roughness: 0.2
+    });
+    this.compassMat = new THREE.MeshStandardMaterial({
+      color: 0xb8860b,
+      metalness: 0.8,
+      roughness: 0.3
+    });
+    this.compassGlassMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff
+    });
 
-    // Maryam Materials (Desert Explorer)
-    this.maryamHairMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.7 });
-    this.maryamJacketMat = new THREE.MeshStandardMaterial({ color: 0xf57f17, roughness: 0.7 });
-    this.maryamPantsMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.8 });
-    this.maryamBootsMat = new THREE.MeshStandardMaterial({ color: 0x795548, roughness: 0.6 });
-    this.maryamBeltMat = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.8 });
+    // 7. Charcoal Grey Pants
+    this.pantsMat = new THREE.MeshStandardMaterial({
+      color: 0x383e40,
+      roughness: 0.75
+    });
+
+    // 8. Burgundy Boots & Laces
+    this.bootsLeatherMat = new THREE.MeshStandardMaterial({
+      color: 0x7c2626,
+      roughness: 0.5
+    });
+    this.bootsSoleMat = new THREE.MeshStandardMaterial({
+      color: 0x222222,
+      roughness: 0.8
+    });
+    this.whiteLacesMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.4
+    });
+
+    // Facial
+    this.eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+    this.eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
   }
 
   setCharacter(type) {
@@ -114,10 +152,7 @@ class Player {
   }
 
   setVehicle(type) {
-    if (type === 'titan' || type === 'girl' || type === 'lana') this.setCharacter('lana');
-    else if (type === 'phantom' || type === 'ziyad') this.setCharacter('ziyad');
-    else if (type === 'fox' || type === 'maryam') this.setCharacter('maryam');
-    else this.setCharacter('sami');
+    this.setCharacter('explorer');
   }
 
   createMesh() {
@@ -128,17 +163,9 @@ class Player {
     this.bodyGroup.position.y = 1.38;
     this.group.add(this.bodyGroup);
 
-    if (this.characterType === 'lana') {
-      this.buildLana();
-    } else if (this.characterType === 'ziyad') {
-      this.buildZiyad();
-    } else if (this.characterType === 'maryam') {
-      this.buildMaryam();
-    } else {
-      this.buildSami();
-    }
+    this.buildExplorerCharacter();
 
-    // Shield Bubble (Smooth Glowing Energy Barrier)
+    // Shield Bubble (Energy Barrier)
     const shieldGeom = new THREE.SphereGeometry(1.6, 24, 24);
     const shieldMat = new THREE.MeshStandardMaterial({
       color: 0x00e676,
@@ -159,46 +186,108 @@ class Player {
   }
 
   // =========================================================================
-  // 👦 1. سامي (Sami - High Quality Stylized Urban Runner)
+  // 🧭 Exact Replica of Reference Image Character
   // =========================================================================
-  buildSami() {
-    const skin = this.skinLightMat;
+  buildExplorerCharacter() {
+    const skin = this.skinBronzeMat;
 
-    // 1. Smooth Tapered Torso (Hoodie with depth and curves)
-    const torsoGeom = new THREE.CylinderGeometry(0.38, 0.32, 0.88, 20);
-    const torso = new THREE.Mesh(torsoGeom, this.samiHoodieMat);
+    // -----------------------------------------------------------------------
+    // 1. Stonewash Denim Jacket & Torso
+    // -----------------------------------------------------------------------
+    const torsoGeom = new THREE.CylinderGeometry(0.38, 0.32, 0.86, 20);
+    const torso = new THREE.Mesh(torsoGeom, this.denimMat);
     torso.castShadow = true;
     this.bodyGroup.add(torso);
 
-    // White Inner Shirt Collar
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.05, 8, 20), this.whiteFabricMat);
+    // Denim Jacket Collar
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.20, 0.05, 8, 20), this.denimDarkMat);
     collar.position.set(0, 0.42, 0);
     collar.rotation.x = Math.PI / 2;
     torso.add(collar);
 
-    // Front Zipper Line & Pocket
-    const zipper = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.75, 6), this.whiteFabricMat);
-    zipper.position.set(0, 0.02, -0.34);
-    torso.add(zipper);
+    // Jacket Waistband Hem
+    const hem = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.08, 20), this.denimDarkMat);
+    hem.position.set(0, -0.40, 0);
+    torso.add(hem);
 
-    // Smooth Curved Backpack
-    const packGeom = new THREE.SphereGeometry(0.34, 16, 16);
-    packGeom.scale(1.0, 1.2, 0.65);
-    const pack = new THREE.Mesh(packGeom, this.samiPackMat);
-    pack.position.set(0, 0.08, 0.32);
-    pack.castShadow = true;
-    torso.add(pack);
+    // Jacket Back Stitching Lines
+    const stitchL = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.65, 6), this.denimDarkMat);
+    stitchL.position.set(0.18, 0.02, 0.31);
+    torso.add(stitchL);
+    const stitchR = stitchL.clone();
+    stitchR.position.set(-0.18, 0.02, 0.31);
+    torso.add(stitchR);
 
-    // Backpack Shoulder Straps
-    const strapL = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.03, 6, 16, Math.PI), this.blackFabricMat);
-    strapL.position.set(0.24, 0.15, 0.05);
-    strapL.rotation.y = Math.PI / 2;
-    torso.add(strapL);
-    const strapR = strapL.clone();
-    strapR.position.set(-0.24, 0.15, 0.05);
-    torso.add(strapR);
+    // -----------------------------------------------------------------------
+    // 2. Vintage Khaki Canvas Backpack (Accurate to Image)
+    // -----------------------------------------------------------------------
+    const packGroup = new THREE.Group();
+    packGroup.position.set(0, 0.06, 0.32);
+    torso.add(packGroup);
 
-    // 2. Sculpted Expressive Head
+    // Main Canvas Pack Body
+    const packBodyGeom = new THREE.BoxGeometry(0.52, 0.62, 0.28);
+    const packBody = new THREE.Mesh(packBodyGeom, this.backpackCanvasMat);
+    packBody.castShadow = true;
+    packGroup.add(packBody);
+
+    // Top Leather Flap
+    const flapGeom = new THREE.CylinderGeometry(0.27, 0.27, 0.52, 16, 1, false, 0, Math.PI);
+    const flap = new THREE.Mesh(flapGeom, this.backpackLeatherMat);
+    flap.position.set(0, 0.28, 0.02);
+    flap.rotation.z = Math.PI / 2;
+    flap.rotation.y = Math.PI;
+    packGroup.add(flap);
+
+    // 2 Vertical Brown Leather Straps with Brass Buckles
+    for (let s = -1; s <= 1; s += 2) {
+      const strap = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.66, 0.02), this.backpackLeatherMat);
+      strap.position.set(s * 0.14, -0.02, 0.15);
+      packGroup.add(strap);
+
+      // Brass Buckle
+      const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 0.03), this.brassBuckleMat);
+      buckle.position.set(s * 0.14, 0.04, 0.16);
+      packGroup.add(buckle);
+    }
+
+    // Front Zipper Pouch
+    const pouch = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.22, 0.10), this.backpackCanvasMat);
+    pouch.position.set(0, -0.16, 0.16);
+    packGroup.add(pouch);
+
+    // Pouch Zipper Line
+    const pouchZip = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.015, 0.02), this.backpackLeatherMat);
+    pouchZip.position.set(0, -0.14, 0.22);
+    packGroup.add(pouchZip);
+
+    // Two Side Pockets
+    const sidePocketL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.26, 0.18), this.backpackCanvasMat);
+    sidePocketL.position.set(0.28, -0.08, 0);
+    packGroup.add(sidePocketL);
+    const sidePocketR = sidePocketL.clone();
+    sidePocketR.position.set(-0.28, -0.08, 0);
+    packGroup.add(sidePocketR);
+
+    // Top Grab Loop
+    const loop = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.015, 6, 12, Math.PI), this.backpackLeatherMat);
+    loop.position.set(0, 0.35, 0);
+    loop.rotation.x = Math.PI / 2;
+    packGroup.add(loop);
+
+    // Padded Shoulder Harness Straps
+    const harnessL = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.04, 8, 16, Math.PI), this.backpackCanvasMat);
+    harnessL.position.set(0.22, 0.16, 0.05);
+    harnessL.rotation.y = Math.PI / 2;
+    torso.add(harnessL);
+
+    const harnessR = harnessL.clone();
+    harnessR.position.set(-0.22, 0.16, 0.05);
+    torso.add(harnessR);
+
+    // -----------------------------------------------------------------------
+    // 3. Head, Crimson Fade Hair & Brick-Red Headband
+    // -----------------------------------------------------------------------
     this.headGroup = new THREE.Group();
     this.headGroup.position.set(0, 0.68, 0);
     this.bodyGroup.add(this.headGroup);
@@ -208,507 +297,292 @@ class Player {
     neck.position.set(0, -0.16, 0);
     this.headGroup.add(neck);
 
-    // Smooth Oval Head with jaw curve
+    // Smooth Bronze Head
     const headGeom = new THREE.SphereGeometry(0.36, 24, 20);
     headGeom.scale(0.92, 1.05, 0.98);
     const head = new THREE.Mesh(headGeom, skin);
     head.castShadow = true;
     this.headGroup.add(head);
 
-    // 3D Cute Nose
-    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.1, 8), skin);
-    nose.position.set(0, -0.02, -0.36);
-    nose.rotation.x = -Math.PI / 2;
-    this.headGroup.add(nose);
+    // Dark Base Hair Fade (Lower Head)
+    const baseHair = new THREE.Mesh(
+      new THREE.SphereGeometry(0.37, 20, 16, 0, Math.PI * 2, 0, Math.PI / 1.8),
+      this.hairDarkMat
+    );
+    baseHair.position.set(0, 0.04, 0.02);
+    this.headGroup.add(baseHair);
 
-    // Detailed Animated Eyes (Left & Right)
-    this.createStylizedEye(0.12, 0.06, -0.32, this.eyeIrisBlueMat);
-    this.createStylizedEye(-0.12, 0.06, -0.32, this.eyeIrisBlueMat);
+    // Vibrant Textured Crimson-Red Hair (Top Dome with Waves)
+    const hairTopGeom = new THREE.SphereGeometry(0.375, 24, 20, 0, Math.PI * 2, 0, Math.PI / 2.2);
+    const hairTop = new THREE.Mesh(hairTopGeom, this.hairRedMat);
+    hairTop.position.set(0, 0.08, 0.02);
+    this.headGroup.add(hairTop);
 
-    // Eyebrows
-    const browGeom = new THREE.BoxGeometry(0.12, 0.03, 0.04);
-    const lBrow = new THREE.Mesh(browGeom, this.eyebrowMat);
-    lBrow.position.set(0.12, 0.15, -0.34);
-    lBrow.rotation.z = -0.1;
-    this.headGroup.add(lBrow);
+    // Textured Crimson Hair Curls / Tufts on Top
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 5; col++) {
+        const tuft = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), this.hairRedMat);
+        const xPos = (col - 2) * 0.11;
+        const zPos = (row - 1.5) * 0.12;
+        tuft.position.set(xPos, 0.38 - Math.abs(xPos) * 0.15 - Math.abs(zPos) * 0.1, zPos);
+        this.headGroup.add(tuft);
+      }
+    }
 
-    const rBrow = new THREE.Mesh(browGeom, this.eyebrowMat);
-    rBrow.position.set(-0.12, 0.15, -0.34);
-    rBrow.rotation.z = 0.1;
-    this.headGroup.add(rBrow);
+    // Brick-Red / Maroon Fabric Headband (Wraps around back & sides below red hair)
+    const headband = new THREE.Mesh(new THREE.TorusGeometry(0.355, 0.045, 8, 24), this.headbandMat);
+    headband.position.set(0, 0.08, 0.02);
+    headband.rotation.x = Math.PI / 2 + 0.12; // Slanted naturally as in photo
+    this.headGroup.add(headband);
 
-    // Sculpted Ears
+    // Detailed Ears
     const earGeom = new THREE.TorusGeometry(0.07, 0.025, 8, 12, Math.PI * 1.2);
     const lEar = new THREE.Mesh(earGeom, skin);
-    lEar.position.set(0.34, 0.02, 0);
+    lEar.position.set(0.35, 0.02, 0);
     lEar.rotation.y = Math.PI / 2;
     this.headGroup.add(lEar);
 
     const rEar = new THREE.Mesh(earGeom, skin);
-    rEar.position.set(-0.34, 0.02, 0);
+    rEar.position.set(-0.35, 0.02, 0);
     rEar.rotation.y = -Math.PI / 2;
     this.headGroup.add(rEar);
 
-    // Layered Hair Tufts
-    this.buildLayeredHair(this.samiHairMat, 'boy');
-
-    // Curved Baseball Cap
-    const capDome = new THREE.Mesh(
-      new THREE.SphereGeometry(0.38, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2),
-      this.samiCapMat
-    );
-    capDome.position.set(0, 0.1, 0.02);
-    capDome.rotation.x = -0.2;
-    this.headGroup.add(capDome);
-
-    // Curved Visor Brim
-    const visorGeom = new THREE.CylinderGeometry(0.42, 0.42, 0.04, 16, 1, false, 0, Math.PI);
-    const visor = new THREE.Mesh(visorGeom, this.samiCapMat);
-    visor.position.set(0, 0.14, 0.25);
-    visor.rotation.x = 0.35;
-    this.headGroup.add(visor);
-
-    // Cap Button on top
-    const capBtn = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), this.whiteFabricMat);
-    capBtn.position.set(0, 0.48, 0.06);
-    this.headGroup.add(capBtn);
-
-    // 3. Human Arms with Sprinter Elbows & Clenched Fists
-    this.buildHumanArms(this.samiHoodieMat, skin);
-
-    // 4. Human Legs with High-Top Stylized Sneakers
-    this.buildHumanLegs(this.samiJoggersMat, this.samiSneakerRedMat, this.whiteFabricMat);
-  }
-
-  // =========================================================================
-  // 👧 2. لانا (Lana - High Quality Stylized Athletic Girl)
-  // =========================================================================
-  buildLana() {
-    const skin = this.skinLightMat;
-
-    // 1. Athletic Top Torso
-    const torsoGeom = new THREE.CylinderGeometry(0.34, 0.28, 0.82, 20);
-    const torso = new THREE.Mesh(torsoGeom, this.lanaTopMat);
-    torso.castShadow = true;
-    this.bodyGroup.add(torso);
-
-    // Neckline
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.04, 8, 20), this.whiteFabricMat);
-    collar.position.set(0, 0.4, 0);
-    collar.rotation.x = Math.PI / 2;
-    torso.add(collar);
-
-    // 2. Sculpted Girl Head & High Ponytail
-    this.headGroup = new THREE.Group();
-    this.headGroup.position.set(0, 0.66, 0);
-    this.bodyGroup.add(this.headGroup);
-
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.22, 16), skin);
-    neck.position.set(0, -0.16, 0);
-    this.headGroup.add(neck);
-
-    const headGeom = new THREE.SphereGeometry(0.34, 24, 20);
-    headGeom.scale(0.9, 1.05, 0.95);
-    const head = new THREE.Mesh(headGeom, skin);
-    head.castShadow = true;
-    this.headGroup.add(head);
-
-    // 3D Cute Nose & Lips
-    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.08, 8), skin);
-    nose.position.set(0, -0.02, -0.34);
-    nose.rotation.x = -Math.PI / 2;
-    this.headGroup.add(nose);
-
-    const lips = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.02, 6, 12, Math.PI), this.lipMat);
-    lips.position.set(0, -0.12, -0.32);
-    lips.rotation.x = Math.PI;
-    this.headGroup.add(lips);
-
-    // Expressive Green Eyes
-    this.createStylizedEye(0.11, 0.06, -0.3, this.eyeIrisGreenMat);
-    this.createStylizedEye(-0.11, 0.06, -0.3, this.eyeIrisGreenMat);
-
-    // Sculpted Blonde Hair with High Flowing Ponytail
-    this.buildLayeredHair(this.lanaHairMat, 'girl');
-
-    // Sporty Headband
-    const band = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.035, 6, 20), this.lanaBandMat);
-    band.position.set(0, 0.08, 0);
-    band.rotation.x = Math.PI / 2;
-    this.headGroup.add(band);
-
-    // 3. Arms & High-Top Sneakers
-    this.buildHumanArms(this.lanaTopMat, skin);
-    this.buildHumanLegs(this.lanaLeggingsMat, this.lanaSneakerCyanMat, this.whiteFabricMat);
-  }
-
-  // =========================================================================
-  // 🧑 3. زياد (Ziyad - Stylized Parkour Pro Boy)
-  // =========================================================================
-  buildZiyad() {
-    const skin = this.skinTanMat;
-
-    // 1. Windbreaker Torso
-    const torsoGeom = new THREE.CylinderGeometry(0.39, 0.33, 0.88, 20);
-    const torso = new THREE.Mesh(torsoGeom, this.ziyadJacketMat);
-    torso.castShadow = true;
-    this.bodyGroup.add(torso);
-
-    // Contrast Shoulders / Trim
-    const trim = new THREE.Mesh(new THREE.CylinderGeometry(0.40, 0.40, 0.15, 20), this.blackFabricMat);
-    trim.position.set(0, 0.35, 0);
-    torso.add(trim);
-
-    // 2. Sculpted Head & Undercut Hairstyle
-    this.headGroup = new THREE.Group();
-    this.headGroup.position.set(0, 0.68, 0);
-    this.bodyGroup.add(this.headGroup);
-
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.16, 0.22, 16), skin);
-    neck.position.set(0, -0.16, 0);
-    this.headGroup.add(neck);
-
-    const headGeom = new THREE.SphereGeometry(0.36, 24, 20);
-    headGeom.scale(0.92, 1.05, 0.98);
-    const head = new THREE.Mesh(headGeom, skin);
-    head.castShadow = true;
-    this.headGroup.add(head);
-
+    // Cute 3D Nose & Eyes
     const nose = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.1, 8), skin);
     nose.position.set(0, -0.02, -0.36);
     nose.rotation.x = -Math.PI / 2;
     this.headGroup.add(nose);
 
-    this.createStylizedEye(0.12, 0.06, -0.32, this.eyeIrisBrownMat);
-    this.createStylizedEye(-0.12, 0.06, -0.32, this.eyeIrisBrownMat);
+    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), this.eyeMat);
+    eyeL.position.set(0.12, 0.05, -0.33);
+    this.headGroup.add(eyeL);
+    const eyeR = eyeL.clone();
+    eyeR.position.set(-0.12, 0.05, -0.33);
+    this.headGroup.add(eyeR);
 
-    // Modern Undercut Sculpted Hair
-    this.buildLayeredHair(this.ziyadHairMat, 'undercut');
+    // -----------------------------------------------------------------------
+    // 4. Arms with Rolled-up Denim Sleeves, Silver Watch & Compass
+    // -----------------------------------------------------------------------
+    this.buildExplorerArms(skin);
 
-    // 3. Arms with Fingerless Gloves
-    this.buildHumanArms(this.ziyadJacketMat, this.ziyadGloveMat);
-    this.buildHumanLegs(this.ziyadPantsMat, this.ziyadSneakerNeonMat, this.blackFabricMat);
+    // -----------------------------------------------------------------------
+    // 5. Charcoal Grey Pants & Burgundy Leather Boots
+    // -----------------------------------------------------------------------
+    this.buildExplorerLegs();
   }
 
   // =========================================================================
-  // 👩 4. مريم (Maryam - Stylized Desert Explorer Girl)
+  // Arms: Rolled-up Sleeves, Silver Watch & Brass Navigation Compass
   // =========================================================================
-  buildMaryam() {
-    const skin = this.skinTanMat;
-
-    // 1. Explorer Jacket Torso
-    const torsoGeom = new THREE.CylinderGeometry(0.35, 0.30, 0.84, 20);
-    const torso = new THREE.Mesh(torsoGeom, this.maryamJacketMat);
-    torso.castShadow = true;
-    this.bodyGroup.add(torso);
-
-    // Leather Tactical Belt & Buckle
-    const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.12, 20), this.maryamBeltMat);
-    belt.position.set(0, -0.35, 0);
-    torso.add(belt);
-    const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.1, 0.06), this.goldTrimMat);
-    buckle.position.set(0, -0.35, -0.33);
-    torso.add(buckle);
-
-    // 2. Sculpted Head & Braided Hair
-    this.headGroup = new THREE.Group();
-    this.headGroup.position.set(0, 0.66, 0);
-    this.bodyGroup.add(this.headGroup);
-
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.22, 16), skin);
-    neck.position.set(0, -0.16, 0);
-    this.headGroup.add(neck);
-
-    const headGeom = new THREE.SphereGeometry(0.34, 24, 20);
-    headGeom.scale(0.9, 1.05, 0.95);
-    const head = new THREE.Mesh(headGeom, skin);
-    head.castShadow = true;
-    this.headGroup.add(head);
-
-    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.08, 8), skin);
-    nose.position.set(0, -0.02, -0.34);
-    nose.rotation.x = -Math.PI / 2;
-    this.headGroup.add(nose);
-
-    this.createStylizedEye(0.11, 0.06, -0.3, this.eyeIrisBrownMat);
-    this.createStylizedEye(-0.11, 0.06, -0.3, this.eyeIrisBrownMat);
-
-    // Braided Explorer Hair
-    this.buildLayeredHair(this.maryamHairMat, 'braids');
-
-    // 3. Arms & Hiking Boots
-    this.buildHumanArms(this.maryamJacketMat, skin);
-    this.buildHumanLegs(this.maryamPantsMat, this.maryamBootsMat, this.maryamBeltMat);
-  }
-
-  // =========================================================================
-  // Helper: Stylized Eye with Sclera, Iris, Pupil & Specular Light Reflection
-  // =========================================================================
-  createStylizedEye(x, y, z, irisMat) {
-    const eyeGroup = new THREE.Group();
-    eyeGroup.position.set(x, y, z);
-
-    // White Sclera
-    const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12), this.eyeWhiteMat);
-    sclera.scale.set(1.0, 1.1, 0.4);
-    eyeGroup.add(sclera);
-
-    // Vibrant Iris
-    const iris = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 10), irisMat);
-    iris.position.set(0, 0, -0.02);
-    iris.scale.set(1.0, 1.0, 0.3);
-    eyeGroup.add(iris);
-
-    // Dark Pupil
-    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), this.pupilMat);
-    pupil.position.set(0, 0, -0.032);
-    pupil.scale.set(1.0, 1.0, 0.2);
-    eyeGroup.add(pupil);
-
-    // Specular Highlight Sparkle
-    const spec = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 6), this.eyeHighlightMat);
-    spec.position.set(0.015, 0.015, -0.04);
-    eyeGroup.add(spec);
-
-    this.headGroup.add(eyeGroup);
-  }
-
-  // =========================================================================
-  // Helper: Multi-Layered Sculpted Volumetric Hair
-  // =========================================================================
-  buildLayeredHair(hairMat, style) {
-    const hairGroup = new THREE.Group();
-    this.headGroup.add(hairGroup);
-
-    if (style === 'girl') {
-      // High Flowing Ponytail & Front Bangs
-      const crown = new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 16), hairMat);
-      crown.position.set(0, 0.06, 0.04);
-      hairGroup.add(crown);
-
-      // Ponytail Tail
-      const ponyGeom = new THREE.ConeGeometry(0.16, 0.8, 12);
-      const pony = new THREE.Mesh(ponyGeom, hairMat);
-      pony.position.set(0, 0.18, 0.48);
-      pony.rotation.x = -0.75;
-      hairGroup.add(pony);
-
-      // Side strands
-      const strandL = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.35, 6), hairMat);
-      strandL.position.set(0.28, -0.05, -0.15);
-      strandL.rotation.z = -0.2;
-      hairGroup.add(strandL);
-      const strandR = strandL.clone();
-      strandR.position.set(-0.28, -0.05, -0.15);
-      strandR.rotation.z = 0.2;
-      hairGroup.add(strandR);
-    } else if (style === 'undercut') {
-      // Modern Undercut Quiff
-      for (let i = 0; i < 5; i++) {
-        const tuft = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.35, 8), hairMat);
-        tuft.position.set((i - 2) * 0.1, 0.34, -0.08 + (i % 2) * 0.04);
-        tuft.rotation.x = -0.4;
-        tuft.rotation.z = (i - 2) * 0.15;
-        hairGroup.add(tuft);
-      }
-      const back = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), hairMat);
-      back.position.set(0, 0.04, 0.08);
-      hairGroup.add(back);
-    } else if (style === 'braids') {
-      // Crown & Two Long Braids
-      const crown = new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 16), hairMat);
-      crown.position.set(0, 0.06, 0.04);
-      hairGroup.add(crown);
-
-      for (let b = 0; b < 2; b++) {
-        const side = b === 0 ? 1 : -1;
-        for (let s = 0; s < 5; s++) {
-          const knot = new THREE.Mesh(new THREE.SphereGeometry(0.07 - s * 0.008, 8, 8), hairMat);
-          knot.position.set(side * (0.28 + s * 0.02), -0.05 - s * 0.1, 0.1);
-          hairGroup.add(knot);
-        }
-      }
-    } else {
-      // Sami's Layered Urban Hair
-      const base = new THREE.Mesh(new THREE.SphereGeometry(0.37, 16, 16), hairMat);
-      base.position.set(0, 0.06, 0.04);
-      hairGroup.add(base);
-
-      for (let i = 0; i < 6; i++) {
-        const tuft = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.28, 6), hairMat);
-        tuft.position.set((i - 2.5) * 0.09, 0.26, -0.22);
-        tuft.rotation.x = -0.6;
-        tuft.rotation.z = (i - 2.5) * 0.15;
-        hairGroup.add(tuft);
-      }
-    }
-  }
-
-  // =========================================================================
-  // Helper: Anatomical Human Arms with Sprinter Elbow Bends & Stylized Fists
-  // =========================================================================
-  buildHumanArms(sleeveMat, handMat) {
-    // 1. Left Arm Hierarchy (Shoulder -> Upper Arm -> Forearm -> Fist)
+  buildExplorerArms(skin) {
+    // 1. Left Arm Hierarchy (Holding Compass)
     this.leftArmGroup = new THREE.Group();
     this.leftArmGroup.position.set(0.46, 0.32, 0);
     this.bodyGroup.add(this.leftArmGroup);
 
-    // Shoulder Deltoid
-    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 14), sleeveMat);
-    this.leftArmGroup.add(shoulder);
+    // Denim Shoulder
+    const lShoulder = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 14), this.denimMat);
+    this.leftArmGroup.add(lShoulder);
 
-    // Upper Arm (Smooth Cylinder)
-    const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.38, 14), sleeveMat);
-    upperArm.position.y = -0.18;
-    upperArm.castShadow = true;
-    this.leftArmGroup.add(upperArm);
+    // Denim Upper Arm (Rolled at elbow)
+    const lUpperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 0.34, 14), this.denimMat);
+    lUpperArm.position.y = -0.16;
+    lUpperArm.castShadow = true;
+    this.leftArmGroup.add(lUpperArm);
 
-    // Forearm (Bent forward at elbow in athletic running posture)
-    const forearmGroup = new THREE.Group();
-    forearmGroup.position.set(0, -0.34, 0);
-    this.leftArmGroup.add(forearmGroup);
+    // Rolled Sleeve Cuff
+    const lCuff = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.03, 8, 16), this.denimDarkMat);
+    lCuff.position.set(0, -0.32, 0);
+    lCuff.rotation.x = Math.PI / 2;
+    this.leftArmGroup.add(lCuff);
 
-    const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.08, 0.36, 14), sleeveMat);
-    forearm.position.set(0, -0.16, -0.08);
-    forearm.rotation.x = -0.65; // Natural Sprinter Arm Bend
-    forearm.castShadow = true;
-    forearmGroup.add(forearm);
+    // Forearm Group (Bare Bronze Skin)
+    const lForearmGroup = new THREE.Group();
+    lForearmGroup.position.set(0, -0.34, 0);
+    this.leftArmGroup.add(lForearmGroup);
 
-    // Sculpted Closed Fist with Thumb
-    const fist = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), handMat);
-    fist.position.set(0, -0.28, -0.18);
-    fist.scale.set(1.0, 1.1, 1.0);
-    forearmGroup.add(fist);
+    const lForearm = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.36, 14), skin);
+    lForearm.position.set(0, -0.16, -0.08);
+    lForearm.rotation.x = -0.75;
+    lForearm.castShadow = true;
+    lForearmGroup.add(lForearm);
 
-    const thumb = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), handMat);
-    thumb.position.set(-0.06, -0.26, -0.17);
-    forearmGroup.add(thumb);
+    // Silver Watch on Left Wrist
+    const watch = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.02, 8, 16), this.silverWatchMat);
+    watch.position.set(0, -0.25, -0.14);
+    watch.rotation.x = Math.PI / 2 - 0.75;
+    lForearmGroup.add(watch);
 
-    // 2. Right Arm Hierarchy
+    // Left Hand (Palm holding Compass upward)
+    const lHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), skin);
+    lHand.position.set(0, -0.28, -0.18);
+    lForearmGroup.add(lHand);
+
+    // Antique Brass Navigation Compass (Exact match from photo!)
+    const compassGroup = new THREE.Group();
+    compassGroup.position.set(0, -0.26, -0.26);
+    compassGroup.rotation.x = -0.3;
+    lForearmGroup.add(compassGroup);
+
+    // Compass Outer Brass Casing
+    const compassBody = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.03, 16), this.compassMat);
+    compassGroup.add(compassBody);
+
+    // Compass Glass Dial Face
+    const compassFace = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.005, 16), this.compassGlassMat);
+    compassFace.position.y = 0.016;
+    compassGroup.add(compassFace);
+
+    // Compass Needle
+    const needle = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.008, 0.11), this.hairRedMat);
+    needle.position.y = 0.02;
+    compassGroup.add(needle);
+
+    // 2. Right Arm Hierarchy (Gesturing freely)
     this.rightArmGroup = new THREE.Group();
     this.rightArmGroup.position.set(-0.46, 0.32, 0);
     this.bodyGroup.add(this.rightArmGroup);
 
-    const rShoulder = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 14), sleeveMat);
+    const rShoulder = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 14), this.denimMat);
     this.rightArmGroup.add(rShoulder);
 
-    const rUpperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.38, 14), sleeveMat);
-    rUpperArm.position.y = -0.18;
+    const rUpperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 0.34, 14), this.denimMat);
+    rUpperArm.position.y = -0.16;
     rUpperArm.castShadow = true;
     this.rightArmGroup.add(rUpperArm);
+
+    const rCuff = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.03, 8, 16), this.denimDarkMat);
+    rCuff.position.set(0, -0.32, 0);
+    rCuff.rotation.x = Math.PI / 2;
+    this.rightArmGroup.add(rCuff);
 
     const rForearmGroup = new THREE.Group();
     rForearmGroup.position.set(0, -0.34, 0);
     this.rightArmGroup.add(rForearmGroup);
 
-    const rForearm = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.08, 0.36, 14), sleeveMat);
+    const rForearm = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.36, 14), skin);
     rForearm.position.set(0, -0.16, -0.08);
     rForearm.rotation.x = -0.65;
     rForearm.castShadow = true;
     rForearmGroup.add(rForearm);
 
-    const rFist = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), handMat);
-    rFist.position.set(0, -0.28, -0.18);
-    rFist.scale.set(1.0, 1.1, 1.0);
-    rForearmGroup.add(rFist);
+    // Right Hand (Open palm with defined fingers as in image)
+    const rHand = new THREE.Mesh(new THREE.SphereGeometry(0.085, 10, 10), skin);
+    rHand.position.set(0, -0.28, -0.18);
+    rForearmGroup.add(rHand);
 
-    const rThumb = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), handMat);
-    rThumb.position.set(0.06, -0.26, -0.17);
-    rForearmGroup.add(rThumb);
+    // Fingers
+    for (let f = 0; f < 4; f++) {
+      const finger = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.012, 0.08, 6), skin);
+      finger.position.set((f - 1.5) * 0.035, -0.34, -0.20);
+      finger.rotation.x = 0.4;
+      rForearmGroup.add(finger);
+    }
   }
 
   // =========================================================================
-  // Helper: Anatomical Human Legs with Pro High-Top Stylized Sneakers
+  // Legs: Charcoal Grey Pants & Burgundy Leather Rugged Boots
   // =========================================================================
-  buildHumanLegs(pantsMat, shoeColorMat, soleMat) {
-    // 1. Left Leg Hierarchy (Thigh -> Knee -> Calf -> Sneaker)
+  buildExplorerLegs() {
+    // 1. Left Leg Hierarchy
     this.leftLegGroup = new THREE.Group();
     this.leftLegGroup.position.set(0.20, -0.38, 0);
     this.bodyGroup.add(this.leftLegGroup);
 
-    // Thigh (Smooth Cylinder)
-    const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.42, 16), pantsMat);
+    // Thigh (Charcoal Grey)
+    const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.42, 16), this.pantsMat);
     thigh.position.y = -0.18;
     thigh.castShadow = true;
     this.leftLegGroup.add(thigh);
 
-    // Knee Cap
-    const knee = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), pantsMat);
+    // Knee
+    const knee = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), this.pantsMat);
     knee.position.set(0, -0.38, 0.02);
     this.leftLegGroup.add(knee);
 
     // Calf
-    const calf = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.38, 16), pantsMat);
+    const calf = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.38, 16), this.pantsMat);
     calf.position.y = -0.56;
     calf.castShadow = true;
     this.leftLegGroup.add(calf);
 
-    // Left Pro Stylized Sneaker
-    this.createStylizedSneaker(this.leftLegGroup, shoeColorMat, soleMat, 1);
+    // Pant Cuff above boot
+    const cuff = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.025, 6, 16), this.pantsMat);
+    cuff.position.set(0, -0.70, 0);
+    cuff.rotation.x = Math.PI / 2;
+    this.leftLegGroup.add(cuff);
+
+    // Left Burgundy Boot
+    this.createBurgundyBoot(this.leftLegGroup);
 
     // 2. Right Leg Hierarchy
     this.rightLegGroup = new THREE.Group();
     this.rightLegGroup.position.set(-0.20, -0.38, 0);
     this.bodyGroup.add(this.rightLegGroup);
 
-    const rThigh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.42, 16), pantsMat);
+    const rThigh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.42, 16), this.pantsMat);
     rThigh.position.y = -0.18;
     rThigh.castShadow = true;
     this.rightLegGroup.add(rThigh);
 
-    const rKnee = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), pantsMat);
+    const rKnee = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), this.pantsMat);
     rKnee.position.set(0, -0.38, 0.02);
     this.rightLegGroup.add(rKnee);
 
-    const rCalf = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.38, 16), pantsMat);
+    const rCalf = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.38, 16), this.pantsMat);
     rCalf.position.y = -0.56;
     rCalf.castShadow = true;
     this.rightLegGroup.add(rCalf);
 
-    // Right Pro Stylized Sneaker
-    this.createStylizedSneaker(this.rightLegGroup, shoeColorMat, soleMat, -1);
+    const rCuff = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.025, 6, 16), this.pantsMat);
+    rCuff.position.set(0, -0.70, 0);
+    rCuff.rotation.x = Math.PI / 2;
+    this.rightLegGroup.add(rCuff);
+
+    // Right Burgundy Boot
+    this.createBurgundyBoot(this.rightLegGroup);
   }
 
   // =========================================================================
-  // Helper: Stylized High-Top Air Sneaker with Rubber Sole, Toe Cap & Tongue
+  // Burgundy Rugged Leather Boots with Dark Sole & White Laces
   // =========================================================================
-  createStylizedSneaker(parentLeg, shoeColorMat, soleMat, side) {
-    const shoeGroup = new THREE.Group();
-    shoeGroup.position.set(0, -0.74, -0.06);
-    parentLeg.add(shoeGroup);
+  createBurgundyBoot(parentLeg) {
+    const bootGroup = new THREE.Group();
+    bootGroup.position.set(0, -0.74, -0.06);
+    parentLeg.add(bootGroup);
 
-    // Thick Curved Rubber Sole
-    const soleGeom = new THREE.BoxGeometry(0.24, 0.08, 0.46);
-    const sole = new THREE.Mesh(soleGeom, soleMat);
+    // Dark Rugged Rubber Sole
+    const soleGeom = new THREE.BoxGeometry(0.24, 0.07, 0.46);
+    const sole = new THREE.Mesh(soleGeom, this.bootsSoleMat);
     sole.position.y = -0.06;
-    shoeGroup.add(sole);
+    bootGroup.add(sole);
 
-    // Sneaker Upper Body
-    const upperGeom = new THREE.CylinderGeometry(0.11, 0.12, 0.18, 14);
-    upperGeom.scale(1.0, 1.0, 1.4);
-    const upper = new THREE.Mesh(upperGeom, shoeColorMat);
-    upper.position.set(0, 0.04, -0.02);
-    shoeGroup.add(upper);
+    // Heel Block
+    const heel = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.16), this.bootsSoleMat);
+    heel.position.set(0, -0.03, 0.12);
+    bootGroup.add(heel);
 
-    // Curved Rubber Toe Cap
+    // Burgundy Leather Upper
+    const upperGeom = new THREE.CylinderGeometry(0.11, 0.12, 0.22, 14);
+    upperGeom.scale(1.0, 1.0, 1.35);
+    const upper = new THREE.Mesh(upperGeom, this.bootsLeatherMat);
+    upper.position.set(0, 0.05, -0.02);
+    bootGroup.add(upper);
+
+    // Curved Boot Toe
     const toeGeom = new THREE.SphereGeometry(0.11, 12, 12, 0, Math.PI * 2, 0, Math.PI / 2);
-    toeGeom.scale(1.05, 0.8, 1.1);
-    const toe = new THREE.Mesh(toeGeom, soleMat);
-    toe.position.set(0, 0.0, -0.16);
+    toeGeom.scale(1.05, 0.85, 1.1);
+    const toe = new THREE.Mesh(toeGeom, this.bootsLeatherMat);
+    toe.position.set(0, 0.01, -0.15);
     toe.rotation.x = Math.PI;
-    shoeGroup.add(toe);
+    bootGroup.add(toe);
 
-    // Sneaker Ankle Collar Ring
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.03, 8, 16), shoeColorMat);
-    collar.position.set(0, 0.13, 0.02);
-    collar.rotation.x = Math.PI / 2;
-    shoeGroup.add(collar);
-
-    // Stylized Side Logo Stripe (Swoosh/Stripe)
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.04, 0.22), soleMat);
-    stripe.position.set(side * 0.12, 0.04, 0);
-    stripe.rotation.z = side * 0.15;
-    shoeGroup.add(stripe);
+    // White Boot Laces Detail
+    for (let l = 0; l < 3; l++) {
+      const lace = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.015, 0.02), this.whiteLacesMat);
+      lace.position.set(0, 0.02 + l * 0.05, -0.12 + l * 0.02);
+      bootGroup.add(lace);
+    }
   }
 
   moveLeft() {

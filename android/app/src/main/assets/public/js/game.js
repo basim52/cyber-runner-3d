@@ -61,8 +61,8 @@ class Game {
     // Persistence
     this.totalGems = parseInt(localStorage.getItem('cyber_runner_gems') || '0');
     this.highScore = parseInt(localStorage.getItem('cyber_runner_highscore') || '0');
-    this.activeCharacter = localStorage.getItem('cyber_runner_active_char') || 'boy';
-    this.unlockedChars = JSON.parse(localStorage.getItem('cyber_runner_unlocked_chars') || '["boy"]');
+    this.activeCharacter = 'explorer';
+    this.unlockedChars = ['explorer'];
     this.upgrades = JSON.parse(localStorage.getItem('cyber_runner_upgrades') || '{"magnet":1,"shield":1,"boost":1}');
 
     // Game Config & Modes
@@ -807,19 +807,26 @@ class Game {
 
       this.camera.lookAt(this.player.x * 0.2, this.player.y * 0.5 + 1.2, this.player.z - 12);
     } else {
-      // Idle Animation on Start / Menu Screen
+      // Idle Animation on Start / Menu Screen (Natural Breathing & Looking at Compass)
       if (this.player) {
-        this.player.runTimer += delta * 2.5;
-        const breath = Math.sin(this.player.runTimer) * 0.05;
-        this.player.bodyGroup.position.y = 1.35 + breath;
+        this.player.runTimer += delta * 2.2;
+        const breath = Math.sin(this.player.runTimer) * 0.04;
+        this.player.bodyGroup.position.y = 1.38 + breath;
         
-        if (this.player.rightArmGroup) {
-          this.player.rightArmGroup.rotation.x = -1.2 + Math.sin(this.player.runTimer * 3) * 0.25;
-          this.player.rightArmGroup.rotation.z = -0.4 + Math.cos(this.player.runTimer * 3) * 0.2;
+        // Left arm holding compass steadily in front
+        if (this.player.leftArmGroup) {
+          this.player.leftArmGroup.rotation.x = -0.4 + Math.sin(this.player.runTimer * 2) * 0.05;
         }
 
-        this.player.group.rotation.y = Math.sin(this.player.runTimer * 0.5) * 0.25;
-        this.player.group.position.set(0, 0, -2.0);
+        // Right arm natural gentle sway
+        if (this.player.rightArmGroup) {
+          this.player.rightArmGroup.rotation.x = -0.2 + Math.sin(this.player.runTimer * 2) * 0.1;
+          this.player.rightArmGroup.rotation.z = -0.15;
+        }
+
+        // Face front/camera with slight natural head tilt
+        this.player.group.rotation.y = Math.sin(this.player.runTimer * 0.4) * 0.2;
+        this.player.group.position.set(0, 0, -2.2);
       }
     }
 
