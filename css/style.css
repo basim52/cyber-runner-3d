@@ -365,6 +365,133 @@ html, body {
   100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
+/* Profile Header Widget */
+.profile-header-widget {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(76, 175, 80, 0.4);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.profile-avatar-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.profile-avatar {
+  font-size: 1.6rem;
+  background: rgba(76, 175, 80, 0.15);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-texts strong {
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.cloud-status-badge {
+  font-size: 0.72rem;
+  color: var(--forest-green);
+  font-weight: 700;
+}
+
+.account-btn {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-family: var(--font-arabic);
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+}
+
+.account-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.45);
+}
+
+/* Account Modal Form */
+.account-modal-card {
+  max-width: 440px;
+}
+
+.account-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  text-align: right;
+}
+
+.account-form-group label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.form-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-family: var(--font-arabic);
+  font-size: 0.9rem;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: var(--leaf-green);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.backup-divider {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  line-height: 0.1em;
+  margin: 14px 0 10px;
+}
+
+.backup-divider span {
+  background: #fff;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.backup-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
 .brand-badge {
   font-family: var(--font-digital);
   font-size: 0.7rem;

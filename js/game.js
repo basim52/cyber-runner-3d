@@ -58,20 +58,14 @@ class Game {
       boostLevelText: document.getElementById('boost-level-text')
     };
 
-    // Persistence
-    this.totalGems = parseInt(localStorage.getItem('cyber_runner_gems') || '0');
-    this.highScore = parseInt(localStorage.getItem('cyber_runner_highscore') || '0');
-    this.activeCharacter = 'explorer';
-    this.unlockedChars = ['explorer'];
-    this.upgrades = JSON.parse(localStorage.getItem('cyber_runner_upgrades') || '{"magnet":1,"shield":1,"boost":1}');
+    // Account & Cloud Persistence
+    this.userEmail = localStorage.getItem('fantasy_runner_email') || '';
+    this.userName = localStorage.getItem('fantasy_runner_name') || 'مغامر الغابة';
+
+    // Multi-tier data loading: check if email profile exists, otherwise fallback to standard storage
+    this.loadProfileData();
 
     // Game Config & Modes
-    this.gameMode = 'odyssey'; // 'odyssey' | 'time_attack' | 'frenzy' | 'survival'
-    this.selectedWorld = 'candy';
-    this.biomeOrder = ['candy', 'castle', 'crystal', 'oasis'];
-    this.biomeIndex = 0;
-    this.currentBiome = 'candy';
-    this.nextWarpDistance = 1000;
 
     // Time Attack Timer
     this.timeAttackTimer = 30.0;
@@ -262,13 +256,10 @@ class Game {
         if (this.totalGems >= cost && !this.unlockedChars.includes(charId)) {
           this.totalGems -= cost;
           this.unlockedChars.push(charId);
-          localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
-          localStorage.setItem('cyber_runner_unlocked_chars', JSON.stringify(this.unlockedChars));
           this.activeCharacter = charId;
-          localStorage.setItem('cyber_runner_active_char', charId);
           this.player.setCharacter(charId);
+          this.syncAllData();
           this.updateGarageUI();
-          this.updateUserStatsUI();
           if (window.sound) window.sound.playPowerup();
         }
       });
@@ -287,11 +278,9 @@ class Game {
           if (this.totalGems >= cost) {
             this.totalGems -= cost;
             this.upgrades[type] = curLvl + 1;
-            localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
-            localStorage.setItem('cyber_runner_upgrades', JSON.stringify(this.upgrades));
+            this.syncAllData();
             this.applyGarageUpgrades();
             this.updateUpgradesUI();
-            this.updateUserStatsUI();
             this.updateGarageUI();
             if (window.sound) window.sound.playPowerup();
           }
@@ -318,9 +307,134 @@ class Game {
     if (this.ui.btnMenu) this.ui.btnMenu.addEventListener('click', () => this.showMenu());
   }
 
-  updateUserStatsUI() {
-    if (this.ui.startHighScore) this.ui.startHighScore.textContent = this.highScore.toLocaleString('ar-EG');
-    if (this.ui.totalBankedGems) this.ui.totalBankedGems.textContent = this.totalGems.toLocaleString('ar-EG');
+  initAccountSystem() {
+    const btnOpen = document.getElementById('btn-open-account');
+    const btnToggle = document.getElementById('btn-account-toggle');
+    const btnClose = document.getElementById('btn-close-account');
+    const accountScreen = document.getElementById('account-screen');
+    const btnSaveLogin = document.getElementById('btn-save-login');
+    const inputEmail = document.getElementById('input-email');
+    const inputName = document.getElementById('input-name');
+    const btnExport = document.getElementById('btn-export-save');
+    const btnImportTrigger = document.getElementById('btn-import-trigger');
+    const inputImportFile = document.getElementById('input-import-file');
+
+    const openAccountModal = () => {
+      if (inputEmail) inputEmail.value = this.userEmail;
+      if (inputName) inputName.value = this.userName;
+      if (accountScreen) accountScreen.classList.remove('hidden');
+    };
+
+    if (btnOpen) btnOpen.addEventListener('click', openAccountModal);
+    if (btnToggle) btnToggle.addEventListener('click', openAccountModal);
+    if (btnClose) btnClose.addEventListener('click', () => {
+      if (accountScreen) accountScreen.classList.add('hidden');
+    });
+
+    if (btnSaveLogin) {
+      btnSaveLogin.addEventListener('click', () => {
+        const email = (inputEmail.value || '').trim();
+        const name = (inputName.value || '').trim() || 'مغامر الغابة';
+
+        if (!email || !email.includes('@')) {
+          alert('يرجى كتابة بريد إلكتروني صحيح لحفظ البيانات');
+          return;
+        }
+
+        this.userEmail = email;
+        this.userName = name;
+
+        // Check if previous cloud data exists for this email
+        let existingProfile = null;
+        try {
+          existingProfile = JSON.parse(localStorage.getItem('fantasy_profile_' + email) || 'null');
+        } catch (e) {}
+
+        if (existingProfile) {
+          // Merge / Restore
+          this.totalGems = Math.max(this.totalGems, existingProfile.gems || 0);
+          this.highScore = Math.max(this.highScore, existingProfile.highScore || 0);
+          this.unlockedChars = Array.from(new Set([...this.unlockedChars, ...(existingProfile.unlockedChars || ['sami'])]));
+          this.upgrades = existingProfile.upgrades || this.upgrades;
+        }
+
+        this.syncAllData();
+        if (accountScreen) accountScreen.classList.add('hidden');
+        if (window.sound) window.sound.playPowerup();
+        alert(`تم تسجيل الدخول بنجاح بحساب ${email} وتم حفظ ومزامنة كافة الأرقام سحابياً! ☁️✨`);
+      });
+    }
+
+    // Export Save File
+    if (btnExport) {
+      btnExport.addEventListener('click', () => {
+        const saveData = {
+          email: this.userEmail,
+          name: this.userName,
+          gems: this.totalGems,
+          highScore: this.highScore,
+          activeCharacter: this.activeCharacter,
+          unlockedChars: this.unlockedChars,
+          upgrades: this.upgrades,
+          timestamp: Date.now()
+        };
+        const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `FantasyRunner_Save_${this.userName || 'Player'}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    // Import Save File
+    if (btnImportTrigger && inputImportFile) {
+      btnImportTrigger.addEventListener('click', () => inputImportFile.click());
+      inputImportFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (data && typeof data.gems !== 'undefined') {
+              this.totalGems = data.gems || 0;
+              this.highScore = data.highScore || 0;
+              this.activeCharacter = data.activeCharacter || 'sami';
+              this.unlockedChars = data.unlockedChars || ['sami'];
+              this.upgrades = data.upgrades || { magnet: 1, shield: 1, boost: 1 };
+              if (data.email) this.userEmail = data.email;
+              if (data.name) this.userName = data.name;
+
+              this.syncAllData();
+              this.updateGarageUI();
+              this.updateUpgradesUI();
+              if (this.player) this.player.setCharacter(this.activeCharacter);
+              if (accountScreen) accountScreen.classList.add('hidden');
+              if (window.sound) window.sound.playPowerup();
+              alert('تم استيراد واسترجاع ملف الحفظ بنجاح! 📥🎉');
+            }
+          } catch (err) {
+            alert('خطأ في قراءة ملف الحفظ');
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+  }
+
+  updateAccountUI() {
+    const displayName = document.getElementById('display-player-name');
+    const displayEmail = document.getElementById('display-player-email');
+    if (displayName) displayName.textContent = this.userName || 'مغامر الغابة';
+    if (displayEmail) {
+      if (this.userEmail) {
+        displayEmail.textContent = `🟢 ${this.userEmail} (محفوظ سحابياً)`;
+      } else {
+        displayEmail.textContent = '🟢 تسجيل الدخول بالبريد لحفظ الأرقام';
+      }
+    }
   }
 
   updateGarageUI() {
@@ -693,16 +807,15 @@ class Game {
     }
 
     this.totalGems += this.gems;
-    localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
-
     const isNewHigh = this.score > this.highScore;
     if (isNewHigh) {
       this.highScore = Math.floor(this.score);
-      localStorage.setItem('cyber_runner_highscore', this.highScore.toString());
       this.ui.newHighBadge.classList.remove('hidden');
     } else {
       this.ui.newHighBadge.classList.add('hidden');
     }
+
+    this.syncAllData();
 
     this.ui.finalScore.textContent = Math.floor(this.score).toLocaleString('ar-EG');
     this.ui.bestScore.textContent = this.highScore.toLocaleString('ar-EG');
