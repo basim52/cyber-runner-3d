@@ -88,20 +88,22 @@ class FirebaseService {
     }
 
     try {
-      // 1. Try standard Google Popup
+      // Try standard Google Popup
       const result = await this.auth.signInWithPopup(this.provider);
       return result.user;
     } catch (error) {
       console.warn('Firebase Popup Notice:', error.code, error.message);
 
-      // If domain is not authorized or popup blocked, try redirect or fallback
-      if (error.code === 'auth/unauthorized-domain' || error.code === 'auth/popup-blocked' || error.code === 'auth/invalid-api-key') {
+      // If domain is not authorized or popup blocked or dummy key, open fallback
+      if (error.code === 'auth/unauthorized-domain' || error.code === 'auth/popup-blocked' || error.code === 'auth/invalid-api-key' || error.code === 'auth/api-key-not-valid.-please-pass-a-valid-api-key.') {
         const choice = confirm(
-          'تنبيه: لتفعيل الدخول المباشر بنافذة Google يرجى ربط مفاتيح Firebase الخاصة بمشروعك في firebase.google.com.\n\nهل ترغب بالدخول السريع بحسابك الآن وحفظ أرقامك؟'
+          'تنبيه: لتفعيل الدخول المباشر بنافذة Google يرجى ربط مفاتيح Firebase الخاصة بمشروعك في firebase.google.com عبر زر الإعدادات ⚙️.\n\nهل ترغب بالدخول السريع بحسابك الآن وحفظ أرقامك؟'
         );
         if (choice) {
           return this.fallbackManualLogin();
         }
+      } else {
+        return this.fallbackManualLogin();
       }
       throw error;
     }
@@ -109,7 +111,9 @@ class FirebaseService {
 
   async signOut() {
     if (this.auth) {
-      await this.auth.signOut();
+      try {
+        await this.auth.signOut();
+      } catch (e) {}
     }
     this.currentUser = null;
     this.notifyListeners(null);
@@ -158,6 +162,9 @@ class FirebaseService {
         console.warn('Firestore read warning:', err.message);
       }
     }
+    return null;
+  }
+
   setupConfigModal() {
     const modal = document.getElementById('firebase-config-modal');
     const btnOpen = document.getElementById('btn-open-firebase-config');
