@@ -1,9 +1,9 @@
 /**
- * Cyber Runner 3D - Multi-World & Garage Game Engine
+ * Cyber Runner 3D - Vibrant Living Nature Game Engine
  */
 class Game {
   constructor() {
-    this.state = 'START'; // 'START' | 'PLAYING' | 'PAUSED' | 'GAMEOVER'
+    this.state = 'START';
     
     // Core Game Stats
     this.score = 0;
@@ -22,10 +22,10 @@ class Game {
     this.isManualBoost = false;
     this.difficulty = 'normal';
 
-    // Multi-World Biomes: 'odyssey' | 'city' | 'lava' | 'nebula' | 'abyss'
+    // Nature Biomes: 'odyssey' | 'forest' | 'savannah' | 'winter' | 'jungle'
     this.selectedWorld = 'odyssey';
-    this.currentBiome = 'city';
-    this.biomeOrder = ['city', 'lava', 'nebula', 'abyss'];
+    this.currentBiome = 'forest';
+    this.biomeOrder = ['forest', 'savannah', 'winter', 'jungle'];
     this.biomeIndex = 0;
     this.nextWarpDistance = 1000;
     this.stageGoal = 1000;
@@ -39,7 +39,7 @@ class Game {
     this.shakeIntensity = 0;
     this.shakeDecay = 4.0;
 
-    // LocalStorage Persistent Economy & Progress
+    // Persistence
     this.highScore = parseInt(localStorage.getItem('cyber_runner_highscore') || '0', 10);
     this.totalGems = parseInt(localStorage.getItem('cyber_runner_gems') || '0', 10);
     this.unlockedVehicles = JSON.parse(localStorage.getItem('cyber_runner_unlocked_veh') || '["dart"]');
@@ -57,19 +57,20 @@ class Game {
     requestAnimationFrame(this.animate);
   }
 
-  // 1. Initialize Three.js Scene, Camera, Renderer & Lighting
+  // Initialize Three.js Scene with Bright Natural Daylight & Sky
   initThree() {
     this.container = document.getElementById('canvas-container');
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x070913);
-    this.scene.fog = new THREE.FogExp2(0x070913, 0.015);
+    // Vibrant Blue Sky & Soft Horizon Fog
+    this.scene.background = new THREE.Color(0x64b5f6);
+    this.scene.fog = new THREE.FogExp2(0xbbdefb, 0.008);
 
     this.camera = new THREE.PerspectiveCamera(
       60,
       window.innerWidth / window.innerHeight,
       0.1,
-      320
+      350
     );
     this.camera.position.set(0, 4.2, 7.5);
     this.camera.lookAt(0, 1.5, -10);
@@ -83,30 +84,37 @@ class Game {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
+    this.renderer.toneMappingExposure = 1.25;
 
     this.container.appendChild(this.renderer.domElement);
 
-    // Lights
-    this.ambientLight = new THREE.AmbientLight(0x223355, 0.9);
+    // Warm Sun Daylight Lighting
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     this.scene.add(this.ambientLight);
 
-    this.hemiLight = new THREE.HemisphereLight(0x00f0ff, 0x110022, 0.65);
+    this.hemiLight = new THREE.HemisphereLight(0x81d4fa, 0x4caf50, 0.65);
     this.scene.add(this.hemiLight);
 
-    this.dirLight = new THREE.DirectionalLight(0xffffff, 1.25);
-    this.dirLight.position.set(15, 30, 20);
+    // Main Sun Directional Light
+    this.dirLight = new THREE.DirectionalLight(0xfffaed, 1.35);
+    this.dirLight.position.set(25, 45, 25);
     this.dirLight.castShadow = true;
     this.dirLight.shadow.mapSize.width = 1024;
     this.dirLight.shadow.mapSize.height = 1024;
+    this.dirLight.shadow.camera.near = 0.5;
+    this.dirLight.shadow.camera.far = 140;
+    this.dirLight.shadow.camera.left = -25;
+    this.dirLight.shadow.camera.right = 25;
+    this.dirLight.shadow.camera.top = 25;
+    this.dirLight.shadow.camera.bottom = -25;
     this.scene.add(this.dirLight);
 
-    this.playerLight = new THREE.PointLight(0x00f0ff, 1.6, 18);
+    // Player Warm Glow Light
+    this.playerLight = new THREE.PointLight(0xffeb3b, 1.2, 16);
     this.playerLight.position.set(0, 2, 0);
     this.scene.add(this.playerLight);
   }
 
-  // 2. Initialize Game Entities
   initEntities() {
     this.particles = new ParticleSystem(this.scene);
     this.player = new Player(this.scene);
@@ -116,7 +124,6 @@ class Game {
     this.player.setVehicle(this.activeVehicle);
   }
 
-  // 3. Initialize UI
   initUI() {
     this.ui = {
       score: document.getElementById('score-display'),
@@ -194,11 +201,9 @@ class Game {
     if (this.ui.garageGemsCount) this.ui.garageGemsCount.textContent = this.totalGems.toLocaleString('ar-EG') + ' 💎';
   }
 
-  // 4. Bind Events
   bindEvents() {
     window.addEventListener('resize', () => this.onWindowResize());
 
-    // Difficulty
     this.ui.diffBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         this.ui.diffBtns.forEach(b => b.classList.remove('active'));
@@ -207,7 +212,6 @@ class Game {
       });
     });
 
-    // Start / Retry / Pause / Sound
     this.ui.btnStart.addEventListener('click', () => this.start());
     this.ui.btnRetry.addEventListener('click', () => this.restart());
     this.ui.btnMenu.addEventListener('click', () => this.showMenu());
@@ -223,7 +227,6 @@ class Game {
       this.ui.btnSound.textContent = isMuted ? '🔇' : '🔊';
     });
 
-    // Stages Selector Modal
     this.ui.btnOpenStages.addEventListener('click', () => {
       this.ui.startScreen.classList.add('hidden');
       this.ui.stagesScreen.classList.remove('hidden');
@@ -250,7 +253,6 @@ class Game {
       });
     });
 
-    // Garage Modal
     this.ui.btnOpenGarage.addEventListener('click', () => {
       this.ui.startScreen.classList.add('hidden');
       this.ui.garageScreen.classList.remove('hidden');
@@ -265,14 +267,12 @@ class Game {
       this.updateUserStatsUI();
     });
 
-    // Vehicle Purchase / Select
     this.ui.vehicleCards.forEach(card => {
       const vehKey = card.dataset.vehicle;
       const btn = card.querySelector('.veh-select-btn');
 
       btn.addEventListener('click', () => {
         if (this.unlockedVehicles.includes(vehKey)) {
-          // Select this vehicle
           this.activeVehicle = vehKey;
           localStorage.setItem('cyber_runner_active_veh', this.activeVehicle);
           this.player.setVehicle(this.activeVehicle);
@@ -280,7 +280,6 @@ class Game {
           this.updateGarageUI();
           window.sound.playPurchase();
         } else {
-          // Buy vehicle
           const cost = parseInt(btn.dataset.cost || '500', 10);
           if (this.totalGems >= cost) {
             this.totalGems -= cost;
@@ -295,13 +294,12 @@ class Game {
             this.updateUserStatsUI();
             window.sound.playPurchase();
           } else {
-            alert('عفواً! ليس لديك بلورات طاقة كافية لشراء هذه المركبة.');
+            alert('عفواً! ليس لديك ثمار ذهبية كافية لفتح هذه المركبة.');
           }
         }
       });
     });
 
-    // Upgrades Purchase
     const buyUpgrade = (type, btn) => {
       const curLvl = this.upgrades[type] || 1;
       if (curLvl >= 5) return;
@@ -317,7 +315,7 @@ class Game {
         this.updateUserStatsUI();
         window.sound.playPurchase();
       } else {
-        alert('بلورات الطاقة غير كافية للترقية.');
+        alert('النقاط غير كافية للترقية.');
       }
     };
 
@@ -326,13 +324,11 @@ class Game {
     this.ui.btnUpBoost.addEventListener('click', () => buyUpgrade('boost', this.ui.btnUpBoost));
   }
 
-  // Update Garage UI Visuals
   updateGarageUI() {
     if (this.ui.garageGemsCount) {
       this.ui.garageGemsCount.textContent = this.totalGems.toLocaleString('ar-EG') + ' 💎';
     }
 
-    // Vehicle Cards
     this.ui.vehicleCards.forEach(card => {
       const vKey = card.dataset.vehicle;
       const isOwned = this.unlockedVehicles.includes(vKey);
@@ -367,7 +363,6 @@ class Game {
       this.ui.phantomStatusBadge.textContent = isPhantomOwned ? 'مملوكة ✅' : 'مغلقة 🔒';
     }
 
-    // Upgrade buttons & levels
     const updateUpBtn = (type, btn, lvlText) => {
       const lvl = this.upgrades[type] || 1;
       lvlText.textContent = `المستوى ${lvl} / 5`;
@@ -385,20 +380,15 @@ class Game {
     updateUpBtn('boost', this.ui.btnUpBoost, this.ui.boostLevelText);
   }
 
-  // Apply Upgrade Stats to Player
   applyGarageUpgrades() {
     const magnetLvl = this.upgrades.magnet || 1;
     const shieldLvl = this.upgrades.shield || 1;
     const boostLvl = this.upgrades.boost || 1;
 
-    // Magnet range: 5m base -> up to 13m
     this.player.magnetRadius = 5.0 + (magnetLvl * 1.6);
     if (this.activeVehicle === 'phantom') this.player.magnetRadius += 3.0;
 
-    // Shield duration bonus: +1.5s per lvl
     this.player.shieldDurationBonus = (shieldLvl - 1) * 1.5;
-
-    // Boost factor
     this.player.boostFactor = 1.0 + (boostLvl * 0.08);
     this.boostSpeed = 44 * this.player.boostFactor;
   }
@@ -409,7 +399,6 @@ class Game {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  // Set World Biome
   switchBiome(biomeKey, showWarpFX = true) {
     this.currentBiome = biomeKey;
     this.world.setBiome(biomeKey);
@@ -433,7 +422,6 @@ class Game {
     }
   }
 
-  // Start Game
   start() {
     this.state = 'PLAYING';
     this.ui.startScreen.classList.remove('active');
@@ -452,7 +440,6 @@ class Game {
       this.maxLives = 2;
     }
 
-    // Starting Biome
     if (this.selectedWorld === 'odyssey') {
       this.biomeIndex = 0;
       this.switchBiome(this.biomeOrder[0], false);
@@ -572,7 +559,7 @@ class Game {
     const playerBox = this.player.boxCollider;
     const playerPos = this.player.group.position;
 
-    // 1. Jump Pads Collision
+    // 1. Jump Pads (Mushroom Bouncers)
     for (let pad of this.world.jumpPads) {
       if (playerBox.intersectsBox(pad.box)) {
         this.player.launchJumpPad();
@@ -582,7 +569,7 @@ class Game {
       }
     }
 
-    // 2. Warp Gates Collision
+    // 2. Warp Gates
     for (let gate of this.world.warpGates) {
       if (!gate.passed && playerPos.z < gate.z + 2.0 && playerPos.z > gate.z - 2.0) {
         gate.passed = true;
@@ -591,7 +578,7 @@ class Game {
       }
     }
 
-    // 3. Obstacle Collisions
+    // 3. Nature Obstacles
     for (let i = this.world.obstacles.length - 1; i >= 0; i--) {
       const obs = this.world.obstacles[i];
       if (playerBox.intersectsBox(obs.box)) {
@@ -624,7 +611,7 @@ class Game {
       }
     }
 
-    // 4. Collectibles
+    // 4. Collectibles (Golden Apples & Gems)
     for (let i = this.world.collectibles.length - 1; i >= 0; i--) {
       const col = this.world.collectibles[i];
       const dist = playerPos.distanceTo(col.mesh.position);
@@ -650,7 +637,7 @@ class Game {
       const pow = this.world.powerups[i];
       const dist = playerPos.distanceTo(pow.mesh.position);
       if (dist < 1.9) {
-        this.particles.createCollectBurst(pow.mesh.position, 0x00ffff);
+        this.particles.createCollectBurst(pow.mesh.position, 0x00e676);
         this.scene.remove(pow.mesh);
         this.world.powerups.splice(i, 1);
         this.activatePowerup(pow.type);
@@ -663,7 +650,6 @@ class Game {
     if (this.ui.gems) this.ui.gems.textContent = this.gems.toLocaleString('ar-EG');
     if (this.ui.distance) this.ui.distance.textContent = Math.floor(this.distance) + 'm';
 
-    // Stage progress
     if (this.selectedWorld === 'odyssey') {
       const cycleDist = this.distance % 1000;
       const pct = Math.min(100, (cycleDist / 1000) * 100);
@@ -696,11 +682,9 @@ class Game {
     window.sound.stopMusic();
     window.sound.playGameOver();
 
-    // Bank Gems
     this.totalGems += this.gems;
     localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
 
-    // High Score
     const isNewHigh = this.score > this.highScore;
     if (isNewHigh) {
       this.highScore = Math.floor(this.score);
@@ -736,23 +720,19 @@ class Game {
         this.ui.speedBarFill.style.width = `${speedPct}%`;
       }
 
-      // Forward step
       const forwardStep = this.currentSpeed * delta;
       this.player.z -= forwardStep;
       this.distance += forwardStep * 0.5;
       this.score += forwardStep * 1.2 * this.combo;
 
-      // Spawn Warp Gate for Odyssey Mode
       if (this.selectedWorld === 'odyssey' && this.distance >= this.nextWarpDistance - 60 && this.world.warpGates.length === 0) {
         const warpZ = this.player.z - 80;
         this.world.spawnWarpGate(warpZ);
         this.nextWarpDistance += 1000;
       }
 
-      // Magnet pull
       this.world.pullCollectibles(this.player.group.position, this.player.magnetRadius);
 
-      // Combo Timer
       if (this.comboTimer > 0) {
         this.comboTimer -= delta;
         if (this.comboTimer <= 0) {
@@ -761,7 +741,6 @@ class Game {
         }
       }
 
-      // Powerup Timer
       if (this.powerupTimer > 0) {
         this.powerupTimer -= delta;
         const progressPct = (this.powerupTimer / this.powerupMaxTime) * 100;
@@ -779,7 +758,6 @@ class Game {
         }
       }
 
-      // Update Entities
       this.player.update(delta, this.particles);
       this.world.update(delta, this.player.z, this.currentSpeed);
       this.particles.update(delta, this.player.z, this.currentSpeed);
@@ -788,7 +766,7 @@ class Game {
 
       // Lights follow player
       this.playerLight.position.set(this.player.x, this.player.y + 1.5, this.player.z);
-      this.dirLight.position.set(this.player.x + 15, 30, this.player.z + 20);
+      this.dirLight.position.set(this.player.x + 25, 45, this.player.z + 25);
       this.dirLight.target = this.player.group;
 
       // Camera follow

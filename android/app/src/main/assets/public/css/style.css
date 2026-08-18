@@ -1,29 +1,25 @@
 /* ==========================================================================
-   Cyber Runner 3D - Multi-World & Garage Glassmorphic Stylesheet
+   Nature Runner 3D - Vibrant Living Nature Stylesheet
    ========================================================================== */
 
 :root {
   --font-arabic: 'Cairo', system-ui, -apple-system, sans-serif;
   --font-digital: 'Orbitron', 'Cairo', monospace, sans-serif;
   
-  --bg-dark: #070913;
-  --bg-panel: rgba(13, 17, 34, 0.85);
-  --bg-panel-border: rgba(0, 240, 255, 0.25);
-  --bg-glass-highlight: rgba(255, 255, 255, 0.08);
+  --bg-dark: #64b5f6;
+  --bg-panel: rgba(255, 255, 255, 0.88);
+  --bg-panel-border: rgba(76, 175, 80, 0.4);
+  --bg-glass-highlight: rgba(255, 255, 255, 0.6);
   
-  --cyan-neon: #00f0ff;
-  --cyan-glow: rgba(0, 240, 255, 0.6);
-  --pink-neon: #ff007f;
-  --pink-glow: rgba(255, 0, 127, 0.6);
-  --gold-neon: #ffd700;
-  --gold-glow: rgba(255, 215, 0, 0.5);
-  --green-neon: #00ff88;
-  --lava-neon: #ff4500;
-  --nebula-neon: #a855f7;
-  --danger-neon: #ff3344;
+  --forest-green: #2e7d32;
+  --leaf-green: #4caf50;
+  --gold-sun: #fbc02d;
+  --apple-red: #e53935;
+  --sky-blue: #0288d1;
+  --warm-orange: #fb8c00;
 
-  --text-main: #f0f4fc;
-  --text-muted: #8b9bb4;
+  --text-main: #1b3022;
+  --text-muted: #4e6b56;
 
   --radius-sm: 8px;
   --radius-md: 16px;
@@ -86,22 +82,23 @@ html, body {
 }
 
 .glow-text {
-  text-shadow: 0 0 16px var(--cyan-glow), 0 0 32px var(--cyan-glow);
+  color: var(--forest-green);
+  text-shadow: 0 2px 10px rgba(46, 125, 50, 0.3);
 }
 
 .accent-title {
-  color: var(--pink-neon);
-  text-shadow: 0 0 16px var(--pink-glow);
+  color: var(--apple-red);
 }
 
-/* Glassmorphism Panel */
+/* Bright Clean Glassmorphism Panel */
 .glass-panel {
   background: var(--bg-panel);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid var(--bg-panel-border);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), inset 0 1px 0 var(--bg-glass-highlight);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid var(--bg-panel-border);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18), inset 0 1px 0 var(--bg-glass-highlight);
   border-radius: var(--radius-lg);
+  color: var(--text-main);
 }
 
 /* ==========================================================================
@@ -125,42 +122,42 @@ html, body {
 }
 
 .hud-card {
-  background: rgba(13, 20, 36, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 240, 255, 0.2);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 175, 80, 0.4);
   padding: 8px 14px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .hud-label {
   font-size: 0.8rem;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hud-value {
   font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--cyan-neon);
+  font-weight: 800;
+  color: var(--forest-green);
 }
 
 .gems-card .hud-value {
-  color: var(--gold-neon);
+  color: var(--apple-red);
 }
 
 .combo-pill {
-  background: linear-gradient(135deg, var(--pink-neon), #8a00e6);
+  background: linear-gradient(135deg, #ff9800, #e91e63);
   padding: 6px 12px;
   border-radius: 999px;
   font-family: var(--font-digital);
   font-weight: 900;
   font-size: 0.85rem;
   color: #fff;
-  box-shadow: 0 0 14px var(--pink-glow);
+  box-shadow: 0 4px 14px rgba(233, 30, 99, 0.4);
   animation: pulse-badge 0.8s infinite alternate ease-in-out;
 }
 
@@ -169,16 +166,17 @@ html, body {
   100% { transform: scale(1.06); }
 }
 
-/* Stage Tracker in HUD */
+/* Stage Tracker */
 .stage-tracker {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: rgba(13, 20, 36, 0.8);
-  border: 1px solid rgba(0, 240, 255, 0.25);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(76, 175, 80, 0.4);
   padding: 6px 14px;
   border-radius: var(--radius-md);
   min-width: 190px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .stage-header-row {
@@ -186,17 +184,17 @@ html, body {
   justify-content: space-between;
   align-items: center;
   font-size: 0.75rem;
-  color: var(--cyan-neon);
+  color: var(--forest-green);
 }
 
 .biome-badge {
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .stage-progress-track {
   width: 100%;
   height: 6px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -204,7 +202,7 @@ html, body {
 #stage-progress-fill {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, var(--cyan-neon), var(--gold-neon));
+  background: linear-gradient(90deg, var(--leaf-green), var(--gold-sun));
   transition: width 0.3s ease;
 }
 
@@ -226,10 +224,10 @@ html, body {
 }
 
 .icon-btn {
-  background: rgba(13, 20, 36, 0.8);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0,0,0,0.15);
   border-radius: var(--radius-sm);
-  color: #fff;
+  color: #1b3022;
   width: 38px;
   height: 38px;
   font-size: 1rem;
@@ -238,11 +236,11 @@ html, body {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .icon-btn:hover {
-  border-color: var(--cyan-neon);
-  box-shadow: 0 0 10px var(--cyan-glow);
+  border-color: var(--leaf-green);
   transform: translateY(-2px);
 }
 
@@ -251,17 +249,17 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   padding: 4px 12px;
   border-radius: 999px;
-  border: 1px solid var(--cyan-neon);
-  box-shadow: 0 0 12px var(--cyan-glow);
+  border: 1px solid var(--leaf-green);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .powerup-progress-track {
   width: 90px;
   height: 6px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.1);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -269,7 +267,7 @@ html, body {
 #powerup-progress-fill {
   width: 100%;
   height: 100%;
-  background: var(--cyan-neon);
+  background: var(--leaf-green);
   transition: width 0.1s linear;
 }
 
@@ -278,27 +276,28 @@ html, body {
   position: absolute;
   bottom: 24px;
   left: 24px;
-  background: rgba(13, 20, 36, 0.75);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 240, 255, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.4);
   border-radius: var(--radius-md);
   padding: 8px 14px;
   display: flex;
   align-items: center;
   gap: 10px;
   pointer-events: auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .speed-label {
   font-size: 0.75rem;
-  color: var(--cyan-neon);
-  font-weight: 700;
+  color: var(--forest-green);
+  font-weight: 800;
 }
 
 .speed-bar-track {
   width: 90px;
   height: 8px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.1);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -306,12 +305,12 @@ html, body {
 .speed-bar-fill {
   height: 100%;
   width: 30%;
-  background: linear-gradient(90deg, var(--green-neon), var(--cyan-neon), var(--pink-neon));
+  background: linear-gradient(90deg, var(--leaf-green), var(--gold-sun), var(--apple-red));
   transition: width 0.2s ease;
 }
 
 /* ==========================================================================
-   Modals & Navigation
+   Modals
    ========================================================================== */
 .screen-modal {
   position: absolute;
@@ -370,11 +369,12 @@ html, body {
   font-family: var(--font-digital);
   font-size: 0.7rem;
   letter-spacing: 2px;
-  color: var(--cyan-neon);
-  background: rgba(0, 240, 255, 0.1);
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: var(--forest-green);
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.4);
   padding: 4px 12px;
   border-radius: 999px;
+  font-weight: 700;
 }
 
 .game-title {
@@ -387,16 +387,17 @@ html, body {
 
 .game-subtitle {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   max-width: 440px;
   line-height: 1.5;
+  font-weight: 600;
 }
 
 .user-stats-bar {
   display: flex;
   gap: 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 8px 18px;
   border-radius: var(--radius-md);
   width: 100%;
@@ -411,11 +412,10 @@ html, body {
 }
 
 .user-stat-item strong {
-  color: var(--gold-neon);
+  color: var(--forest-green);
   font-size: 1.1rem;
 }
 
-/* Feature Navigation Buttons */
 .menu-nav-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -424,11 +424,11 @@ html, body {
 }
 
 .nav-feature-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(76, 175, 80, 0.3);
   border-radius: var(--radius-md);
   padding: 14px 10px;
-  color: #fff;
+  color: var(--text-main);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -439,18 +439,18 @@ html, body {
 }
 
 .nav-feature-btn:hover {
-  background: rgba(0, 240, 255, 0.15);
-  border-color: var(--cyan-neon);
-  box-shadow: 0 0 16px var(--cyan-glow);
+  background: rgba(76, 175, 80, 0.15);
+  border-color: var(--forest-green);
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.25);
   transform: translateY(-2px);
 }
 
 .nav-icon {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
 }
 
 .nav-text {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.85rem;
 }
 
@@ -465,6 +465,7 @@ html, body {
 .difficulty-picker label {
   font-size: 0.8rem;
   color: var(--text-muted);
+  font-weight: 700;
 }
 
 .diff-buttons {
@@ -475,8 +476,8 @@ html, body {
 
 .diff-btn {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   color: var(--text-main);
   padding: 8px 12px;
   border-radius: var(--radius-sm);
@@ -484,40 +485,41 @@ html, body {
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-weight: 600;
 }
 
 .diff-btn.active {
-  background: rgba(0, 240, 255, 0.15);
-  border-color: var(--cyan-neon);
-  color: var(--cyan-neon);
-  box-shadow: 0 0 12px var(--cyan-glow);
-  font-weight: 700;
+  background: var(--leaf-green);
+  border-color: var(--forest-green);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+  font-weight: 800;
 }
 
 /* Action Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, var(--cyan-neon), #0088ff);
-  color: #070913;
+  background: linear-gradient(135deg, #43a047, #1b5e20);
+  color: #fff;
   border: none;
   font-family: var(--font-arabic);
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   padding: 12px 32px;
   border-radius: 999px;
   cursor: pointer;
   width: 100%;
-  box-shadow: 0 0 24px var(--cyan-glow);
+  box-shadow: 0 4px 18px rgba(46, 125, 50, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 0 32px var(--cyan-glow);
+  box-shadow: 0 6px 24px rgba(46, 125, 50, 0.5);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   color: var(--text-main);
   font-family: var(--font-arabic);
   font-weight: 700;
@@ -530,8 +532,7 @@ html, body {
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: #fff;
+  background: rgba(0, 0, 0, 0.12);
 }
 
 .btn-sm {
@@ -544,13 +545,11 @@ html, body {
 }
 
 @keyframes pulse-glow {
-  0% { box-shadow: 0 0 14px var(--cyan-glow); }
-  100% { box-shadow: 0 0 28px var(--cyan-glow), 0 0 40px rgba(0, 240, 255, 0.3); }
+  0% { box-shadow: 0 4px 14px rgba(46, 125, 50, 0.35); }
+  100% { box-shadow: 0 6px 26px rgba(46, 125, 50, 0.6); }
 }
 
-/* ==========================================================================
-   Stage Selector Cards Grid
-   ========================================================================== */
+/* Stage Cards */
 .stages-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -560,8 +559,8 @@ html, body {
 }
 
 .stage-card {
-  background: rgba(0, 0, 0, 0.35);
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--radius-md);
   padding: 16px 12px;
   cursor: pointer;
@@ -569,33 +568,32 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  position: relative;
   transition: all 0.25s ease;
 }
 
 .stage-card:hover {
-  border-color: rgba(0, 240, 255, 0.5);
+  border-color: var(--leaf-green);
   transform: translateY(-3px);
 }
 
 .stage-card.active {
-  border-color: var(--cyan-neon);
-  background: rgba(0, 240, 255, 0.12);
-  box-shadow: 0 0 18px var(--cyan-glow);
+  border-color: var(--forest-green);
+  background: rgba(76, 175, 80, 0.15);
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
 }
 
 .stage-tag {
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.08);
   color: var(--text-muted);
 }
 
 .stage-card.active .stage-tag {
-  background: var(--cyan-neon);
-  color: #000;
+  background: var(--forest-green);
+  color: #fff;
 }
 
 .stage-card-icon {
@@ -605,7 +603,8 @@ html, body {
 
 .stage-card h3 {
   font-size: 0.95rem;
-  color: #fff;
+  color: var(--text-main);
+  font-weight: 800;
 }
 
 .stage-card p {
@@ -614,9 +613,7 @@ html, body {
   line-height: 1.3;
 }
 
-/* ==========================================================================
-   Garage Modal & Upgrades
-   ========================================================================== */
+/* Garage & Vehicles */
 .garage-header {
   display: flex;
   justify-content: space-between;
@@ -625,14 +622,15 @@ html, body {
 }
 
 .garage-bank {
-  background: rgba(255, 215, 0, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  color: var(--gold-neon);
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid var(--gold-sun);
+  color: #e65100;
   padding: 6px 14px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   gap: 6px;
+  font-weight: 800;
 }
 
 .vehicles-slider {
@@ -643,8 +641,8 @@ html, body {
 }
 
 .vehicle-card {
-  background: rgba(0, 0, 0, 0.35);
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--radius-md);
   padding: 14px 10px;
   display: flex;
@@ -655,27 +653,28 @@ html, body {
 }
 
 .vehicle-card.active {
-  border-color: var(--cyan-neon);
-  background: rgba(0, 240, 255, 0.08);
-  box-shadow: 0 0 16px var(--cyan-glow);
+  border-color: var(--forest-green);
+  background: rgba(76, 175, 80, 0.12);
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.25);
 }
 
 .veh-status-badge {
   font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: 999px;
+  font-weight: 700;
 }
 
 .veh-status-badge.owned {
-  background: rgba(0, 255, 136, 0.15);
-  color: var(--green-neon);
-  border: 1px solid var(--green-neon);
+  background: rgba(76, 175, 80, 0.2);
+  color: var(--forest-green);
+  border: 1px solid var(--forest-green);
 }
 
 .veh-status-badge.locked {
-  background: rgba(255, 51, 68, 0.15);
-  color: var(--danger-neon);
-  border: 1px solid var(--danger-neon);
+  background: rgba(229, 57, 53, 0.15);
+  color: var(--apple-red);
+  border: 1px solid var(--apple-red);
 }
 
 .veh-visual {
@@ -701,19 +700,20 @@ html, body {
   justify-content: space-between;
   font-size: 0.7rem;
   color: var(--text-muted);
+  font-weight: 700;
 }
 
 .stat-bar {
   width: 60%;
   height: 5px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .stat-bar div {
   height: 100%;
-  background: var(--cyan-neon);
+  background: var(--leaf-green);
 }
 
 /* Upgrades Section */
@@ -725,7 +725,8 @@ html, body {
 .upgrade-sec-title {
   font-size: 0.95rem;
   margin-bottom: 8px;
-  color: #fff;
+  color: var(--forest-green);
+  font-weight: 800;
 }
 
 .upgrades-grid {
@@ -735,8 +736,8 @@ html, body {
 }
 
 .upgrade-card {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--radius-md);
   padding: 10px;
   display: flex;
@@ -762,24 +763,25 @@ html, body {
 
 .up-level {
   font-size: 0.7rem;
-  color: var(--cyan-neon);
+  color: var(--forest-green);
+  font-weight: 700;
 }
 
 .btn-upgrade {
-  background: rgba(255, 215, 0, 0.15);
-  border: 1px solid var(--gold-neon);
-  color: var(--gold-neon);
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid var(--gold-sun);
+  color: #e65100;
   border-radius: var(--radius-sm);
   padding: 6px;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: var(--font-arabic);
 }
 
 .btn-upgrade:hover {
-  background: var(--gold-neon);
+  background: var(--gold-sun);
   color: #000;
 }
 
@@ -790,16 +792,14 @@ html, body {
   color: #888;
 }
 
-/* ==========================================================================
-   Warp Portal FX Screen
-   ========================================================================== */
+/* Warp Portal Overlay */
 .warp-portal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(0,240,255,0.4) 0%, rgba(7,9,19,0.95) 80%);
+  background: radial-gradient(circle, rgba(129, 199, 132, 0.6) 0%, rgba(255, 255, 255, 0.95) 80%);
   z-index: 28;
   display: flex;
   align-items: center;
@@ -824,10 +824,9 @@ html, body {
 .warp-spin-ring {
   width: 90px;
   height: 90px;
-  border: 4px dashed var(--cyan-neon);
+  border: 4px dashed var(--leaf-green);
   border-radius: 50%;
   animation: spin-portal 1s linear infinite;
-  box-shadow: 0 0 24px var(--cyan-glow);
 }
 
 @keyframes spin-portal {
@@ -836,20 +835,19 @@ html, body {
 
 .warp-title {
   font-size: 1.6rem;
-  color: #fff;
-  text-shadow: 0 0 20px var(--cyan-glow);
+  color: var(--forest-green);
+  font-weight: 900;
 }
 
 .warp-sub {
   font-family: var(--font-digital);
   font-size: 0.85rem;
-  color: var(--cyan-neon);
+  color: var(--leaf-green);
   letter-spacing: 2px;
+  font-weight: 800;
 }
 
-/* ==========================================================================
-   Mobile Controls & Screen Flash
-   ========================================================================== */
+/* Mobile Controls */
 .mobile-controls-layer {
   display: none;
   pointer-events: auto;
@@ -872,33 +870,24 @@ html, body {
   width: 62px;
   height: 62px;
   border-radius: 50%;
-  background: rgba(13, 20, 36, 0.75);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(0, 240, 255, 0.35);
-  color: #fff;
+  border: 2px solid rgba(76, 175, 80, 0.5);
+  color: var(--forest-green);
   font-size: 1.3rem;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
   touch-action: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   transition: transform 0.1s ease;
 }
 
 .touch-btn:active, .touch-btn.active {
   transform: scale(0.92);
-  background: rgba(0, 240, 255, 0.3);
-  border-color: var(--cyan-neon);
-}
-
-.touch-action.jump-btn {
-  border-color: rgba(0, 255, 136, 0.4);
-  color: var(--green-neon);
-}
-
-.touch-action.boost-btn {
-  border-color: rgba(255, 0, 127, 0.4);
-  color: var(--pink-neon);
+  background: rgba(76, 175, 80, 0.3);
+  border-color: var(--forest-green);
 }
 
 .damage-flash-overlay {
@@ -907,7 +896,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 51, 68, 0.4);
+  background-color: rgba(229, 57, 53, 0.35);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.1s ease;
@@ -922,7 +911,7 @@ html, body {
   display: none !important;
 }
 
-/* Responsive Rules */
+/* Responsive */
 @media (max-width: 768px), (pointer: coarse) {
   .mobile-controls-layer {
     display: flex;

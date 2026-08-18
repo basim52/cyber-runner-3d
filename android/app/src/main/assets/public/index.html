@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cyber Runner 3D | المغامر السيبراني - العوالم المتعددة</title>
-  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة وحماسية مع عوالم متعددة وترقيات ومركبات فضائية باستخدام Three.js">
+  <title>Nature Runner 3D | مغامر الغابة والطبيعة</title>
+  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة ومبهجة في عوالم الطبيعة الساحرة مع أشجار وحيوانات وتفاح ذهبي">
   
-  <!-- Fonts: Google Fonts Orbitron & Cairo for modern Sci-Fi typography -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
   <!-- UI Overlay Layers -->
   <div id="ui-overlay">
     
-    <!-- Top HUD Bar (Always visible during gameplay) -->
+    <!-- Top HUD Bar -->
     <header id="hud" class="hud-layer hidden">
       <div class="hud-group hud-left">
         <div class="hud-card score-card">
@@ -31,7 +31,7 @@
           <span id="score-display" class="hud-value digit-font">0</span>
         </div>
         <div class="hud-card gems-card">
-          <span class="hud-icon">💎</span>
+          <span class="hud-icon">🍎</span>
           <span id="gems-display" class="hud-value digit-font">0</span>
         </div>
         <div id="combo-badge" class="combo-pill hidden">
@@ -43,7 +43,7 @@
         <!-- Stage Progress & Biome Tag -->
         <div class="stage-tracker">
           <div class="stage-header-row">
-            <span id="current-biome-badge" class="biome-badge">🏙️ المدينة السيبرانية</span>
+            <span id="current-biome-badge" class="biome-badge">🌲 الغابة الساحرة</span>
             <span id="stage-distance-badge" class="digit-font">0 / 1000m</span>
           </div>
           <div class="stage-progress-track">
@@ -90,9 +90,9 @@
     <!-- Start / Main Menu Screen -->
     <div id="start-screen" class="screen-modal active">
       <div class="modal-card glass-panel">
-        <div class="brand-badge">NEXT-GEN 3D WEBGL ENGINE</div>
-        <h1 class="game-title glow-text">CYBER RUNNER <span class="accent-title">3D</span></h1>
-        <p class="game-subtitle">انطلق عبر 4 عوالم مذهلة، طوّر مركبتك الفضائية، وتحدَّ حدود السرعة!</p>
+        <div class="brand-badge">🌳 3D NATURE ADVENTURE</div>
+        <h1 class="game-title glow-text">NATURE RUNNER <span class="accent-title">3D</span></h1>
+        <p class="game-subtitle">انطلق عبر عوالم الطبيعة الساحرة، تفادَ جذوع الأشجار والصخور، واجمع التفاح الذهبي برفقة الحيوانات اللطيفة!</p>
         
         <div class="user-stats-bar">
           <div class="user-stat-item">
@@ -100,7 +100,7 @@
             <strong id="start-high-score" class="digit-font">0</strong>
           </div>
           <div class="user-stat-item">
-            <span>💎 إجمالي البلورات:</span>
+            <span>🍎 التفاح المجمّع:</span>
             <strong id="total-banked-gems" class="digit-font">0</strong>
           </div>
         </div>
@@ -108,7 +108,7 @@
         <div class="menu-nav-buttons">
           <button id="btn-open-stages" class="nav-feature-btn">
             <span class="nav-icon">🗺️</span>
-            <span class="nav-text">اختيار العوالم والمراحل</span>
+            <span class="nav-text">اختيار عوالم الطبيعة</span>
           </button>
           <button id="btn-open-garage" class="nav-feature-btn">
             <span class="nav-icon">🚀</span>
@@ -126,7 +126,7 @@
         </div>
 
         <button id="btn-start" class="btn-primary pulse-btn">
-          <span>انطلاق فوري 🚀</span>
+          <span>انطلاق للمغامرة 🌲🚀</span>
         </button>
       </div>
     </div>
@@ -135,7 +135,7 @@
     <div id="stages-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel stage-modal-card">
         <h2 class="glow-text">اختر عالم المغامرة 🗺️</h2>
-        <p class="sub-text">انطلق في عالم محدد أو اختر نمط الرحلة اللانهائية للتنقل بين كل العوالم!</p>
+        <p class="sub-text">انطلق في عالم محدد أو اختر نمط الرحلة اللانهائية للتنقل بين كل العوالم الطبيعية!</p>
         
         <div class="stages-grid">
           <!-- Stage 0: Endless Odyssey -->
@@ -143,39 +143,39 @@
             <div class="stage-tag">الموصى به ⭐</div>
             <div class="stage-card-icon">🌀</div>
             <h3>الرحلة اللانهائية</h3>
-            <p>انتقال تلقائي بين كل العوالم عبر بوابات البعد</p>
+            <p>انتقال تلقائي بين كل العوالم الطبيعية عبر بوابات الورد</p>
           </div>
 
-          <!-- Stage 1: Cyber City -->
-          <div class="stage-card" data-world="city">
-            <div class="stage-tag city-tag">العالم 1</div>
-            <div class="stage-card-icon">🏙️</div>
-            <h3>المدينة السيبرانية</h3>
-            <p>أضواء نيون، أمطار رقمية، وبوابات ليزر</p>
+          <!-- Stage 1: Enchanted Forest -->
+          <div class="stage-card" data-world="forest">
+            <div class="stage-tag forest-tag">العالم 1</div>
+            <div class="stage-card-icon">🌲</div>
+            <h3>الغابة الساحرة</h3>
+            <p>مروج خضراء، أشجار صنوبر وزهور، غزلان وأرانب تقفز</p>
           </div>
 
-          <!-- Stage 2: Lava Magma Core -->
-          <div class="stage-card" data-world="lava">
-            <div class="stage-tag lava-tag">العالم 2</div>
-            <div class="stage-card-icon">🌋</div>
-            <h3>الكوكب البركاني</h3>
-            <p>حمم منصهرة، صخور نارية، وشهب متساقطة</p>
+          <!-- Stage 2: Golden Savannah -->
+          <div class="stage-card" data-world="savannah">
+            <div class="stage-tag savannah-tag">العالم 2</div>
+            <div class="stage-card-icon">🌴</div>
+            <h3>السافانا وواحة النخيل</h3>
+            <p>رمال ذهبية، أشجار نخيل، جمال وغزلان وشموس دافئة</p>
           </div>
 
-          <!-- Stage 3: Cosmic Nebula -->
-          <div class="stage-card" data-world="nebula">
-            <div class="stage-tag nebula-tag">العالم 3</div>
-            <div class="stage-card-icon">🌌</div>
-            <h3>السديم الفضائي</h3>
-            <p>فضاء عميق، كواكب دوارة، ومنصات قفز عملاقة</p>
+          <!-- Stage 3: Winter Wonderland -->
+          <div class="stage-card" data-world="winter">
+            <div class="stage-tag winter-tag">العالم 3</div>
+            <div class="stage-card-icon">❄️</div>
+            <h3>غابة الثلج والقطب</h3>
+            <p>ثلوج ناصعة، أشجار مغطاة بالثلج، وبطاريق مرحة</p>
           </div>
 
-          <!-- Stage 4: Abyssal Matrix -->
-          <div class="stage-card" data-world="abyss">
-            <div class="stage-tag abyss-tag">العالم 4</div>
-            <div class="stage-card-icon">🌊</div>
-            <h3>أعماق الماتريكس</h3>
-            <p>عالم مائي زمردي، دوامات طاقة، وفقاعات مضيئة</p>
+          <!-- Stage 4: Tropical Jungle -->
+          <div class="stage-card" data-world="jungle">
+            <div class="stage-tag jungle-tag">العالم 4</div>
+            <div class="stage-card-icon">🌿</div>
+            <h3>الغابة الاستوائية</h3>
+            <p>فطور عملاقة، نباتات خصبة، وبحيرات زمردية</p>
           </div>
         </div>
 
@@ -186,25 +186,24 @@
       </div>
     </div>
 
-    <!-- Garage & Vehicle Upgrades Modal -->
+    <!-- Garage Modal -->
     <div id="garage-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel garage-modal-card">
         <div class="garage-header">
-          <h2 class="glow-text">مرآب المركبات الفضائية 🚀</h2>
+          <h2 class="glow-text">مرآب المركبات وترقيات الطبيعة 🚀</h2>
           <div class="garage-bank">
             <span>رصيدك:</span>
-            <strong id="garage-gems-count" class="digit-font">0 💎</strong>
+            <strong id="garage-gems-count" class="digit-font">0 🍎</strong>
           </div>
         </div>
 
-        <!-- Vehicle Selection Carousel -->
         <div class="vehicles-slider">
           <!-- Vehicle 1 -->
           <div class="vehicle-card active" data-vehicle="dart">
             <div class="veh-status-badge owned">مملوكة ✅</div>
             <div class="veh-visual">⚡</div>
-            <h3>Cyber Dart</h3>
-            <p class="veh-desc">مركبة هجومية خفيفة متوازنة وسريعة الاستجابة</p>
+            <h3>Nature Glider</h3>
+            <p class="veh-desc">مركبة هجومية خفيفة رشيقة ومتوازنة</p>
             <div class="veh-stats">
               <div class="stat-row">
                 <span>السرعة:</span>
@@ -222,8 +221,8 @@
           <div class="vehicle-card" data-vehicle="titan">
             <div id="titan-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
             <div class="veh-visual">🛡️</div>
-            <h3>Titan Mech</h3>
-            <p class="veh-desc">مدرعة ثقيلة قوية تتحمل الصدمات ولديها درع إضافي</p>
+            <h3>Forest Titan</h3>
+            <p class="veh-desc">مدرعة غابات صلبة تتحمل الصدمات ولديها درع إضافي</p>
             <div class="veh-stats">
               <div class="stat-row">
                 <span>السرعة:</span>
@@ -234,15 +233,15 @@
                 <div class="stat-bar"><div style="width: 95%"></div></div>
               </div>
             </div>
-            <button id="btn-buy-titan" class="veh-select-btn btn-secondary btn-sm" data-cost="500">فتح بـ 500 💎</button>
+            <button id="btn-buy-titan" class="veh-select-btn btn-secondary btn-sm" data-cost="500">فتح بـ 500 🍎</button>
           </div>
 
           <!-- Vehicle 3 -->
           <div class="vehicle-card" data-vehicle="phantom">
             <div id="phantom-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
             <div class="veh-visual">🌌</div>
-            <h3>Phantom Speeder</h3>
-            <p class="veh-desc">طيف السرعة الخارق بمغناطيس بلورات واسع النطاق</p>
+            <h3>Phantom Falcon</h3>
+            <p class="veh-desc">صقر السرعة الخارق بمغناطيس تفاح وجواهر واسع النطاق</p>
             <div class="veh-stats">
               <div class="stat-row">
                 <span>السرعة:</span>
@@ -253,11 +252,10 @@
                 <div class="stat-bar"><div style="width: 40%"></div></div>
               </div>
             </div>
-            <button id="btn-buy-phantom" class="veh-select-btn btn-secondary btn-sm" data-cost="1200">فتح بـ 1200 💎</button>
+            <button id="btn-buy-phantom" class="veh-select-btn btn-secondary btn-sm" data-cost="1200">فتح بـ 1200 🍎</button>
           </div>
         </div>
 
-        <!-- Global Upgrades System -->
         <div class="upgrades-container">
           <h3 class="upgrade-sec-title">ترقيات وتطوير الأنظمة 🛠️</h3>
           <div class="upgrades-grid">
@@ -265,22 +263,22 @@
               <div class="upgrade-info">
                 <span class="up-icon">🧲</span>
                 <div>
-                  <strong>مجال المغناطيس</strong>
+                  <strong>مجال سحب التفاح</strong>
                   <span id="magnet-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
-              <button id="btn-up-magnet" class="btn-upgrade" data-type="magnet">ترقية بـ 200 💎</button>
+              <button id="btn-up-magnet" class="btn-upgrade" data-type="magnet">ترقية بـ 200 🍎</button>
             </div>
 
             <div class="upgrade-card">
               <div class="upgrade-info">
                 <span class="up-icon">🛡️</span>
                 <div>
-                  <strong>صمود الدرع</strong>
+                  <strong>صمود الدرع السحري</strong>
                   <span id="shield-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
-              <button id="btn-up-shield" class="btn-upgrade" data-type="shield">ترقية بـ 200 💎</button>
+              <button id="btn-up-shield" class="btn-upgrade" data-type="shield">ترقية بـ 200 🍎</button>
             </div>
 
             <div class="upgrade-card">
@@ -291,7 +289,7 @@
                   <span id="boost-level-text" class="up-level">المستوى 1 / 5</span>
                 </div>
               </div>
-              <button id="btn-up-boost" class="btn-upgrade" data-type="boost">ترقية بـ 200 💎</button>
+              <button id="btn-up-boost" class="btn-upgrade" data-type="boost">ترقية بـ 200 🍎</button>
             </div>
           </div>
         </div>
@@ -304,7 +302,7 @@
     <div id="pause-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel small-modal">
         <h2 class="glow-text">اللعبة متوقفة</h2>
-        <p>خذ قسطاً من الراحة وعد إلى السباق!</p>
+        <p>استمتع بهدوء الطبيعة وعد إلى المغامرة!</p>
         <div class="modal-actions">
           <button id="btn-resume" class="btn-primary">متابعة اللعب ▶️</button>
           <button id="btn-restart-pause" class="btn-secondary">إعادة البدء 🔄</button>
@@ -316,7 +314,7 @@
     <div id="gameover-screen" class="screen-modal hidden">
       <div class="modal-card glass-panel">
         <div id="new-high-badge" class="high-score-alert hidden">🌟 رقم قياسي جديد! 🌟</div>
-        <h2 class="gameover-title">انتهت اللعبة!</h2>
+        <h2 class="gameover-title">انتهت الجولة!</h2>
         
         <div class="results-grid">
           <div class="result-box">
@@ -332,8 +330,8 @@
             <span id="final-distance" class="res-value digit-font">0m</span>
           </div>
           <div class="result-box">
-            <span class="res-label">البلورات المجموعة</span>
-            <span id="final-gems" class="res-value digit-font">0 💎</span>
+            <span class="res-label">التفاح المجمّع</span>
+            <span id="final-gems" class="res-value digit-font">0 🍎</span>
           </div>
         </div>
 
@@ -348,16 +346,16 @@
       </div>
     </div>
 
-    <!-- Warp Portal Transition FX Screen -->
+    <!-- Nature Warp Portal Overlay -->
     <div id="warp-overlay" class="warp-portal-overlay">
       <div class="warp-content">
         <div class="warp-spin-ring"></div>
-        <h2 id="warp-world-name" class="warp-title">الانتقال إلى الكوكب البركاني!</h2>
-        <span class="warp-sub">WARP DRIVE ACTIVATED 🚀</span>
+        <h2 id="warp-world-name" class="warp-title">الانتقال إلى واحة السافانا!</h2>
+        <span class="warp-sub">EXPLORING NEW BIOME 🌿</span>
       </div>
     </div>
 
-    <!-- Mobile Virtual Touch Controls -->
+    <!-- Mobile Touch Controls -->
     <div id="mobile-controls" class="mobile-controls-layer">
       <div class="mobile-dpad">
         <button id="touch-left" class="touch-btn touch-steer" aria-label="يسار">◀</button>
@@ -370,7 +368,6 @@
       </div>
     </div>
 
-    <!-- Screen Flash / Damage FX Overlay -->
     <div id="damage-flash" class="damage-flash-overlay"></div>
 
   </div>
