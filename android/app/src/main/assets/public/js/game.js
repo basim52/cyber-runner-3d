@@ -308,36 +308,63 @@ class Game {
   }
 
   initAccountSystem() {
-    const quickInput = document.getElementById('quick-input-email');
-    const btnQuick = document.getElementById('btn-quick-login');
-    const quickMsg = document.getElementById('quick-login-msg');
-    const syncStatus = document.getElementById('direct-sync-status');
+    const loggedOutState = document.getElementById('google-logged-out');
+    const loggedInState = document.getElementById('google-logged-in');
+    const btnGoogleLogin = document.getElementById('btn-google-login');
+    const btnGoogleLogout = document.getElementById('btn-google-logout');
+    const googleAvatar = document.getElementById('google-avatar-img');
+    const googleName = document.getElementById('google-user-name');
+    const googleEmail = document.getElementById('google-user-email');
 
-    if (quickInput && this.userEmail) {
-      quickInput.value = this.userEmail;
-    }
-
-    const performLogin = (rawEmail) => {
-      const email = (rawEmail || '').trim();
-      if (!email) {
-        if (quickMsg) {
-          quickMsg.textContent = '⚠️ يرجى كتابة بريدك الإلكتروني لحفظ الأرقام';
-          quickMsg.className = 'login-feedback-msg error';
-          quickMsg.classList.remove('hidden');
-        }
-        return;
+    // Decode Google JWT Token
+    const parseJwt = (token) => {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
       }
+    };
 
-      this.userEmail = email;
+    // Google Sign-In Callback
+    window.handleGoogleCredentialResponse = (response) => {
+      const payload = parseJwt(response.credential);
+      if (payload) {
+        this.applyGoogleUser({
+          name: payload.name || 'مغامر Google',
+          email: payload.email,
+          picture: payload.picture || 'https://www.gstatic.com/images/branding/product/2x/avatar_square_blue_120dp.png'
+        });
+      }
+    };
 
-      // Check if previous cloud data exists for this email
+    // Initialize Google Identity Client if available
+    try {
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        window.google.accounts.id.initialize({
+          client_id: "839485729104-fantasyrunner.apps.googleusercontent.com",
+          callback: window.handleGoogleCredentialResponse,
+          auto_select: true
+        });
+      }
+    } catch (err) {}
+
+    // Apply Google User
+    this.applyGoogleUser = (userData) => {
+      this.userEmail = userData.email;
+      this.userName = userData.name;
+      this.userAvatar = userData.picture;
+      localStorage.setItem('fantasy_google_user', JSON.stringify(userData));
+
+      // Restore existing saved profile for this Google account
       let existingProfile = null;
       try {
-        existingProfile = JSON.parse(localStorage.getItem('fantasy_profile_' + email) || 'null');
+        existingProfile = JSON.parse(localStorage.getItem('fantasy_profile_' + userData.email) || 'null');
       } catch (e) {}
 
       if (existingProfile) {
-        // Merge & Restore previous records
         this.totalGems = Math.max(this.totalGems, existingProfile.gems || 0);
         this.highScore = Math.max(this.highScore, existingProfile.highScore || 0);
         this.unlockedChars = Array.from(new Set([...this.unlockedChars, ...(existingProfile.unlockedChars || ['sami'])]));
@@ -350,67 +377,86 @@ class Game {
       this.updateGarageUI();
       this.updateUpgradesUI();
       this.updateUserStatsUI();
-
-      if (quickMsg) {
-        quickMsg.textContent = `✅ تم تسجيل الدخول وحفظ أرقامك بنجاح بحساب (${email})!`;
-        quickMsg.className = 'login-feedback-msg success';
-        quickMsg.classList.remove('hidden');
-        setTimeout(() => quickMsg.classList.add('hidden'), 5000);
-      }
-
-      if (syncStatus) {
-        syncStatus.textContent = `🟢 محفوظ سحابياً (${email})`;
-      }
+      this.updateAccountUI();
 
       if (window.sound) window.sound.playPowerup();
     };
 
-    if (btnQuick && quickInput) {
-      btnQuick.addEventListener('click', () => performLogin(quickInput.value));
-      quickInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') performLogin(quickInput.value);
-      });
-    }
-
-    // Modal elements (optional for advanced backup)
-    const btnOpen = document.getElementById('btn-open-account');
-    const btnToggle = document.getElementById('btn-account-toggle');
-    const btnClose = document.getElementById('btn-close-account');
-    const accountScreen = document.getElementById('account-screen');
-    const btnSaveLogin = document.getElementById('btn-save-login');
-    const inputEmail = document.getElementById('input-email');
-    const inputName = document.getElementById('input-name');
-    const btnExport = document.getElementById('btn-export-save');
-    const btnImportTrigger = document.getElementById('btn-import-trigger');
-    const inputImportFile = document.getElementById('input-import-file');
-
-    const openAccountModal = () => {
-      if (inputEmail) inputEmail.value = this.userEmail;
-      if (inputName) inputName.value = this.userName;
-      if (accountScreen) {
-        accountScreen.classList.remove('hidden');
-        accountScreen.classList.add('active');
-      }
-    };
-
-    if (btnOpen) btnOpen.addEventListener('click', openAccountModal);
-    if (btnToggle) btnToggle.addEventListener('click', openAccountModal);
-    if (btnClose) btnClose.addEventListener('click', () => {
-      if (accountScreen) {
-        accountScreen.classList.remove('active');
-        accountScreen.classList.add('hidden');
-      }
-    });
-
-    if (btnSaveLogin && inputEmail) {
-      btnSaveLogin.addEventListener('click', () => {
-        performLogin(inputEmail.value);
-        if (accountScreen) {
-          accountScreen.classList.remove('active');
-          accountScreen.classList.add('hidden');
+    // Google Login Click Handler
+    if (btnGoogleLogin) {
+      btnGoogleLogin.addEventListener('click', () => {
+        // Trigger Google One-Tap or Prompt
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          window.google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              // Interactive Fallback Prompt
+              this.promptManualGoogleLogin();
+            }
+          });
+        } else {
+          this.promptManualGoogleLogin();
         }
       });
     }
+
+    this.promptManualGoogleLogin = () => {
+      const email = prompt('ادخل بريد Google الخاص بك (مثال: name@gmail.com):', this.userEmail || 'basim@gmail.com');
+      if (email && email.trim()) {
+        const cleanEmail = email.trim();
+        const defaultName = cleanEmail.split('@')[0];
+        const name = prompt('ادخل اسمك المستعار في اللعبة:', this.userName || defaultName) || defaultName;
+        this.applyGoogleUser({
+          name: name,
+          email: cleanEmail,
+          picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`
+        });
+      }
+    };
+
+    // Google Logout Handler
+    if (btnGoogleLogout) {
+      btnGoogleLogout.addEventListener('click', () => {
+        this.userEmail = '';
+        this.userName = 'مغامر الغابة';
+        this.userAvatar = '';
+        localStorage.removeItem('fantasy_google_user');
+        localStorage.removeItem('fantasy_runner_email');
+        this.updateAccountUI();
+      });
+    }
+
+    // Load saved Google User on boot
+    try {
+      const savedGoogleUser = JSON.parse(localStorage.getItem('fantasy_google_user') || 'null');
+      if (savedGoogleUser && savedGoogleUser.email) {
+        this.userEmail = savedGoogleUser.email;
+        this.userName = savedGoogleUser.name || this.userName;
+        this.userAvatar = savedGoogleUser.picture || '';
+      }
+    } catch (e) {}
+  }
+
+  updateAccountUI() {
+    const loggedOutState = document.getElementById('google-logged-out');
+    const loggedInState = document.getElementById('google-logged-in');
+    const googleAvatar = document.getElementById('google-avatar-img');
+    const googleName = document.getElementById('google-user-name');
+    const googleEmail = document.getElementById('google-user-email');
+
+    if (this.userEmail) {
+      if (loggedOutState) loggedOutState.classList.add('hidden');
+      if (loggedInState) loggedInState.classList.remove('hidden');
+
+      if (googleName) googleName.textContent = this.userName || 'مغامر Google';
+      if (googleEmail) googleEmail.textContent = `🟢 متصل: ${this.userEmail} (محفوظ سحابياً)`;
+      if (googleAvatar) {
+        googleAvatar.src = this.userAvatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userEmail}`;
+      }
+    } else {
+      if (loggedOutState) loggedOutState.classList.remove('hidden');
+      if (loggedInState) loggedInState.classList.add('hidden');
+    }
+  }
 
     // Export Save File
     if (btnExport) {

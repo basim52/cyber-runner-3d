@@ -9,15 +9,18 @@
   <meta http-equiv="Expires" content="0">
   
   <title>Fantasy Runner 3D | مغامر العوالم التخيلية</title>
-  <meta name="description" content="لعبة ثلاثية الأبعاد ممتعة مع حسابات وتسجيل دخول سحابي لحفظ البيانات">
+  <meta name="description" content="لعبة ثلاثية الأبعاد ممتعة مع تسجيل الدخول بحساب Google لحفظ الأرقام سحابياً">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/style.css?v=10.0.0">
+  <link rel="stylesheet" href="css/style.css?v=12.0.0">
   
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -94,17 +97,32 @@
     <div id="start-screen" class="screen-modal active">
       <div class="modal-card glass-panel">
         
-        <!-- Quick Direct Email Login Bar (Foolproof & Instant) -->
-        <div class="direct-login-box">
-          <div class="direct-login-header">
-            <span class="direct-login-title">🔐 تسجيل الدخول بالبريد الإلكتروني لحفظ أرقامك:</span>
-            <span id="direct-sync-status" class="sync-pill active">🟢 متصل ومحفوظ سحابياً</span>
+        <!-- Google Sign-In Header Widget -->
+        <div class="google-auth-widget" id="google-auth-widget">
+          <!-- Logged Out State -->
+          <div id="google-logged-out" class="google-auth-state">
+            <button id="btn-google-login" class="btn-google-signin">
+              <svg class="google-icon-svg" viewBox="0 0 24 24" width="22" height="22">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+              <span>تسجيل الدخول عبر Google لحفظ الأرقام ☁️</span>
+            </button>
           </div>
-          <div class="direct-login-row">
-            <input type="text" id="quick-input-email" class="quick-email-input" placeholder="اكتب بريدك الإلكتروني هنا (مثال: basim@gmail.com)..." autocomplete="email">
-            <button id="btn-quick-login" class="btn-quick-login">حفظ الحساب ☁️</button>
+
+          <!-- Logged In State (Hidden by default) -->
+          <div id="google-logged-in" class="google-auth-state hidden">
+            <div class="google-user-profile">
+              <img id="google-avatar-img" class="google-avatar-img" src="" alt="صورة الحساب">
+              <div class="google-user-details">
+                <strong id="google-user-name">اسم اللاعب</strong>
+                <span id="google-user-email" class="google-email-tag">🟢 متصل ومحفوظ سحابياً</span>
+              </div>
+            </div>
+            <button id="btn-google-logout" class="btn-google-logout" title="تبديل الحساب / خروج">🚪 تبديل</button>
           </div>
-          <div id="quick-login-msg" class="login-feedback-msg hidden"></div>
         </div>
 
         <div class="brand-badge">✨ 3D FANTASY RUNNER</div>
@@ -171,38 +189,6 @@
         <button id="btn-start" class="btn-primary pulse-btn">
           <span>انطلاق للمغامرة الساحرة 🚀✨</span>
         </button>
-      </div>
-    </div>
-
-    <!-- Email Login & Cloud Save Account Modal -->
-    <div id="account-screen" class="screen-modal hidden">
-      <div class="modal-card glass-panel small-modal account-modal-card">
-        <h2 class="glow-text">🔐 الحساب والمزامنة السحابية</h2>
-        <p class="sub-text">سجل دخولك بالبريد الإلكتروني لحفظ كافة الأرقام والإنجازات والشخصيات واسترجاعها في أي وقت ومن أي جهاز!</p>
-        
-        <div class="account-form-group">
-          <label for="input-email">البريد الإلكتروني (Email):</label>
-          <input type="email" id="input-email" class="form-input" placeholder="name@example.com" autocomplete="email">
-        </div>
-
-        <div class="account-form-group">
-          <label for="input-name">اسم اللاعب (Nickname):</label>
-          <input type="text" id="input-name" class="form-input" placeholder="اكتب اسمك هنا" maxlength="18">
-        </div>
-
-        <div class="modal-actions">
-          <button id="btn-save-login" class="btn-primary">حفظ وتسجيل الدخول السحابي ☁️</button>
-        </div>
-
-        <div class="backup-divider"><span>أو إدارة النسخ الاحتياطية</span></div>
-
-        <div class="backup-actions-grid">
-          <button id="btn-export-save" class="btn-secondary btn-sm" title="تحميل ملف حفظ احتياطي">💾 تصدير ملف الحفظ</button>
-          <button id="btn-import-trigger" class="btn-secondary btn-sm" title="استرجاع ملف الحفظ">📥 استيراد ملف الحفظ</button>
-          <input type="file" id="input-import-file" accept=".json" class="hidden">
-        </div>
-
-        <button id="btn-close-account" class="btn-secondary">إغلاق ↩️</button>
       </div>
     </div>
 
@@ -446,12 +432,12 @@
 
   </div>
 
-  <!-- Scripts with v11.0.0 cache buster -->
-  <script src="js/audio.js?v=11.0.0"></script>
-  <script src="js/particles.js?v=11.0.0"></script>
-  <script src="js/player.js?v=11.0.0"></script>
-  <script src="js/world.js?v=11.0.0"></script>
-  <script src="js/controls.js?v=11.0.0"></script>
-  <script src="js/game.js?v=11.0.0"></script>
+  <!-- Scripts with v12.0.0 cache buster -->
+  <script src="js/audio.js?v=12.0.0"></script>
+  <script src="js/particles.js?v=12.0.0"></script>
+  <script src="js/player.js?v=12.0.0"></script>
+  <script src="js/world.js?v=12.0.0"></script>
+  <script src="js/controls.js?v=12.0.0"></script>
+  <script src="js/game.js?v=12.0.0"></script>
 </body>
 </html>
