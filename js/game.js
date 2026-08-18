@@ -61,11 +61,17 @@ class Game {
     // Account & Cloud Persistence
     this.userEmail = localStorage.getItem('fantasy_runner_email') || '';
     this.userName = localStorage.getItem('fantasy_runner_name') || 'مغامر الغابة';
+    this.userUid = '';
 
     // Multi-tier data loading: check if email profile exists, otherwise fallback to standard storage
     this.loadProfileData();
 
     // Game Config & Modes
+    this.gameMode = 'odyssey';
+    this.timeAttackDuration = 35;
+    this.timeAttackRemaining = 35;
+    this.frenzyMultiplier = 10;
+    this.isOneLifeMode = false;
 
     // Time Attack Timer
     this.timeAttackTimer = 30.0;
@@ -100,12 +106,72 @@ class Game {
     this.initThree();
     this.initGameSystems();
     this.initEvents();
+    this.initAccountSystem();
     this.updateUserStatsUI();
     this.applyGarageUpgrades();
     this.updateUpgradesUI();
 
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
+  }
+
+  loadProfileData() {
+    let profile = null;
+    if (this.userEmail) {
+      try {
+        profile = JSON.parse(localStorage.getItem('fantasy_profile_' + this.userEmail) || 'null');
+      } catch (e) {}
+    }
+
+    if (profile) {
+      this.totalGems = profile.gems || 0;
+      this.highScore = profile.highScore || 0;
+      this.activeCharacter = profile.activeCharacter || 'sami';
+      this.unlockedChars = profile.unlockedChars || ['sami'];
+      this.upgrades = profile.upgrades || { magnet: 1, shield: 1, boost: 1 };
+      this.userName = profile.name || this.userName;
+    } else {
+      this.totalGems = parseInt(localStorage.getItem('cyber_runner_gems') || '0');
+      this.highScore = parseInt(localStorage.getItem('cyber_runner_highscore') || '0');
+      this.activeCharacter = localStorage.getItem('cyber_runner_active_char') || 'sami';
+      this.unlockedChars = JSON.parse(localStorage.getItem('cyber_runner_unlocked_chars') || '["sami"]');
+      this.upgrades = JSON.parse(localStorage.getItem('cyber_runner_upgrades') || '{"magnet":1,"shield":1,"boost":1}');
+    }
+  }
+
+  syncAllData() {
+    // 1. Save standard local keys
+    localStorage.setItem('cyber_runner_gems', this.totalGems.toString());
+    localStorage.setItem('cyber_runner_highscore', this.highScore.toString());
+    localStorage.setItem('cyber_runner_active_char', this.activeCharacter);
+    localStorage.setItem('cyber_runner_unlocked_chars', JSON.stringify(this.unlockedChars));
+    localStorage.setItem('cyber_runner_upgrades', JSON.stringify(this.upgrades));
+    localStorage.setItem('fantasy_runner_email', this.userEmail);
+    localStorage.setItem('fantasy_runner_name', this.userName);
+
+    const payload = {
+      email: this.userEmail,
+      name: this.userName,
+      gems: this.totalGems,
+      highScore: this.highScore,
+      activeCharacter: this.activeCharacter,
+      unlockedChars: this.unlockedChars,
+      upgrades: this.upgrades,
+      lastSaved: new Date().toISOString()
+    };
+
+    // 2. Save structured profile locally
+    if (this.userEmail) {
+      localStorage.setItem('fantasy_profile_' + this.userEmail, JSON.stringify(payload));
+    }
+
+    // 3. Save directly to Firebase Firestore Cloud if initialized
+    if (window.firebaseService && this.userUid) {
+      window.firebaseService.saveUserData(this.userUid, payload);
+    }
+
+    this.updateUserStatsUI();
+    this.updateAccountUI();
   }
 
   initThree() {
@@ -308,87 +374,83 @@ class Game {
   }
 
   initAccountSystem() {
-    const loggedOutState = document.getElementById('google-logged-out');
-    const loggedInState = document.getElementById('google-logged-in');
-    const googleAvatar = document.getElementById('google-avatar-img');
-    const googleName = document.getElementById('google-user-name');
-    const googleEmail = document.getElementById('google-user-email');
-    const directInput = document.getElementById('direct-google-email');
+    const btnFirebaseGoogle = document.getElementById('btn-firebase-google');
+    const btnGoogleLogout = document.getElementById('btn-google-logout');
 
-    // Apply Google User
-    this.applyGoogleUser = (userData) => {
-      this.userEmail = userData.email;
-      this.userName = userData.name;
-      this.userAvatar = userData.picture;
-      localStorage.setItem('fantasy_google_user', JSON.stringify(userData));
+    // Firebase Auth State Listener
+    if (window.firebaseService) {
+      window.firebaseService.onAuthChange(async (user) => {
+        if (user) {
+          this.userEmail = user.email || '';
+          this.userName = user.displayName || 'مغامر Google';
+          this.userAvatar = user.photoURL || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.email}`;
+          this.userUid = user.uid;
 
-      // Restore existing saved profile for this Google account
-      let existingProfile = null;
-      try {
-        existingProfile = JSON.parse(localStorage.getItem('fantasy_profile_' + userData.email) || 'null');
-      } catch (e) {}
+          // 1. Try reading existing Firestore Cloud profile
+          const cloudData = await window.firebaseService.loadUserData(user.uid);
+          if (cloudData) {
+            this.totalGems = Math.max(this.totalGems, cloudData.gems || 0);
+            this.highScore = Math.max(this.highScore, cloudData.highScore || 0);
+            this.unlockedChars = Array.from(new Set([...this.unlockedChars, ...(cloudData.unlockedChars || ['sami'])]));
+            this.upgrades = cloudData.upgrades || this.upgrades;
+            this.activeCharacter = cloudData.activeCharacter || this.activeCharacter;
+            if (this.player) this.player.setCharacter(this.activeCharacter);
+          } else {
+            // Restore from localStorage profile fallback
+            let localProfile = null;
+            try {
+              localProfile = JSON.parse(localStorage.getItem('fantasy_profile_' + user.email) || 'null');
+            } catch (e) {}
+            if (localProfile) {
+              this.totalGems = Math.max(this.totalGems, localProfile.gems || 0);
+              this.highScore = Math.max(this.highScore, localProfile.highScore || 0);
+              this.unlockedChars = Array.from(new Set([...this.unlockedChars, ...(localProfile.unlockedChars || ['sami'])]));
+              this.upgrades = localProfile.upgrades || this.upgrades;
+              this.activeCharacter = localProfile.activeCharacter || this.activeCharacter;
+              if (this.player) this.player.setCharacter(this.activeCharacter);
+            }
+          }
 
-      if (existingProfile) {
-        this.totalGems = Math.max(this.totalGems, existingProfile.gems || 0);
-        this.highScore = Math.max(this.highScore, existingProfile.highScore || 0);
-        this.unlockedChars = Array.from(new Set([...this.unlockedChars, ...(existingProfile.unlockedChars || ['sami'])]));
-        this.upgrades = existingProfile.upgrades || this.upgrades;
-        this.activeCharacter = existingProfile.activeCharacter || this.activeCharacter;
-        if (this.player) this.player.setCharacter(this.activeCharacter);
-      }
-
-      this.syncAllData();
-      this.updateGarageUI();
-      this.updateUpgradesUI();
-      this.updateUserStatsUI();
-      this.updateAccountUI();
-
-      if (window.sound) window.sound.playPowerup();
-      alert(`تم تسجيل الدخول بحساب Google بنجاح: ${userData.email}\nتم ربط وحفظ كافة الأرقام سحابياً! ☁️✨`);
-    };
-
-    // Direct Google Login Trigger (Attached to Window for 100% Guaranteed Execution)
-    window.handleDirectGoogleLogin = () => {
-      const input = document.getElementById('direct-google-email');
-      const email = (input ? input.value : '').trim();
-      if (!email) {
-        alert('يرجى كتابة بريد Google الخاص بك (مثال: basim@gmail.com)');
-        return;
-      }
-      const defaultName = email.split('@')[0] || 'مغامر Google';
-      this.applyGoogleUser({
-        name: defaultName,
-        email: email,
-        picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${email}`
-      });
-    };
-
-    // Direct Google Logout Trigger
-    window.handleDirectGoogleLogout = () => {
-      this.userEmail = '';
-      this.userName = 'مغامر الغابة';
-      this.userAvatar = '';
-      localStorage.removeItem('fantasy_google_user');
-      localStorage.removeItem('fantasy_runner_email');
-      this.updateAccountUI();
-    };
-
-    // Enter key handler on input
-    if (directInput) {
-      directInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') window.handleDirectGoogleLogin();
+          this.syncAllData();
+          this.updateGarageUI();
+          this.updateUpgradesUI();
+          this.updateUserStatsUI();
+          this.updateAccountUI();
+        } else {
+          this.userEmail = '';
+          this.userName = 'مغامر الغابة';
+          this.userAvatar = '';
+          this.userUid = '';
+          this.updateAccountUI();
+        }
       });
     }
 
-    // Load saved Google User on boot
-    try {
-      const savedGoogleUser = JSON.parse(localStorage.getItem('fantasy_google_user') || 'null');
-      if (savedGoogleUser && savedGoogleUser.email) {
-        this.userEmail = savedGoogleUser.email;
-        this.userName = savedGoogleUser.name || this.userName;
-        this.userAvatar = savedGoogleUser.picture || '';
-      }
-    } catch (e) {}
+    // Google Sign-In Button Click (Firebase Popup / Fallback)
+    if (btnFirebaseGoogle) {
+      btnFirebaseGoogle.addEventListener('click', async () => {
+        if (window.firebaseService) {
+          try {
+            await window.firebaseService.signInWithGoogle();
+            if (window.sound) window.sound.playPowerup();
+          } catch (err) {
+            console.warn('Firebase login notice:', err);
+          }
+        }
+      });
+    }
+
+    // Google Logout Button Click
+    if (btnGoogleLogout) {
+      btnGoogleLogout.addEventListener('click', async () => {
+        if (window.firebaseService) {
+          await window.firebaseService.signOut();
+        }
+        localStorage.removeItem('fantasy_google_user');
+        localStorage.removeItem('fantasy_runner_email');
+        this.updateAccountUI();
+      });
+    }
   }
 
   updateAccountUI() {
@@ -403,7 +465,7 @@ class Game {
       if (loggedInState) loggedInState.classList.remove('hidden');
 
       if (googleName) googleName.textContent = this.userName || 'مغامر Google';
-      if (googleEmail) googleEmail.textContent = `🟢 متصل: ${this.userEmail} (محفوظ سحابياً)`;
+      if (googleEmail) googleEmail.textContent = `🔥 متصل: ${this.userEmail} (Firebase Cloud)`;
       if (googleAvatar) {
         googleAvatar.src = this.userAvatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userEmail}`;
       }
