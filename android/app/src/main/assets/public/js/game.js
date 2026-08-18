@@ -241,12 +241,13 @@ class Game {
     document.querySelectorAll('.vehicle-card').forEach(card => {
       card.addEventListener('click', () => {
         const charId = card.dataset.char || card.dataset.vehicle;
-        const isUnlocked = this.unlockedChars.includes(charId);
+        const mappedChar = (charId === 'titan' || charId === 'maryam') ? 'maryam' : ((charId === 'phantom' || charId === 'ziyad') ? 'ziyad' : 'sami');
+        const isUnlocked = this.unlockedChars.includes(mappedChar);
 
         if (isUnlocked) {
-          this.activeCharacter = charId;
-          localStorage.setItem('cyber_runner_active_char', charId);
-          this.player.setCharacter(charId);
+          this.activeCharacter = mappedChar;
+          localStorage.setItem('cyber_runner_active_char', mappedChar);
+          this.player.setCharacter(mappedChar);
           this.updateGarageUI();
         }
       });
@@ -273,9 +274,8 @@ class Game {
       });
     };
 
-    setupBuyBtn('btn-buy-lana', 'lana', 500);
-    setupBuyBtn('btn-buy-ziyad', 'ziyad', 1000);
-    setupBuyBtn('btn-buy-maryam', 'maryam', 1500);
+    setupBuyBtn('btn-buy-ziyad', 'ziyad', 500);
+    setupBuyBtn('btn-buy-maryam', 'maryam', 1000);
 
     // Upgrades
     const setupUpBtn = (btn, type) => {
