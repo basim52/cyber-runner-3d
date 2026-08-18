@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Runner 3D | المغامر السيبراني - العوالم المتعددة</title>
+  <meta name="description" content="لعبة ثلاثية الأبعاد سريعة وحماسية مع عوالم متعددة وترقيات ومركبات فضائية باستخدام Three.js">
+  
+  <!-- Fonts: Google Fonts Orbitron & Cairo for modern Sci-Fi typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <!-- 3D Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- UI Overlay Layers -->
+  <div id="ui-overlay">
+    
+    <!-- Top HUD Bar (Always visible during gameplay) -->
+    <header id="hud" class="hud-layer hidden">
+      <div class="hud-group hud-left">
+        <div class="hud-card score-card">
+          <span class="hud-label">النقاط</span>
+          <span id="score-display" class="hud-value digit-font">0</span>
+        </div>
+        <div class="hud-card gems-card">
+          <span class="hud-icon">💎</span>
+          <span id="gems-display" class="hud-value digit-font">0</span>
+        </div>
+        <div id="combo-badge" class="combo-pill hidden">
+          <span id="combo-text">COMBO x2</span>
+        </div>
+      </div>
+
+      <div class="hud-group hud-center">
+        <!-- Stage Progress & Biome Tag -->
+        <div class="stage-tracker">
+          <div class="stage-header-row">
+            <span id="current-biome-badge" class="biome-badge">🏙️ المدينة السيبرانية</span>
+            <span id="stage-distance-badge" class="digit-font">0 / 1000m</span>
+          </div>
+          <div class="stage-progress-track">
+            <div id="stage-progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Shield & Powerup Active Bar -->
+        <div id="powerup-status" class="powerup-bar hidden">
+          <span id="powerup-icon">⚡</span>
+          <div class="powerup-progress-track">
+            <div id="powerup-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-group hud-right">
+        <div class="hud-card distance-card">
+          <span class="hud-label">المسافة</span>
+          <span id="distance-display" class="hud-value digit-font">0m</span>
+        </div>
+        <div class="hud-card lives-card">
+          <div id="lives-container" class="lives-icons">
+            <span class="life-heart active">❤️</span>
+            <span class="life-heart active">❤️</span>
+            <span class="life-heart active">❤️</span>
+          </div>
+        </div>
+        <div class="hud-controls-buttons">
+          <button id="btn-sound-toggle" class="icon-btn" title="كتم/تشغيل الصوت">🔊</button>
+          <button id="btn-pause" class="icon-btn" title="إيقاف مؤقت">⏸️</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Speed/Boost Meter -->
+    <div id="speed-meter" class="speed-meter-container hidden">
+      <div class="speed-label digit-font">SPEED</div>
+      <div class="speed-bar-track">
+        <div id="speed-bar-fill" class="speed-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- Start / Main Menu Screen -->
+    <div id="start-screen" class="screen-modal active">
+      <div class="modal-card glass-panel">
+        <div class="brand-badge">NEXT-GEN 3D WEBGL ENGINE</div>
+        <h1 class="game-title glow-text">CYBER RUNNER <span class="accent-title">3D</span></h1>
+        <p class="game-subtitle">انطلق عبر 4 عوالم مذهلة، طوّر مركبتك الفضائية، وتحدَّ حدود السرعة!</p>
+        
+        <div class="user-stats-bar">
+          <div class="user-stat-item">
+            <span>🏆 أفضل نتيجة:</span>
+            <strong id="start-high-score" class="digit-font">0</strong>
+          </div>
+          <div class="user-stat-item">
+            <span>💎 إجمالي البلورات:</span>
+            <strong id="total-banked-gems" class="digit-font">0</strong>
+          </div>
+        </div>
+
+        <div class="menu-nav-buttons">
+          <button id="btn-open-stages" class="nav-feature-btn">
+            <span class="nav-icon">🗺️</span>
+            <span class="nav-text">اختيار العوالم والمراحل</span>
+          </button>
+          <button id="btn-open-garage" class="nav-feature-btn">
+            <span class="nav-icon">🚀</span>
+            <span class="nav-text">المرآب وترقية المركبات</span>
+          </button>
+        </div>
+
+        <div class="difficulty-picker">
+          <label>مستوى التحدي:</label>
+          <div class="diff-buttons">
+            <button class="diff-btn" data-diff="easy">سهل</button>
+            <button class="diff-btn active" data-diff="normal">متوسط</button>
+            <button class="diff-btn" data-diff="hard">خبير ⚡</button>
+          </div>
+        </div>
+
+        <button id="btn-start" class="btn-primary pulse-btn">
+          <span>انطلاق فوري 🚀</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stage Select Modal -->
+    <div id="stages-screen" class="screen-modal hidden">
+      <div class="modal-card glass-panel stage-modal-card">
+        <h2 class="glow-text">اختر عالم المغامرة 🗺️</h2>
+        <p class="sub-text">انطلق في عالم محدد أو اختر نمط الرحلة اللانهائية للتنقل بين كل العوالم!</p>
+        
+        <div class="stages-grid">
+          <!-- Stage 0: Endless Odyssey -->
+          <div class="stage-card active" data-world="odyssey">
+            <div class="stage-tag">الموصى به ⭐</div>
+            <div class="stage-card-icon">🌀</div>
+            <h3>الرحلة اللانهائية</h3>
+            <p>انتقال تلقائي بين كل العوالم عبر بوابات البعد</p>
+          </div>
+
+          <!-- Stage 1: Cyber City -->
+          <div class="stage-card" data-world="city">
+            <div class="stage-tag city-tag">العالم 1</div>
+            <div class="stage-card-icon">🏙️</div>
+            <h3>المدينة السيبرانية</h3>
+            <p>أضواء نيون، أمطار رقمية، وبوابات ليزر</p>
+          </div>
+
+          <!-- Stage 2: Lava Magma Core -->
+          <div class="stage-card" data-world="lava">
+            <div class="stage-tag lava-tag">العالم 2</div>
+            <div class="stage-card-icon">🌋</div>
+            <h3>الكوكب البركاني</h3>
+            <p>حمم منصهرة، صخور نارية، وشهب متساقطة</p>
+          </div>
+
+          <!-- Stage 3: Cosmic Nebula -->
+          <div class="stage-card" data-world="nebula">
+            <div class="stage-tag nebula-tag">العالم 3</div>
+            <div class="stage-card-icon">🌌</div>
+            <h3>السديم الفضائي</h3>
+            <p>فضاء عميق، كواكب دوارة، ومنصات قفز عملاقة</p>
+          </div>
+
+          <!-- Stage 4: Abyssal Matrix -->
+          <div class="stage-card" data-world="abyss">
+            <div class="stage-tag abyss-tag">العالم 4</div>
+            <div class="stage-card-icon">🌊</div>
+            <h3>أعماق الماتريكس</h3>
+            <p>عالم مائي زمردي، دوامات طاقة، وفقاعات مضيئة</p>
+          </div>
+        </div>
+
+        <div class="modal-actions horizontal-actions">
+          <button id="btn-confirm-stage" class="btn-primary">اختيار هذا العالم ✅</button>
+          <button id="btn-close-stages" class="btn-secondary">رجوع ↩️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Garage & Vehicle Upgrades Modal -->
+    <div id="garage-screen" class="screen-modal hidden">
+      <div class="modal-card glass-panel garage-modal-card">
+        <div class="garage-header">
+          <h2 class="glow-text">مرآب المركبات الفضائية 🚀</h2>
+          <div class="garage-bank">
+            <span>رصيدك:</span>
+            <strong id="garage-gems-count" class="digit-font">0 💎</strong>
+          </div>
+        </div>
+
+        <!-- Vehicle Selection Carousel -->
+        <div class="vehicles-slider">
+          <!-- Vehicle 1 -->
+          <div class="vehicle-card active" data-vehicle="dart">
+            <div class="veh-status-badge owned">مملوكة ✅</div>
+            <div class="veh-visual">⚡</div>
+            <h3>Cyber Dart</h3>
+            <p class="veh-desc">مركبة هجومية خفيفة متوازنة وسريعة الاستجابة</p>
+            <div class="veh-stats">
+              <div class="stat-row">
+                <span>السرعة:</span>
+                <div class="stat-bar"><div style="width: 70%"></div></div>
+              </div>
+              <div class="stat-row">
+                <span>الدرع:</span>
+                <div class="stat-bar"><div style="width: 50%"></div></div>
+              </div>
+            </div>
+            <button class="veh-select-btn btn-primary btn-sm selected">محددة للسباق</button>
+          </div>
+
+          <!-- Vehicle 2 -->
+          <div class="vehicle-card" data-vehicle="titan">
+            <div id="titan-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
+            <div class="veh-visual">🛡️</div>
+            <h3>Titan Mech</h3>
+            <p class="veh-desc">مدرعة ثقيلة قوية تتحمل الصدمات ولديها درع إضافي</p>
+            <div class="veh-stats">
+              <div class="stat-row">
+                <span>السرعة:</span>
+                <div class="stat-bar"><div style="width: 55%"></div></div>
+              </div>
+              <div class="stat-row">
+                <span>الدرع:</span>
+                <div class="stat-bar"><div style="width: 95%"></div></div>
+              </div>
+            </div>
+            <button id="btn-buy-titan" class="veh-select-btn btn-secondary btn-sm" data-cost="500">فتح بـ 500 💎</button>
+          </div>
+
+          <!-- Vehicle 3 -->
+          <div class="vehicle-card" data-vehicle="phantom">
+            <div id="phantom-status-badge" class="veh-status-badge locked">مغلقة 🔒</div>
+            <div class="veh-visual">🌌</div>
+            <h3>Phantom Speeder</h3>
+            <p class="veh-desc">طيف السرعة الخارق بمغناطيس بلورات واسع النطاق</p>
+            <div class="veh-stats">
+              <div class="stat-row">
+                <span>السرعة:</span>
+                <div class="stat-bar"><div style="width: 98%"></div></div>
+              </div>
+              <div class="stat-row">
+                <span>الدرع:</span>
+                <div class="stat-bar"><div style="width: 40%"></div></div>
+              </div>
+            </div>
+            <button id="btn-buy-phantom" class="veh-select-btn btn-secondary btn-sm" data-cost="1200">فتح بـ 1200 💎</button>
+          </div>
+        </div>
+
+        <!-- Global Upgrades System -->
+        <div class="upgrades-container">
+          <h3 class="upgrade-sec-title">ترقيات وتطوير الأنظمة 🛠️</h3>
+          <div class="upgrades-grid">
+            <div class="upgrade-card">
+              <div class="upgrade-info">
+                <span class="up-icon">🧲</span>
+                <div>
+                  <strong>مجال المغناطيس</strong>
+                  <span id="magnet-level-text" class="up-level">المستوى 1 / 5</span>
+                </div>
+              </div>
+              <button id="btn-up-magnet" class="btn-upgrade" data-type="magnet">ترقية بـ 200 💎</button>
+            </div>
+
+            <div class="upgrade-card">
+              <div class="upgrade-info">
+                <span class="up-icon">🛡️</span>
+                <div>
+                  <strong>صمود الدرع</strong>
+                  <span id="shield-level-text" class="up-level">المستوى 1 / 5</span>
+                </div>
+              </div>
+              <button id="btn-up-shield" class="btn-upgrade" data-type="shield">ترقية بـ 200 💎</button>
+            </div>
+
+            <div class="upgrade-card">
+              <div class="upgrade-info">
+                <span class="up-icon">⚡</span>
+                <div>
+                  <strong>طاقة التوربو Boost</strong>
+                  <span id="boost-level-text" class="up-level">المستوى 1 / 5</span>
+                </div>
+              </div>
+              <button id="btn-up-boost" class="btn-upgrade" data-type="boost">ترقية بـ 200 💎</button>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-close-garage" class="btn-primary">حفظ والعودة ↩️</button>
+      </div>
+    </div>
+
+    <!-- Pause Screen -->
+    <div id="pause-screen" class="screen-modal hidden">
+      <div class="modal-card glass-panel small-modal">
+        <h2 class="glow-text">اللعبة متوقفة</h2>
+        <p>خذ قسطاً من الراحة وعد إلى السباق!</p>
+        <div class="modal-actions">
+          <button id="btn-resume" class="btn-primary">متابعة اللعب ▶️</button>
+          <button id="btn-restart-pause" class="btn-secondary">إعادة البدء 🔄</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="screen-modal hidden">
+      <div class="modal-card glass-panel">
+        <div id="new-high-badge" class="high-score-alert hidden">🌟 رقم قياسي جديد! 🌟</div>
+        <h2 class="gameover-title">انتهت اللعبة!</h2>
+        
+        <div class="results-grid">
+          <div class="result-box">
+            <span class="res-label">النقاط النهائية</span>
+            <span id="final-score" class="res-value digit-font">0</span>
+          </div>
+          <div class="result-box">
+            <span class="res-label">أفضل نتيجة</span>
+            <span id="best-score" class="res-value digit-font">0</span>
+          </div>
+          <div class="result-box">
+            <span class="res-label">المسافة المقطوعة</span>
+            <span id="final-distance" class="res-value digit-font">0m</span>
+          </div>
+          <div class="result-box">
+            <span class="res-label">البلورات المجموعة</span>
+            <span id="final-gems" class="res-value digit-font">0 💎</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-retry" class="btn-primary pulse-btn">
+            <span>إعادة المحاولة 🔄</span>
+          </button>
+          <button id="btn-menu" class="btn-secondary">
+            <span>القائمة الرئيسية 🏠</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warp Portal Transition FX Screen -->
+    <div id="warp-overlay" class="warp-portal-overlay">
+      <div class="warp-content">
+        <div class="warp-spin-ring"></div>
+        <h2 id="warp-world-name" class="warp-title">الانتقال إلى الكوكب البركاني!</h2>
+        <span class="warp-sub">WARP DRIVE ACTIVATED 🚀</span>
+      </div>
+    </div>
+
+    <!-- Mobile Virtual Touch Controls -->
+    <div id="mobile-controls" class="mobile-controls-layer">
+      <div class="mobile-dpad">
+        <button id="touch-left" class="touch-btn touch-steer" aria-label="يسار">◀</button>
+        <button id="touch-right" class="touch-btn touch-steer" aria-label="يمين">▶</button>
+      </div>
+
+      <div class="mobile-actions">
+        <button id="touch-boost" class="touch-btn touch-action boost-btn" aria-label="تعزيز">⚡</button>
+        <button id="touch-jump" class="touch-btn touch-action jump-btn" aria-label="قفز">▲</button>
+      </div>
+    </div>
+
+    <!-- Screen Flash / Damage FX Overlay -->
+    <div id="damage-flash" class="damage-flash-overlay"></div>
+
+  </div>
+
+  <!-- Game Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

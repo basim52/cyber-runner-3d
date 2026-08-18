@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Cyber Runner 3D</string>
+    <string name="title_activity_main">Cyber Runner 3D</string>
+    <string name="package_name">com.cyberrunner.game</string>
+    <string name="custom_url_scheme">com.cyberrunner.game</string>
+</resources>
