@@ -790,10 +790,22 @@ class Game {
 
       this.camera.lookAt(this.player.x * 0.2, this.player.y * 0.5 + 1.2, this.player.z - 12);
     } else {
+      // Idle on start / menu screens
       if (this.player) {
-        this.player.hoverBobTimer += delta * 3;
-        this.player.group.position.y = 1.0 + Math.sin(this.player.hoverBobTimer) * 0.15;
-        this.player.group.rotation.y += 0.5 * delta;
+        this.player.runTimer += delta * 2.5;
+        // Breathing body bounce
+        const breath = Math.sin(this.player.runTimer) * 0.05;
+        this.player.bodyGroup.position.y = 1.35 + breath;
+        
+        // Gentle wave with right arm
+        if (this.player.rightArmGroup) {
+          this.player.rightArmGroup.rotation.x = -1.2 + Math.sin(this.player.runTimer * 3) * 0.25;
+          this.player.rightArmGroup.rotation.z = -0.4 + Math.cos(this.player.runTimer * 3) * 0.2;
+        }
+
+        // Face front/camera with slight slow sway
+        this.player.group.rotation.y = Math.sin(this.player.runTimer * 0.5) * 0.25;
+        this.player.group.position.set(0, 0, -2.0);
       }
     }
 
