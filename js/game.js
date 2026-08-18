@@ -308,6 +308,71 @@ class Game {
   }
 
   initAccountSystem() {
+    const quickInput = document.getElementById('quick-input-email');
+    const btnQuick = document.getElementById('btn-quick-login');
+    const quickMsg = document.getElementById('quick-login-msg');
+    const syncStatus = document.getElementById('direct-sync-status');
+
+    if (quickInput && this.userEmail) {
+      quickInput.value = this.userEmail;
+    }
+
+    const performLogin = (rawEmail) => {
+      const email = (rawEmail || '').trim();
+      if (!email) {
+        if (quickMsg) {
+          quickMsg.textContent = '⚠️ يرجى كتابة بريدك الإلكتروني لحفظ الأرقام';
+          quickMsg.className = 'login-feedback-msg error';
+          quickMsg.classList.remove('hidden');
+        }
+        return;
+      }
+
+      this.userEmail = email;
+
+      // Check if previous cloud data exists for this email
+      let existingProfile = null;
+      try {
+        existingProfile = JSON.parse(localStorage.getItem('fantasy_profile_' + email) || 'null');
+      } catch (e) {}
+
+      if (existingProfile) {
+        // Merge & Restore previous records
+        this.totalGems = Math.max(this.totalGems, existingProfile.gems || 0);
+        this.highScore = Math.max(this.highScore, existingProfile.highScore || 0);
+        this.unlockedChars = Array.from(new Set([...this.unlockedChars, ...(existingProfile.unlockedChars || ['sami'])]));
+        this.upgrades = existingProfile.upgrades || this.upgrades;
+        this.activeCharacter = existingProfile.activeCharacter || this.activeCharacter;
+        if (this.player) this.player.setCharacter(this.activeCharacter);
+      }
+
+      this.syncAllData();
+      this.updateGarageUI();
+      this.updateUpgradesUI();
+      this.updateUserStatsUI();
+
+      if (quickMsg) {
+        quickMsg.textContent = `✅ تم تسجيل الدخول وحفظ أرقامك بنجاح بحساب (${email})!`;
+        quickMsg.className = 'login-feedback-msg success';
+        quickMsg.classList.remove('hidden');
+        setTimeout(() => quickMsg.classList.add('hidden'), 5000);
+      }
+
+      if (syncStatus) {
+        syncStatus.textContent = `🟢 محفوظ سحابياً (${email})`;
+      }
+
+      if (window.sound) window.sound.playPowerup();
+    };
+
+    if (btnQuick && quickInput) {
+      btnQuick.addEventListener('click', () => performLogin(quickInput.value));
+      quickInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') performLogin(quickInput.value);
+      });
+    }
+
+    // Modal elements (optional for advanced backup)
     const btnOpen = document.getElementById('btn-open-account');
     const btnToggle = document.getElementById('btn-account-toggle');
     const btnClose = document.getElementById('btn-close-account');
@@ -322,46 +387,28 @@ class Game {
     const openAccountModal = () => {
       if (inputEmail) inputEmail.value = this.userEmail;
       if (inputName) inputName.value = this.userName;
-      if (accountScreen) accountScreen.classList.remove('hidden');
+      if (accountScreen) {
+        accountScreen.classList.remove('hidden');
+        accountScreen.classList.add('active');
+      }
     };
 
     if (btnOpen) btnOpen.addEventListener('click', openAccountModal);
     if (btnToggle) btnToggle.addEventListener('click', openAccountModal);
     if (btnClose) btnClose.addEventListener('click', () => {
-      if (accountScreen) accountScreen.classList.add('hidden');
+      if (accountScreen) {
+        accountScreen.classList.remove('active');
+        accountScreen.classList.add('hidden');
+      }
     });
 
-    if (btnSaveLogin) {
+    if (btnSaveLogin && inputEmail) {
       btnSaveLogin.addEventListener('click', () => {
-        const email = (inputEmail.value || '').trim();
-        const name = (inputName.value || '').trim() || 'مغامر الغابة';
-
-        if (!email || !email.includes('@')) {
-          alert('يرجى كتابة بريد إلكتروني صحيح لحفظ البيانات');
-          return;
+        performLogin(inputEmail.value);
+        if (accountScreen) {
+          accountScreen.classList.remove('active');
+          accountScreen.classList.add('hidden');
         }
-
-        this.userEmail = email;
-        this.userName = name;
-
-        // Check if previous cloud data exists for this email
-        let existingProfile = null;
-        try {
-          existingProfile = JSON.parse(localStorage.getItem('fantasy_profile_' + email) || 'null');
-        } catch (e) {}
-
-        if (existingProfile) {
-          // Merge / Restore
-          this.totalGems = Math.max(this.totalGems, existingProfile.gems || 0);
-          this.highScore = Math.max(this.highScore, existingProfile.highScore || 0);
-          this.unlockedChars = Array.from(new Set([...this.unlockedChars, ...(existingProfile.unlockedChars || ['sami'])]));
-          this.upgrades = existingProfile.upgrades || this.upgrades;
-        }
-
-        this.syncAllData();
-        if (accountScreen) accountScreen.classList.add('hidden');
-        if (window.sound) window.sound.playPowerup();
-        alert(`تم تسجيل الدخول بنجاح بحساب ${email} وتم حفظ ومزامنة كافة الأرقام سحابياً! ☁️✨`);
       });
     }
 
@@ -427,6 +474,9 @@ class Game {
   updateAccountUI() {
     const displayName = document.getElementById('display-player-name');
     const displayEmail = document.getElementById('display-player-email');
+    const directSyncStatus = document.getElementById('direct-sync-status');
+    const quickInput = document.getElementById('quick-input-email');
+
     if (displayName) displayName.textContent = this.userName || 'مغامر الغابة';
     if (displayEmail) {
       if (this.userEmail) {
@@ -434,6 +484,16 @@ class Game {
       } else {
         displayEmail.textContent = '🟢 تسجيل الدخول بالبريد لحفظ الأرقام';
       }
+    }
+    if (directSyncStatus) {
+      if (this.userEmail) {
+        directSyncStatus.textContent = `🟢 محفوظ سحابياً (${this.userEmail})`;
+      } else {
+        directSyncStatus.textContent = '⚪ غير مسجل (اكتب بريدك للحفظ)';
+      }
+    }
+    if (quickInput && this.userEmail && !quickInput.value) {
+      quickInput.value = this.userEmail;
     }
   }
 

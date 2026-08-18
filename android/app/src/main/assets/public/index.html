@@ -94,16 +94,17 @@
     <div id="start-screen" class="screen-modal active">
       <div class="modal-card glass-panel">
         
-        <!-- User Cloud Profile Header Widget -->
-        <div class="profile-header-widget">
-          <div class="profile-avatar-info" id="btn-open-account">
-            <div class="profile-avatar">👤</div>
-            <div class="profile-texts">
-              <strong id="display-player-name">مغامر الغابة</strong>
-              <span id="display-player-email" class="cloud-status-badge">🟢 تسجيل الدخول بالبريد لحفظ الأرقام</span>
-            </div>
+        <!-- Quick Direct Email Login Bar (Foolproof & Instant) -->
+        <div class="direct-login-box">
+          <div class="direct-login-header">
+            <span class="direct-login-title">🔐 تسجيل الدخول بالبريد الإلكتروني لحفظ أرقامك:</span>
+            <span id="direct-sync-status" class="sync-pill active">🟢 متصل ومحفوظ سحابياً</span>
           </div>
-          <button id="btn-account-toggle" class="account-btn" title="إدارة الحساب والمزامنة السحابية">🔐 الحساب</button>
+          <div class="direct-login-row">
+            <input type="text" id="quick-input-email" class="quick-email-input" placeholder="اكتب بريدك الإلكتروني هنا (مثال: basim@gmail.com)..." autocomplete="email">
+            <button id="btn-quick-login" class="btn-quick-login">حفظ الحساب ☁️</button>
+          </div>
+          <div id="quick-login-msg" class="login-feedback-msg hidden"></div>
         </div>
 
         <div class="brand-badge">✨ 3D FANTASY RUNNER</div>
@@ -445,12 +446,12 @@
 
   </div>
 
-  <!-- Scripts with v10.0.0 cache buster -->
-  <script src="js/audio.js?v=10.0.0"></script>
-  <script src="js/particles.js?v=10.0.0"></script>
-  <script src="js/player.js?v=10.0.0"></script>
-  <script src="js/world.js?v=10.0.0"></script>
-  <script src="js/controls.js?v=10.0.0"></script>
-  <script src="js/game.js?v=10.0.0"></script>
+  <!-- Scripts with v11.0.0 cache buster -->
+  <script src="js/audio.js?v=11.0.0"></script>
+  <script src="js/particles.js?v=11.0.0"></script>
+  <script src="js/player.js?v=11.0.0"></script>
+  <script src="js/world.js?v=11.0.0"></script>
+  <script src="js/controls.js?v=11.0.0"></script>
+  <script src="js/game.js?v=11.0.0"></script>
 </body>
 </html>
